@@ -10472,7 +10472,7 @@ library
               element: <testLibraryFragment>::@class::C::@field::foo::@def::0#element
               getter2: <testLibraryFragment>::@class::C::@getter::foo::@def::0
               setter2: <testLibraryFragment>::@class::C::@setter::foo
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::foo::@def::1
               element: <testLibraryFragment>::@class::C::@field::foo::@def::1#element
               getter2: <testLibraryFragment>::@class::C::@getter::foo::@def::1
@@ -10613,7 +10613,7 @@ library
               element: <testLibraryFragment>::@class::C::@field::foo::@def::0#element
               getter2: <testLibraryFragment>::@class::C::@getter::foo
               setter2: <testLibraryFragment>::@class::C::@setter::foo::@def::0
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::foo::@def::1
               element: <testLibraryFragment>::@class::C::@field::foo::@def::1#element
               setter2: <testLibraryFragment>::@class::C::@setter::foo::@def::1
@@ -11274,7 +11274,7 @@ library
           reference: <testLibraryFragment>::@class::D
           element: <testLibraryFragment>::@class::D#element
           fields
-            v @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::D::@field::v
               element: <testLibraryFragment>::@class::D::@field::v#element
               getter2: <testLibraryFragment>::@class::D::@getter::v
@@ -11776,7 +11776,7 @@ library
           reference: <testLibraryFragment>::@class::D
           element: <testLibraryFragment>::@class::D#element
           fields
-            v @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::D::@field::v
               element: <testLibraryFragment>::@class::D::@field::v#element
               getter2: <testLibraryFragment>::@class::D::@getter::v
@@ -11921,7 +11921,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            f @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::f
               element: <testLibraryFragment>::@class::A::@field::f#element
               getter2: <testLibraryFragment>::@class::A::@getter::f
@@ -12160,7 +12160,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -14236,6 +14236,140 @@ library
 ''');
   }
 
+  test_class_field_missingName() async {
+    var library = await buildLibrary('''
+abstract class C {
+  Object a,;
+}
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+      classes
+        abstract class C @15
+          reference: <testLibraryFragment>::@class::C
+          enclosingElement3: <testLibraryFragment>
+          fields
+            a @28
+              reference: <testLibraryFragment>::@class::C::@field::a
+              enclosingElement3: <testLibraryFragment>::@class::C
+              type: Object
+            @30
+              reference: <testLibraryFragment>::@class::C::@field::0
+              enclosingElement3: <testLibraryFragment>::@class::C
+              type: Object
+          constructors
+            synthetic @-1
+              reference: <testLibraryFragment>::@class::C::@constructor::new
+              enclosingElement3: <testLibraryFragment>::@class::C
+          accessors
+            synthetic get a @-1
+              reference: <testLibraryFragment>::@class::C::@getter::a
+              enclosingElement3: <testLibraryFragment>::@class::C
+              returnType: Object
+            synthetic set a= @-1
+              reference: <testLibraryFragment>::@class::C::@setter::a
+              enclosingElement3: <testLibraryFragment>::@class::C
+              parameters
+                requiredPositional _a @-1
+                  type: Object
+              returnType: void
+            synthetic get @-1
+              reference: <testLibraryFragment>::@class::C::@getter::0
+              enclosingElement3: <testLibraryFragment>::@class::C
+              returnType: Object
+            synthetic set = @-1
+              reference: <testLibraryFragment>::@class::C::@setter::0
+              enclosingElement3: <testLibraryFragment>::@class::C
+              parameters
+                requiredPositional _ @-1
+                  type: Object
+              returnType: void
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+      classes
+        class C @15
+          reference: <testLibraryFragment>::@class::C
+          element: <testLibraryFragment>::@class::C#element
+          fields
+            a @28
+              reference: <testLibraryFragment>::@class::C::@field::a
+              element: <testLibraryFragment>::@class::C::@field::a#element
+              getter2: <testLibraryFragment>::@class::C::@getter::a
+              setter2: <testLibraryFragment>::@class::C::@setter::a
+            <null-name>
+              reference: <testLibraryFragment>::@class::C::@field::0
+              element: <testLibraryFragment>::@class::C::@field::0#element
+              getter2: <testLibraryFragment>::@class::C::@getter::0
+              setter2: <testLibraryFragment>::@class::C::@setter::0
+          constructors
+            synthetic <null-name>
+              reference: <testLibraryFragment>::@class::C::@constructor::new
+              element: <testLibraryFragment>::@class::C::@constructor::new#element
+          getters
+            get <null-name>
+              reference: <testLibraryFragment>::@class::C::@getter::a
+              element: <testLibraryFragment>::@class::C::@getter::a#element
+            get <null-name>
+              reference: <testLibraryFragment>::@class::C::@getter::0
+              element: <testLibraryFragment>::@class::C::@getter::0#element
+          setters
+            set <null-name>
+              reference: <testLibraryFragment>::@class::C::@setter::a
+              element: <testLibraryFragment>::@class::C::@setter::a#element
+              formalParameters
+                <null-name>
+                  element: <testLibraryFragment>::@class::C::@setter::a::@parameter::_a#element
+            set <null-name>
+              reference: <testLibraryFragment>::@class::C::@setter::0
+              element: <testLibraryFragment>::@class::C::@setter::0#element
+              formalParameters
+                <null-name>
+                  element: <testLibraryFragment>::@class::C::@setter::0::@parameter::_#element
+  classes
+    abstract class C
+      firstFragment: <testLibraryFragment>::@class::C
+      fields
+        a
+          firstFragment: <testLibraryFragment>::@class::C::@field::a
+          type: Object
+          getter: <testLibraryFragment>::@class::C::@getter::a#element
+          setter: <testLibraryFragment>::@class::C::@setter::a#element
+        
+          firstFragment: <testLibraryFragment>::@class::C::@field::0
+          type: Object
+          getter: <testLibraryFragment>::@class::C::@getter::0#element
+          setter: <testLibraryFragment>::@class::C::@setter::0#element
+      constructors
+        synthetic new
+          firstFragment: <testLibraryFragment>::@class::C::@constructor::new
+      getters
+        synthetic get a
+          firstFragment: <testLibraryFragment>::@class::C::@getter::a
+        synthetic get 
+          firstFragment: <testLibraryFragment>::@class::C::@getter::0
+      setters
+        synthetic set a=
+          firstFragment: <testLibraryFragment>::@class::C::@setter::a
+          formalParameters
+            requiredPositional _a
+              type: Object
+        synthetic set =
+          firstFragment: <testLibraryFragment>::@class::C::@setter::0
+          formalParameters
+            requiredPositional _
+              type: Object
+''');
+  }
+
   test_class_field_propagatedType_const_noDep() async {
     var library = await buildLibrary('''
 class C {
@@ -15228,7 +15362,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -16159,7 +16293,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -16313,7 +16447,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
@@ -16380,7 +16514,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
@@ -16447,7 +16581,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
@@ -16520,7 +16654,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -16593,7 +16727,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -16666,7 +16800,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -16692,6 +16826,62 @@ library
       getters
         get foo
           firstFragment: <testLibraryFragment>::@class::A::@getter::foo
+''');
+  }
+
+  test_class_getter_missingName() async {
+    var library = await buildLibrary('''
+class A {
+  get () => 0;
+}
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          enclosingElement3: <testLibraryFragment>
+          constructors
+            synthetic @-1
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              enclosingElement3: <testLibraryFragment>::@class::A
+          methods
+            get @12
+              reference: <testLibraryFragment>::@class::A::@method::get
+              enclosingElement3: <testLibraryFragment>::@class::A
+              returnType: dynamic
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          element: <testLibraryFragment>::@class::A#element
+          constructors
+            synthetic <null-name>
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              element: <testLibraryFragment>::@class::A::@constructor::new#element
+          methods
+            get @12
+              reference: <testLibraryFragment>::@class::A::@method::get
+              element: <testLibraryFragment>::@class::A::@method::get#element
+  classes
+    class A
+      firstFragment: <testLibraryFragment>::@class::A
+      constructors
+        synthetic new
+          firstFragment: <testLibraryFragment>::@class::A::@constructor::new
+      methods
+        get
+          firstFragment: <testLibraryFragment>::@class::A::@method::get
 ''');
   }
 
@@ -16737,7 +16927,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
@@ -16804,7 +16994,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
@@ -16880,11 +17070,11 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
-            y @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::y
               element: <testLibraryFragment>::@class::C::@field::y#element
               getter2: <testLibraryFragment>::@class::C::@getter::y
@@ -16972,7 +17162,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
@@ -17066,7 +17256,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               getter2: <testLibraryFragment>::@class::C::@getter::x
@@ -18072,6 +18262,62 @@ library
       methods
         foo
           firstFragment: <testLibraryFragment>::@class::A::@method::foo
+''');
+  }
+
+  test_class_method_missingName() async {
+    var library = await buildLibrary('''
+class A {
+  () {}
+}
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          enclosingElement3: <testLibraryFragment>
+          constructors
+            synthetic @-1
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              enclosingElement3: <testLibraryFragment>::@class::A
+          methods
+            @12
+              reference: <testLibraryFragment>::@class::A::@method::0
+              enclosingElement3: <testLibraryFragment>::@class::A
+              returnType: dynamic
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          element: <testLibraryFragment>::@class::A#element
+          constructors
+            synthetic <null-name>
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              element: <testLibraryFragment>::@class::A::@constructor::new#element
+          methods
+            <null-name>
+              reference: <testLibraryFragment>::@class::A::@method::0
+              element: <testLibraryFragment>::@class::A::@method::0#element
+  classes
+    class A
+      firstFragment: <testLibraryFragment>::@class::A
+      constructors
+        synthetic new
+          firstFragment: <testLibraryFragment>::@class::A::@constructor::new
+      methods
+        
+          firstFragment: <testLibraryFragment>::@class::A::@method::0
 ''');
   }
 
@@ -21701,7 +21947,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -21778,7 +22024,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -21855,7 +22101,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -21931,7 +22177,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -22007,7 +22253,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -22215,7 +22461,7 @@ library
           reference: <testLibraryFragment>::@class::D
           element: <testLibraryFragment>::@class::D#element
           fields
-            t @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::D::@field::t
               element: <testLibraryFragment>::@class::D::@field::t#element
               setter2: <testLibraryFragment>::@class::D::@setter::t
@@ -22367,7 +22613,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            f @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::f
               element: <testLibraryFragment>::@class::C::@field::f#element
               setter2: <testLibraryFragment>::@class::C::@setter::f
@@ -22387,7 +22633,7 @@ library
           reference: <testLibraryFragment>::@class::D
           element: <testLibraryFragment>::@class::D#element
           fields
-            f @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::D::@field::f
               element: <testLibraryFragment>::@class::D::@field::f#element
               setter2: <testLibraryFragment>::@class::D::@setter::f
@@ -22485,7 +22731,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            f @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::f
               element: <testLibraryFragment>::@class::C::@field::f#element
               setter2: <testLibraryFragment>::@class::C::@setter::f
@@ -22562,7 +22808,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -22637,7 +22883,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -22707,7 +22953,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -22785,7 +23031,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -22871,7 +23117,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo
@@ -22953,7 +23199,7 @@ library
           reference: <testLibraryFragment>::@class::A
           element: <testLibraryFragment>::@class::A#element
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo
@@ -22982,6 +23228,71 @@ library
       setters
         set foo=
           firstFragment: <testLibraryFragment>::@class::A::@setter::foo
+          formalParameters
+            requiredPositional _
+              type: int
+''');
+  }
+
+  test_class_setter_missingName() async {
+    var library = await buildLibrary('''
+class A {
+  set (int _) {}
+}
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          enclosingElement3: <testLibraryFragment>
+          constructors
+            synthetic @-1
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              enclosingElement3: <testLibraryFragment>::@class::A
+          methods
+            set @12
+              reference: <testLibraryFragment>::@class::A::@method::set
+              enclosingElement3: <testLibraryFragment>::@class::A
+              parameters
+                requiredPositional _ @21
+                  type: int
+              returnType: dynamic
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          element: <testLibraryFragment>::@class::A#element
+          constructors
+            synthetic <null-name>
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              element: <testLibraryFragment>::@class::A::@constructor::new#element
+          methods
+            set @12
+              reference: <testLibraryFragment>::@class::A::@method::set
+              element: <testLibraryFragment>::@class::A::@method::set#element
+              formalParameters
+                _ @21
+                  element: <testLibraryFragment>::@class::A::@method::set::@parameter::_#element
+  classes
+    class A
+      firstFragment: <testLibraryFragment>::@class::A
+      constructors
+        synthetic new
+          firstFragment: <testLibraryFragment>::@class::A::@constructor::new
+      methods
+        set
+          firstFragment: <testLibraryFragment>::@class::A::@method::set
           formalParameters
             requiredPositional _
               type: int
@@ -23033,7 +23344,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -23110,7 +23421,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -23202,11 +23513,11 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
-            y @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::y
               element: <testLibraryFragment>::@class::C::@field::y#element
               setter2: <testLibraryFragment>::@class::C::@setter::y
@@ -24900,6 +25211,61 @@ library
       constructors
         synthetic new
           firstFragment: <testLibraryFragment>::@class::C::@constructor::new
+''');
+  }
+
+  test_class_typeParameters_missingName() async {
+    var library = await buildLibrary(r'''
+class A<T,> {}
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          enclosingElement3: <testLibraryFragment>
+          typeParameters
+            covariant T @8
+              defaultType: dynamic
+            covariant @10
+              defaultType: dynamic
+          constructors
+            synthetic @-1
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              enclosingElement3: <testLibraryFragment>::@class::A
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+      classes
+        class A @6
+          reference: <testLibraryFragment>::@class::A
+          element: <testLibraryFragment>::@class::A#element
+          typeParameters
+            T @8
+              element: <not-implemented>
+            <null-name>
+              element: <not-implemented>
+          constructors
+            synthetic <null-name>
+              reference: <testLibraryFragment>::@class::A::@constructor::new
+              element: <testLibraryFragment>::@class::A::@constructor::new#element
+  classes
+    class A
+      firstFragment: <testLibraryFragment>::@class::A
+      typeParameters
+        T
+        
+      constructors
+        synthetic new
+          firstFragment: <testLibraryFragment>::@class::A::@constructor::new
 ''');
   }
 
@@ -28789,11 +29155,11 @@ library
               element: <testLibraryFragment>::@class::E::@field::x#element
               getter2: <testLibraryFragment>::@class::E::@getter::x
               setter2: <testLibraryFragment>::@class::E::@setter::x
-            a @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::E::@field::a
               element: <testLibraryFragment>::@class::E::@field::a#element
               getter2: <testLibraryFragment>::@class::E::@getter::a
-            b @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::E::@field::b
               element: <testLibraryFragment>::@class::E::@field::b#element
               setter2: <testLibraryFragment>::@class::E::@setter::b
@@ -29144,7 +29510,7 @@ library
               element: <testLibraryFragment>::@class::C::@field::foo#element
               getter2: <testLibraryFragment>::@class::C::@getter::foo
               setter2: <testLibraryFragment>::@class::C::@setter::foo
-            bar @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::bar
               element: <testLibraryFragment>::@class::C::@field::bar#element
               setter2: <testLibraryFragment>::@class::C::@setter::bar
@@ -29248,7 +29614,7 @@ library
           reference: <testLibraryFragment>::@class::C
           element: <testLibraryFragment>::@class::C#element
           fields
-            x @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::C::@field::x
               element: <testLibraryFragment>::@class::C::@field::x#element
               setter2: <testLibraryFragment>::@class::C::@setter::x
@@ -30744,7 +31110,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -30964,7 +31330,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo
@@ -33157,7 +33523,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@fieldAugmentation::foo
@@ -33408,7 +33774,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@fieldAugmentation::foo
@@ -34441,7 +34807,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo
@@ -34587,7 +34953,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo1 @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo1
               element: <testLibraryFragment>::@class::A::@field::foo1#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo1
@@ -34608,7 +34974,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           previousFragment: <testLibraryFragment>::@class::A
           fields
-            foo2 @-1
+            <null-name>
               reference: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@field::foo2
               element: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@field::foo2#element
               getter2: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@getter::foo2
@@ -34748,7 +35114,7 @@ library
             T1 @23
               element: <not-implemented>
           fields
-            foo1 @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo1
               element: <testLibraryFragment>::@class::A::@field::foo1#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo1
@@ -34772,7 +35138,7 @@ library
             T1 @37
               element: <not-implemented>
           fields
-            foo2 @-1
+            <null-name>
               reference: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@field::foo2
               element: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@field::foo2#element
               getter2: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@getter::foo2
@@ -35273,11 +35639,11 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo1 @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo1
               element: <testLibraryFragment>::@class::A::@field::foo1#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo1
-            foo2 @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo2
               element: <testLibraryFragment>::@class::A::@field::foo2#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo2
@@ -35427,7 +35793,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -35594,7 +35960,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -36667,7 +37033,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -36797,7 +37163,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo
@@ -38396,7 +38762,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo
               element: <testLibraryFragment>::@class::A::@field::foo#element
               getter2: <testLibraryFragment>::@class::A::@getter::foo
@@ -38670,7 +39036,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo1 @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo1
               element: <testLibraryFragment>::@class::A::@field::foo1#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo1
@@ -38694,7 +39060,7 @@ library
           element: <testLibraryFragment>::@class::A#element
           previousFragment: <testLibraryFragment>::@class::A
           fields
-            foo2 @-1
+            <null-name>
               reference: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@field::foo2
               element: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@field::foo2#element
               setter2: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A::@setter::foo2
@@ -39106,11 +39472,11 @@ library
           element: <testLibraryFragment>::@class::A#element
           nextFragment: <testLibrary>::@fragment::package:test/a.dart::@classAugmentation::A
           fields
-            foo1 @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo1
               element: <testLibraryFragment>::@class::A::@field::foo1#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo1
-            foo2 @-1
+            <null-name>
               reference: <testLibraryFragment>::@class::A::@field::foo2
               element: <testLibraryFragment>::@class::A::@field::foo2#element
               setter2: <testLibraryFragment>::@class::A::@setter::foo2

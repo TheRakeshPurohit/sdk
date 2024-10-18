@@ -322,6 +322,26 @@ f() => 0;
     expect(f.hasImplicitReturnType, isTrue);
   }
 
+  test_function_missingName() async {
+    var library = await buildLibrary('''
+() {}
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+''');
+  }
+
   test_function_parameter_const() async {
     var library = await buildLibrary('''
 void f(const x) {}
@@ -1338,6 +1358,39 @@ library
 ''');
   }
 
+  test_getter_missingName() async {
+    var library = await buildLibrary('''
+get () => 0;
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+      functions
+        get @0
+          reference: <testLibraryFragment>::@function::get
+          enclosingElement3: <testLibraryFragment>
+          returnType: dynamic
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+      functions
+        get @0
+          reference: <testLibraryFragment>::@function::get
+          element: <testLibraryFragment>::@function::get#element
+  functions
+    get
+      firstFragment: <testLibraryFragment>::@function::get
+      returnType: dynamic
+''');
+  }
+
   test_main_class() async {
     var library = await buildLibrary('class main {}');
     checkElementText(library, r'''
@@ -1557,7 +1610,7 @@ library
     <testLibraryFragment>
       element: <testLibrary>
       topLevelVariables
-        synthetic main @-1
+        synthetic <null-name>
           reference: <testLibraryFragment>::@topLevelVariable::main
           element: <testLibraryFragment>::@topLevelVariable::main#element
           getter2: <testLibraryFragment>::@getter::main
@@ -1747,6 +1800,48 @@ library
   fragments
     <testLibraryFragment>
       element: <testLibrary>
+''');
+  }
+
+  test_setter_missingName() async {
+    var library = await buildLibrary('''
+set (int _) {}
+''');
+    checkElementText(library, r'''
+library
+  reference: <testLibrary>
+  definingUnit: <testLibraryFragment>
+  units
+    <testLibraryFragment>
+      enclosingElement3: <null>
+      functions
+        set @0
+          reference: <testLibraryFragment>::@function::set
+          enclosingElement3: <testLibraryFragment>
+          parameters
+            requiredPositional _ @9
+              type: int
+          returnType: dynamic
+----------------------------------------
+library
+  reference: <testLibrary>
+  fragments
+    <testLibraryFragment>
+      element: <testLibrary>
+      functions
+        set @0
+          reference: <testLibraryFragment>::@function::set
+          element: <testLibraryFragment>::@function::set#element
+          formalParameters
+            _ @9
+              element: <testLibraryFragment>::@function::set::@parameter::_#element
+  functions
+    set
+      firstFragment: <testLibraryFragment>::@function::set
+      formalParameters
+        requiredPositional _
+          type: int
+      returnType: dynamic
 ''');
   }
 }
@@ -2230,7 +2325,7 @@ library
       element: <testLibrary>
       nextFragment: <testLibrary>::@fragment::package:test/a.dart
       topLevelVariables
-        synthetic foo @-1
+        synthetic <null-name>
           reference: <testLibraryFragment>::@topLevelVariable::foo
           element: <testLibraryFragment>::@topLevelVariable::foo#element
           getter2: <testLibraryFragment>::@getter::foo
@@ -2316,7 +2411,7 @@ library
       element: <testLibrary>
       nextFragment: <testLibrary>::@fragment::package:test/a.dart
       topLevelVariables
-        synthetic foo @-1
+        synthetic <null-name>
           reference: <testLibraryFragment>::@topLevelVariable::foo
           element: <testLibraryFragment>::@topLevelVariable::foo#element
           setter2: <testLibraryFragment>::@setter::foo
@@ -2681,7 +2776,7 @@ library
       element: <testLibrary>
       nextFragment: <testLibrary>::@fragment::package:test/a.dart
       topLevelVariables
-        synthetic foo @-1
+        synthetic <null-name>
           reference: <testLibraryFragment>::@topLevelVariable::foo
           element: <testLibraryFragment>::@topLevelVariable::foo#element
           getter2: <testLibraryFragment>::@getter::foo
@@ -2841,7 +2936,7 @@ library
       element: <testLibrary>
       nextFragment: <testLibrary>::@fragment::package:test/a.dart
       topLevelVariables
-        synthetic foo @-1
+        synthetic <null-name>
           reference: <testLibraryFragment>::@topLevelVariable::foo
           element: <testLibraryFragment>::@topLevelVariable::foo#element
           setter2: <testLibraryFragment>::@setter::foo
@@ -3171,7 +3266,7 @@ library
       element: <testLibrary>
       nextFragment: <testLibrary>::@fragment::package:test/a.dart
       topLevelVariables
-        synthetic foo @-1
+        synthetic <null-name>
           reference: <testLibraryFragment>::@topLevelVariable::foo
           element: <testLibraryFragment>::@topLevelVariable::foo#element
           getter2: <testLibraryFragment>::@getter::foo
@@ -3350,7 +3445,7 @@ library
       element: <testLibrary>
       nextFragment: <testLibrary>::@fragment::package:test/a.dart
       topLevelVariables
-        synthetic foo @-1
+        synthetic <null-name>
           reference: <testLibraryFragment>::@topLevelVariable::foo
           element: <testLibraryFragment>::@topLevelVariable::foo#element
           setter2: <testLibraryFragment>::@setter::foo

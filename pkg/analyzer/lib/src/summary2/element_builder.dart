@@ -288,6 +288,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
     for (var i = 0; i < constants.length; ++i) {
       var constant = constants[i];
       var name = constant.name.lexeme;
+      var fragmentName = _buildFragmentName(constant.name);
       var field = ConstFieldElementImpl(name, constant.name.offset)
         ..hasImplicitType = true
         ..hasInitializer = true
@@ -295,6 +296,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
         ..isConst = true
         ..isEnumConstant = true
         ..isStatic = true;
+      field.name2 = fragmentName;
       _setCodeRange(field, constant);
       _setDocumentation(field, constant);
       field.metadata = _buildAnnotationsWithUnit(
@@ -349,7 +351,10 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
       _linker.elementNodes[field] = variableDeclaration;
 
       field.constantInitializer = initializer;
-      holder.addNonSyntheticField(field);
+
+      var refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+      holder.addNonSyntheticField(refName, field);
+
       valuesElements.add(
         SimpleIdentifierImpl(
           StringToken(TokenType.STRING, name, -1),
@@ -405,7 +410,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
       );
       _linker.elementNodes[valuesField] = variableDeclaration;
 
-      holder.addNonSyntheticField(valuesField);
+      holder.addNonSyntheticField('values', valuesField);
 
       _libraryBuilder.implicitEnumNodes[element] = ImplicitEnumNodes(
         element: element,
@@ -632,6 +637,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
       var nameToken = variable.name;
       var name = nameToken.lexeme;
       var nameOffset = nameToken.offset;
+      var fragmentName = _buildFragmentName(nameToken);
 
       var element = FieldElementImpl(name, nameOffset);
       if (variable.initializer case var initializer?) {
@@ -648,6 +654,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
         }
       }
 
+      element.name2 = fragmentName;
       element.hasInitializer = variable.initializer != null;
       element.isAbstract = node.abstractKeyword != null;
       element.isAugmentation = node.augmentKeyword != null;
@@ -665,7 +672,8 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
         element.hasImplicitType = true;
       }
 
-      _enclosingContext.addNonSyntheticField(element);
+      var refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+      _enclosingContext.addNonSyntheticField(refName, element);
 
       _linker.elementNodes[element] = variable;
       variable.declaredElement = element;
@@ -819,8 +827,10 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
   void visitFunctionTypeAlias(covariant FunctionTypeAliasImpl node) {
     var nameToken = node.name;
     var name = nameToken.lexeme;
+    var fragmentName = _buildFragmentName(nameToken);
 
     var element = TypeAliasElementImpl(name, nameToken.offset);
+    element.name2 = fragmentName;
     element.isFunctionTypeAliasBased = true;
     element.metadata = _buildAnnotations(node.metadata);
     _setCodeRange(element, node);
@@ -829,7 +839,8 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
     node.declaredElement = element;
     _linker.elementNodes[element] = node;
 
-    var reference = _enclosingContext.addTypeAlias(name, element);
+    var refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+    var reference = _enclosingContext.addTypeAlias(refName, element);
     _libraryBuilder.declare(name, reference);
 
     var holder = _EnclosingContext(reference, element);
@@ -931,8 +942,10 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
   void visitGenericTypeAlias(covariant GenericTypeAliasImpl node) {
     var nameToken = node.name;
     var name = nameToken.lexeme;
+    var fragmentName = _buildFragmentName(nameToken);
 
     var element = TypeAliasElementImpl(name, nameToken.offset);
+    element.name2 = fragmentName;
     element.isAugmentation = node.augmentKeyword != null;
     element.metadata = _buildAnnotations(node.metadata);
     _setCodeRange(element, node);
@@ -941,7 +954,8 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
     node.declaredElement = element;
     _linker.elementNodes[element] = node;
 
-    var reference = _enclosingContext.addTypeAlias(name, element);
+    var refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+    var reference = _enclosingContext.addTypeAlias(refName, element);
     if (!element.isAugmentation) {
       _libraryBuilder.declare(name, reference);
     }
@@ -1007,7 +1021,8 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
       reference = _enclosingContext.addGetter(name, element);
       executableElement = element;
 
-      _buildSyntheticVariable(name: name, accessorElement: element);
+      var refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+      _buildSyntheticVariable(name: refName, accessorElement: element);
     } else if (node.isSetter) {
       var element = PropertyAccessorElementImpl(name, nameOffset);
       element.name2 = fragmentName;
@@ -1016,16 +1031,20 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
       element.isSetter = true;
       element.isStatic = node.isStatic;
 
-      reference = _enclosingContext.addSetter(name, element);
+      var refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+      reference = _enclosingContext.addSetter(refName, element);
       executableElement = element;
 
       _buildSyntheticVariable(name: name, accessorElement: element);
     } else {
-      if (name == '-') {
+      var isUnaryMinus = false;
+      if (fragmentName?.name == '-') {
         var parameters = node.parameters;
-        if (parameters != null && parameters.parameters.isEmpty) {
-          name = 'unary-';
-        }
+        isUnaryMinus = parameters != null && parameters.parameters.isEmpty;
+      }
+
+      if (isUnaryMinus) {
+        name = 'unary-';
       }
 
       var element = MethodElementImpl(name, nameOffset);
@@ -1034,7 +1053,14 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
       element.isAugmentation = node.augmentKeyword != null;
       element.isStatic = node.isStatic;
 
-      reference = _enclosingContext.addMethod(name, element);
+      String refName;
+      if (isUnaryMinus) {
+        refName = 'unary-';
+      } else {
+        refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+      }
+
+      reference = _enclosingContext.addMethod(refName, element);
       executableElement = element;
     }
     executableElement.hasImplicitReturnType = node.returnType == null;
@@ -1273,6 +1299,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
       var nameToken = variable.name;
       var name = nameToken.lexeme;
       var nameOffset = nameToken.offset;
+      var fragmentName = _buildFragmentName(nameToken);
 
       TopLevelVariableElementImpl element;
       if (node.variables.isConst) {
@@ -1282,6 +1309,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
         element = TopLevelVariableElementImpl(name, nameOffset);
       }
 
+      element.name2 = fragmentName;
       element.hasInitializer = variable.initializer != null;
       element.isAugmentation = node.augmentKeyword != null;
       element.isConst = node.variables.isConst;
@@ -1296,22 +1324,24 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
         element.hasImplicitType = true;
       }
 
+      var refName = fragmentName?.name ?? '${_nextUnnamedId++}';
+      _enclosingContext.addTopLevelVariable(refName, element);
+
       {
-        var ref = enclosingRef.getChild('@getter').addChild(name);
+        var ref = enclosingRef.getChild('@getter').addChild(refName);
         var getter = element.createImplicitGetter(ref);
         _enclosingContext.addPropertyAccessorSynthetic(getter);
         _libraryBuilder.declare(name, ref);
       }
 
       if (element.hasSetter) {
-        var ref = enclosingRef.getChild('@setter').addChild(name);
+        var ref = enclosingRef.getChild('@setter').addChild(refName);
         var setter = element.createImplicitSetter(ref);
         _enclosingContext.addPropertyAccessorSynthetic(setter);
         _libraryBuilder.declare('$name=', ref);
       }
 
       _linker.elementNodes[element] = variable;
-      _enclosingContext.addTopLevelVariable(name, element);
       variable.declaredElement = element;
 
       _libraryBuilder.topVariables.addVariable(element);
@@ -1329,8 +1359,10 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
   void visitTypeParameter(covariant TypeParameterImpl node) {
     var nameToken = node.name;
     var name = nameToken.lexeme;
+    var fragmentName = _buildFragmentName(nameToken);
 
     var element = TypeParameterElementImpl(name, nameToken.offset);
+    element.name2 = fragmentName;
     element.metadata = _buildAnnotations(node.metadata);
     _setCodeRange(element, node);
 
@@ -1500,11 +1532,13 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
 
     var fieldNameToken = representation.fieldName;
     var fieldName = fieldNameToken.lexeme.ifNotEmptyOrElse('<empty>');
+    var fieldFragmentName = _buildFragmentName(fieldNameToken);
 
     var fieldElement = FieldElementImpl(
       fieldName,
       fieldNameToken.offset,
     );
+    fieldElement.name2 = fieldFragmentName;
     fieldElement.isFinal = true;
     fieldElement.metadata = _buildAnnotations(representation.fieldMetadata);
 
@@ -1516,7 +1550,7 @@ class ElementBuilder extends ThrowingAstVisitor<void> {
 
     representation.fieldElement = fieldElement;
     _linker.elementNodes[fieldElement] = representation;
-    _enclosingContext.addNonSyntheticField(fieldElement);
+    _enclosingContext.addNonSyntheticField(fieldName, fieldElement);
 
     var formalParameterElement = FieldFormalParameterElementImpl(
       name: fieldName,
@@ -1831,8 +1865,7 @@ class _EnclosingContext {
     return _addReference(containerName, name, element);
   }
 
-  void addNonSyntheticField(FieldElementImpl element) {
-    var name = element.name;
+  void addNonSyntheticField(String name, FieldElementImpl element) {
     addField(name, element);
 
     // Augmenting a variable with a variable only alters its initializer.
