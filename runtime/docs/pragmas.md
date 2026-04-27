@@ -22,6 +22,7 @@ These pragmas are part of the VM's API and are safe for use in external code.
 | `vm:deeply-immutable` | [Specifying a class and all its subtypes are deeply immutable](deeply_immutable.md) |
 | `vm:align-loops` | Tells compiler to align all loop headers inside the function to an architecture specific boundary: currently 32 bytes on X64 and ARM64 (except Apple Silicon, which explicitly discourages aligning branch targets) |
 | `vm:no-sanitize-thread` | Disable ThreadSanitizer instrumentation |
+| `external-effect` | Declares a static method which will be treated as live code when performing any analysis of the program. The call itself (and its arguments) are then dropped from the running program.
 
 ## Unsafe pragmas for general use
 

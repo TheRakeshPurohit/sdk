@@ -3699,6 +3699,10 @@ class Function : public Object {
 
   bool IsCachableIdempotent() const;
 
+  // Whether this function represents an external effect and should be dropped
+  // from codegen.
+  bool IsExternalEffect() const;
+
   // Whether this function's |recognized_kind| requires optimization.
   bool RecognizedKindForceOptimize() const;
 
