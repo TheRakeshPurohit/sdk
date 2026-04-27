@@ -14,7 +14,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  cli_util: 0.5.0-wip
+  cli_util: ^0.5.0
   path: ^1.9.0
 
 # We use 'any' version constraints here as we get our package versions from
