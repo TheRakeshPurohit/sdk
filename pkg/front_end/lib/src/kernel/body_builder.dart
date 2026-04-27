@@ -8041,7 +8041,10 @@ class BodyBuilderImpl extends StackListenerImpl
       VariableDeclaration variable;
 
       bool isImplicitlyTyped;
-      if (formals is FormalParameters && formals.parameters?.length == 1) {
+      int typeOffset;
+      if (formals is FormalParameters &&
+          formals.parameters?.length == 1 &&
+          formals.parameters![0].isRequiredPositional) {
         bodyExpr = toValue(body);
         receiver = popForValue();
         FormalParameterBuilder formal = formals.parameters![0];
@@ -8055,12 +8058,14 @@ class BodyBuilderImpl extends StackListenerImpl
         if (variable is InternalVariable) {
           isImplicitlyTyped = (variable as InternalVariable).isImplicitlyTyped;
         }
+        typeOffset = formal.type.charOffset ?? variable.fileOffset;
       } else if (formals == null) {
         bodyExpr = toValue(body);
         variable = _thisVariables.pop();
         _parameterlessAnonymousMethodDepth--;
         receiver = popForValue();
         isImplicitlyTyped = true;
+        typeOffset = variable.fileOffset;
       } else {
         FormalParameters formalParameters = formals as FormalParameters;
         addProblem(
@@ -8094,6 +8099,7 @@ class BodyBuilderImpl extends StackListenerImpl
         isImplicitlyTyped: isImplicitlyTyped,
         isNullAware: isNullAware,
         isCascade: isCascade,
+        typeOffset: typeOffset,
       )..fileOffset = variableOffset;
 
       push(result);

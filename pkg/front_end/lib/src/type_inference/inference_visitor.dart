@@ -12251,7 +12251,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
             receiverType: checkedType,
             parameterType: variableType,
           ),
-          fileOffset: node.variable.fileOffset,
+          fileOffset: node.typeOffset,
         );
       }
     }
