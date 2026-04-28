@@ -135,6 +135,17 @@ B0 = EntryBlock()
   Suspend syncYieldStar(v1)
   Return(v6)
 
+--- getter syncStar3
+B0 = EntryBlock()
+  v1 = Constant(<int>)
+  v3 = Constant(1)
+  v5 = Constant(2)
+  v7 = Constant(null)
+  EnterSuspendableFunction(v1)
+  Suspend syncYield(v3)
+  Suspend syncYield(v5)
+  Return(v7)
+
 --- main
 B0 = EntryBlock()
   v1 = Constant(null)

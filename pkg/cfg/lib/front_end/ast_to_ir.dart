@@ -1905,10 +1905,7 @@ class LocalVariableIndexer {
         builder.declareLocalVariable('#value', null, function.valueType),
       );
     }
-    ast.FunctionNode? functionNode = switch (function) {
-      LocalFunction() => function.localFunction.function,
-      _ => function.member.function,
-    };
+    final functionNode = function.functionNode;
     if (functionNode != null) {
       for (final v in functionNode.positionalParameters) {
         parameters.add(variableForDeclaration(v));

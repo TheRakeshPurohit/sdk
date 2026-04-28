@@ -52,4 +52,9 @@ Iterable<int> syncStar2(List<int> a) sync* {
   yield* a;
 }
 
+Iterable<int> get syncStar3 sync* {
+  yield 1;
+  yield 2;
+}
+
 void main() {}
