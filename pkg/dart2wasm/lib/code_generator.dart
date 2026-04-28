@@ -1819,12 +1819,18 @@ abstract class AstCodeGenerator
     DynamicInvocation node,
     w.ValueType expectedType,
   ) {
+    return _handleDynamicInvocation(node.receiver, node.arguments, node.name);
+  }
+
+  w.ValueType _handleDynamicInvocation(
+    Expression receiver,
+    Arguments arguments,
+    Name memberName,
+  ) {
     // Call dynamic invocation forwarder
-    final receiver = node.receiver;
-    final typeArguments = node.arguments.types;
-    final positionalArguments = node.arguments.positional;
-    final namedArguments = node.arguments.named;
-    final memberName = node.name;
+    final typeArguments = arguments.types;
+    final positionalArguments = arguments.positional;
+    final namedArguments = arguments.named;
     final callShape = MethodCallShape(
       memberName,
       typeArguments.length,
@@ -2550,15 +2556,7 @@ abstract class AstCodeGenerator
 
     if (node.kind == FunctionAccessKind.Function) {
       // Type of function is `Function`, without the argument types.
-      return visitDynamicInvocation(
-        DynamicInvocation(
-          DynamicAccessKind.Dynamic,
-          node.receiver,
-          node.name,
-          node.arguments,
-        ),
-        expectedType,
-      );
+      return _handleDynamicInvocation(node.receiver, node.arguments, node.name);
     }
 
     List<String> argNames = node.arguments.named.map((a) => a.name).toList()
