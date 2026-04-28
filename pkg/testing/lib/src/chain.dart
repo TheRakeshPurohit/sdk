@@ -28,16 +28,13 @@ typedef CreateContext =
 /// A test suite for tool chains, for example, a compiler.
 class Chain extends Suite {
   final Uri source;
-
   final Uri root;
-
   final List<Uri> subRoots;
-
   final List<String> includeEndsWith;
-
   final List<RegExp> pattern;
-
   final List<RegExp> exclude;
+  final List<String> excludeContains;
+  final List<String> excludeEndsWith;
 
   Chain(
     String name,
@@ -49,6 +46,8 @@ class Chain extends Suite {
     this.includeEndsWith,
     this.pattern,
     this.exclude,
+    this.excludeContains,
+    this.excludeEndsWith,
   ) : super(name, kind, statusFile);
 
   factory Chain.fromJsonMap(Uri base, Map json, String name, String kind) {
@@ -80,6 +79,12 @@ class Chain extends Suite {
     List<RegExp> exclude = [
       for (final e in json['exclude'] ?? const []) RegExp(e),
     ];
+    List<String> excludeContains = List<String>.from(
+      json['excludeContains'] ?? const [],
+    );
+    List<String> excludeEndsWith = List<String>.from(
+      json['excludeEndsWith'] ?? const [],
+    );
     return Chain(
       name,
       kind,
@@ -90,6 +95,8 @@ class Chain extends Suite {
       includeEndsWith,
       pattern,
       exclude,
+      excludeContains,
+      excludeEndsWith,
     );
   }
 
@@ -124,6 +131,8 @@ class Chain extends Suite {
       "pattern": [for (final r in pattern) r.pattern],
       "includeEndsWith": includeEndsWith,
       "exclude": [for (final r in exclude) r.pattern],
+      "excludeContains": excludeContains,
+      "excludeEndsWith": excludeEndsWith,
     };
   }
 }
@@ -351,7 +360,17 @@ abstract class ChainContext {
           // Use `.uri.path` instead of just `.path` to ensure forward slashes.
           String path = entity.uri.path;
 
-          if (suite.exclude.any((RegExp r) => path.contains(r))) continue;
+          if (suite.excludeContains.any((String s) => path.contains(s))) {
+            continue;
+          }
+
+          if (suite.excludeEndsWith.any((String s) => path.endsWith(s))) {
+            continue;
+          }
+
+          if (suite.exclude.any((RegExp r) => path.contains(r))) {
+            continue;
+          }
 
           bool include = false;
           if (suite.includeEndsWith.any((String end) => path.endsWith(end))) {
