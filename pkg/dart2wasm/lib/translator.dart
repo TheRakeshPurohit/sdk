@@ -140,7 +140,6 @@ class Translator with KernelNodes {
   late final TableBasedGlobals tableBasedGlobals;
   late final DispatchTable dispatchTable;
   late final DynamicDispatchTable dynamicDispatchTable;
-  DispatchTable? dynamicMainModuleDispatchTable;
   late final Globals globals;
   late final DartGlobals dartGlobals;
   late final Constants constants;
@@ -545,7 +544,6 @@ class Translator with KernelNodes {
 
     dispatchTable.build();
     dynamicDispatchTable.build(dynamicCallShapes);
-    dynamicMainModuleDispatchTable?.build();
     functions.initialize();
 
     drainCompletionQueue();
@@ -805,9 +803,7 @@ class Translator with KernelNodes {
     SelectorInfo selector, {
     Reference? interfaceTarget,
     required bool useUncheckedEntry,
-    DispatchTable? table,
   }) {
-    table ??= dispatchTable;
     functions.recordSelectorUse(selector, useUncheckedEntry);
 
     final offset = selector.targets(unchecked: useUncheckedEntry).offset;
@@ -823,7 +819,7 @@ class Translator with KernelNodes {
       b.i32_add();
     }
     final signature = selector.signature;
-    b.call_indirect(signature, table.getWasmTable(b.moduleBuilder));
+    b.call_indirect(signature, dispatchTable.getWasmTable(b.moduleBuilder));
     b.emitUnreachableIfNoResult(signature.outputs);
   }
 
@@ -1742,22 +1738,8 @@ class Translator with KernelNodes {
   }
 
   w.FunctionType signatureForDirectCall(Reference target) {
-    return _signatureForModule(
-      target,
-      target.asMember.isInstanceMember ? dispatchTable : null,
-    );
-  }
-
-  w.FunctionType signatureForMainModule(Reference target) {
-    return _signatureForModule(
-      target,
-      target.asMember.isInstanceMember ? dynamicMainModuleDispatchTable! : null,
-    );
-  }
-
-  w.FunctionType _signatureForModule(Reference target, DispatchTable? table) {
-    if (table != null && !target.isBodyReference) {
-      final selector = table.selectorForTarget(target);
+    if (target.asMember.isInstanceMember && !target.isBodyReference) {
+      final selector = dispatchTable.selectorForTarget(target);
       if (selector.containsTarget(target)) {
         return selector.signature;
       }
@@ -1783,8 +1765,7 @@ class Translator with KernelNodes {
 
   ParameterInfo paramInfoForDirectCall(Reference target) {
     if (target.asMember.isInstanceMember) {
-      final table = dispatchTable;
-      final selector = table.selectorForTarget(target);
+      final selector = dispatchTable.selectorForTarget(target);
       if (selector.containsTarget(target)) {
         return selector.paramInfo;
       }

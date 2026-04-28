@@ -14,7 +14,6 @@ import 'package:wasm_builder/wasm_builder.dart' as w;
 import 'async.dart';
 import 'class_info.dart';
 import 'closures.dart';
-import 'dispatch_table.dart';
 import 'functions.dart';
 import 'globals.dart';
 import 'intrinsics.dart';
@@ -1987,8 +1986,7 @@ abstract class AstCodeGenerator
       getter: kind.isGetter,
       setter: kind.isSetter,
     );
-    final dispatchTable = translator.dispatchTable;
-    SelectorInfo selector = dispatchTable.selectorForTarget(reference);
+    final selector = translator.dispatchTable.selectorForTarget(reference);
     final signature = selector.signature;
     final name = selector.entryPointName(useUncheckedEntry);
     assert(selector.name == interfaceTarget.name.text);
@@ -2062,7 +2060,6 @@ abstract class AstCodeGenerator
         selector,
         interfaceTarget: reference,
         useUncheckedEntry: useUncheckedEntry,
-        table: dispatchTable,
       );
     }
     if (selector.synthesizeNullReturnValue) {
