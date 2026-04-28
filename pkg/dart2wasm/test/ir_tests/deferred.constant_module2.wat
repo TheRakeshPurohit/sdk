@@ -84,11 +84,12 @@
     ref.cast $BoxedInt
     struct.get $BoxedInt $value
     call $globalH0Foo
+    ref.null none
   )
   (func $null (result (ref null $H0)) <...>)
-  (func $globalH0Foo (param $var0 i64) (result (ref null $#Top))
+  (func $globalH0Foo (param $var0 i64)
     global.get $"\"globalH0Foo\""
     i32.const 5
-    call_indirect $module0.cross-module-funcs-0 (param (ref null $#Top)) (result (ref null $#Top))
+    call_indirect $module0.cross-module-funcs-0 (param (ref null $#Top))
   )
 )

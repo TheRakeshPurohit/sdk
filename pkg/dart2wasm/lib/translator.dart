@@ -759,10 +759,19 @@ class Translator with KernelNodes {
     w.InstructionsBuilder b,
   ) {
     final callTarget = directCallTarget(reference);
+
+    late final List<w.ValueType> outputs;
     if (callTarget.supportsInlining && callTarget.shouldInline) {
-      return b.inlineCallTo(callTarget);
+      outputs = b.inlineCallTo(callTarget);
+    } else {
+      outputs = callFunction(callTarget.function, b);
     }
-    return callFunction(functions.getFunction(reference), b);
+    if (callTarget.synthesizeNullReturnValue) {
+      assert(outputs.isEmpty);
+      b.ref_null(w.HeapType.none);
+      return [w.RefType(w.HeapType.none, nullable: true)];
+    }
+    return outputs;
   }
 
   late final WasmMemoryImporter _importedMemories = WasmMemoryImporter(
@@ -943,6 +952,10 @@ class Translator with KernelNodes {
     bool nullable = type.isPotentiallyNullable;
     if (type is InterfaceType) {
       Class cls = type.classNode;
+
+      if (cls == coreTypes.deprecatedNullClass) {
+        return const w.RefType.none(nullable: true);
+      }
 
       // Abstract `Function`?
       if (cls == coreTypes.functionClass) {
@@ -1752,6 +1765,22 @@ class Translator with KernelNodes {
     return functions.getFunctionType(target);
   }
 
+  bool synthesizeNullReturnValue(Reference target) {
+    final member = target.asMember;
+    if (member.isInstanceMember) {
+      final table = dispatchTable;
+      final selector = table.selectorForTarget(target);
+      if (selector.containsTarget(target)) {
+        assert(
+          !selector.synthesizeNullReturnValue ||
+              selector.signature.outputs.isEmpty,
+        );
+        return selector.synthesizeNullReturnValue;
+      }
+    }
+    return functions.synthesizeNullReturnValue(target);
+  }
+
   ParameterInfo paramInfoForDirectCall(Reference target) {
     if (target.asMember.isInstanceMember) {
       final table = dispatchTable;
@@ -2012,6 +2041,10 @@ class Translator with KernelNodes {
   ) {
     if (inferredType == null) return null;
 
+    if (defaultType is VoidType) {
+      defaultType = coreTypes.objectNullableRawType;
+    }
+
     // To check whether [inferredType] is more precise than [defaultType] we
     // require it (for now) to be an interface type.
     if (defaultType is! InterfaceType) return null;
@@ -2036,6 +2069,8 @@ class Translator with KernelNodes {
     if (!hierarchy.isSubInterfaceOf(concreteClass, defaultType.classNode)) {
       return null;
     }
+
+    if (concreteClass == coreTypes.deprecatedNullClass) return const NullType();
 
     final typeParameters = concreteClass.typeParameters;
     final typeArguments = typeParameters.isEmpty

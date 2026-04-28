@@ -8,6 +8,7 @@
   (type $_InterfaceType <...>)
   (type $_Type <...>)
   (global $"\")\"_11" (import "$" "2") (ref $JSExternWrapper))
+  (global $"\"Attempt to execute code remove<...>\"" (import "$" "(") (ref $JSExternWrapper))
   (global $_InterfaceType (import "$" "0") (ref $_InterfaceType))
   (table $$.% (import "$" "%") 742 funcref)
   (table $$.' (import "$" "'") 22 funcref)
@@ -27,8 +28,7 @@
     i32.const 16
     call_indirect $$.' (param (ref $Array<Object?>)) (result (ref $JSExternWrapper))
     i32.const 20
-    call_indirect $$.' (param (ref null $#Top)) (result (ref null $#Top))
-    drop
+    call_indirect $$.' (param (ref null $#Top))
     global.get $_InterfaceType
     local.set $var2
     block $label0 (result i32)
@@ -62,13 +62,12 @@
     i32.eqz
     if
       i32.const 2
-      call_indirect $$.' (result (ref none))
+      call_indirect $$.' 
       unreachable
     end
     local.get $var0
     i32.const 20
-    call_indirect $$.' (param (ref null $#Top)) (result (ref null $#Top))
-    drop
+    call_indirect $$.' (param (ref null $#Top))
   )
   (func $"Foo.takeT (checked entry)" (param $var0 (ref $Foo)) (param $var1 (ref $#Top))
     (local $var2 i32)
@@ -167,7 +166,10 @@
     i32.eqz
     if
       i32.const 2
-      call_indirect $$.' (result (ref none))
+      call_indirect $$.' 
+      global.get $"\"Attempt to execute code remove<...>\""
+      i32.const 3
+      call_indirect $$.' (param (ref $#Top))
       unreachable
     end
     local.get $var0

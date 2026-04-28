@@ -36,10 +36,10 @@
     (set 17 (ref.func $JSStringImpl._interpolate4))
     (set 18 (ref.func $IntegerDivisionByZeroException))
     (set 19 (ref.func $"_TypeError._throwNullCheckErrorWithCurrentStack <noInline>")))
-  (func $Error._throwWithCurrentStackTrace <noInline> (param $var0 (ref $#Top)) (result (ref none)) <...>)
-  (func $_TypeError._throwNullCheckErrorWithCurrentStack <noInline> (result (ref none)) <...>)
-  (func $_throwIndexError <noInline> (param $var0 i64) (param $var1 i64) (param $var2 (ref null $JSExternWrapper)) (result (ref none)) <...>)
-  (func $_throwRangeError <noInline> (param $var0 i64) (param $var1 i64) (param $var2 i64) (param $var3 (ref null $JSExternWrapper)) (param $var4 (ref null $JSExternWrapper)) (result (ref none)) <...>)
+  (func $Error._throwWithCurrentStackTrace <noInline> (param $var0 (ref $#Top)) <...>)
+  (func $_TypeError._throwNullCheckErrorWithCurrentStack <noInline>  <...>)
+  (func $_throwIndexError <noInline> (param $var0 i64) (param $var1 i64) (param $var2 (ref null $JSExternWrapper)) <...>)
+  (func $_throwRangeError <noInline> (param $var0 i64) (param $var1 i64) (param $var2 i64) (param $var3 (ref null $JSExternWrapper)) (param $var4 (ref null $JSExternWrapper)) <...>)
   (func $#init
     global.get $"\"1.0\""
     i32.const 16

@@ -2065,6 +2065,11 @@ abstract class AstCodeGenerator
         table: dispatchTable,
       );
     }
+    if (selector.synthesizeNullReturnValue) {
+      assert(selector.signature.outputs.isEmpty);
+      b.ref_null(w.HeapType.none);
+      return w.RefType(w.HeapType.none, nullable: true);
+    }
 
     return translator.outputOrVoid(signature.outputs);
   }
@@ -3546,6 +3551,7 @@ CodeGenerator? getInlinableMemberCodeGenerator(
       translator,
       functionType,
       member,
+      reference,
       reference.entryKind,
     );
   }
@@ -3558,12 +3564,14 @@ CodeGenerator? getInlinableMemberCodeGenerator(
 
 class SynchronousProcedureCodeGenerator extends AstCodeGenerator {
   final Procedure member;
+  final Reference reference;
   final EntryPoint kind;
 
   SynchronousProcedureCodeGenerator(
     Translator translator,
     w.FunctionType functionType,
     this.member,
+    this.reference,
     this.kind,
   ) : super(translator, functionType, member) {
     assert(
@@ -3639,7 +3647,7 @@ class SynchronousProcedureCodeGenerator extends AstCodeGenerator {
 
     final outputs = call(member.bodyReference);
     if (outputs.isNotEmpty) {
-      translator.convertType(b, outputs.single, functionType.outputs.single);
+      translator.convertType(b, outputs.single, returnType);
     }
     _returnFromFunction();
     b.end();
@@ -6094,6 +6102,9 @@ abstract class CallTarget {
 
   CallTarget(this.signature);
 
+  /// Whether callers should synthesize a `null` return value.
+  bool get synthesizeNullReturnValue => false;
+
   /// Whether this call target supports inlining.
   bool get supportsInlining => false;
 
@@ -6122,6 +6133,10 @@ class AstCallTarget extends CallTarget {
   final Reference _reference;
 
   AstCallTarget(super.signature, this._translator, this._reference);
+
+  @override
+  bool get synthesizeNullReturnValue =>
+      _translator.synthesizeNullReturnValue(_reference);
 
   @override
   String get name => _translator.functions.getFunctionName(_reference);
