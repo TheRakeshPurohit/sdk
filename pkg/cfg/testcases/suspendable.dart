@@ -23,11 +23,25 @@ Future<void> async5<T>(T x) async {
 }
 
 Stream<int> asyncStar1(int a) async* {
+  print('before');
   yield a;
+  print('after');
 }
 
 Stream<int> asyncStar2(Stream<int> a) async* {
+  print('before');
   yield* a;
+  print('after');
+}
+
+Stream<int> asyncStar3(int a) async* {
+  try {
+    print('before');
+    yield a;
+    print('after');
+  } finally {
+    print('finally');
+  }
 }
 
 Iterable<int> syncStar1(int a) sync* {
