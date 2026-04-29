@@ -453,7 +453,7 @@ class DartCodeActionsProducer extends AbstractCodeActionsProducer {
         if (element is GetterElement &&
             ConvertGetterToMethodRefactoring(
               server.refactoringWorkspace,
-              unitResult.session,
+              unitResult,
               element,
             ).isAvailable()) {
           refactorActions.add(
@@ -473,7 +473,7 @@ class DartCodeActionsProducer extends AbstractCodeActionsProducer {
         if (element is ExecutableElement &&
             ConvertMethodToGetterRefactoring(
               server.refactoringWorkspace,
-              unitResult.session,
+              unitResult,
               element,
             ).isAvailable()) {
           refactorActions.add(

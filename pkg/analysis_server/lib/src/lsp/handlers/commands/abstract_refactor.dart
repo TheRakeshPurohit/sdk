@@ -133,7 +133,7 @@ abstract class AbstractRefactorCommandHandler
         if (element is GetterElement) {
           var refactor = ConvertGetterToMethodRefactoring(
             server.refactoringWorkspace,
-            result.session,
+            result,
             element,
           );
           return success(refactor);
@@ -149,7 +149,7 @@ abstract class AbstractRefactorCommandHandler
         if (element is ExecutableElement) {
           var refactor = ConvertMethodToGetterRefactoring(
             server.refactoringWorkspace,
-            result.session,
+            result,
             element,
           );
           return success(refactor);

@@ -23,7 +23,6 @@ import 'package:analysis_server/src/services/refactoring/legacy/rename_type_para
 import 'package:analysis_server/src/services/refactoring/legacy/rename_unit_member.dart';
 import 'package:analysis_server/src/services/search/search_engine.dart';
 import 'package:analyzer/dart/analysis/results.dart';
-import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/ast/syntactic_entity.dart';
 import 'package:analyzer/dart/element/element.dart';
@@ -42,10 +41,14 @@ abstract class ConvertGetterToMethodRefactoring implements Refactoring {
   /// [element] and all the corresponding hierarchy elements.
   factory ConvertGetterToMethodRefactoring(
     RefactoringWorkspace workspace,
-    AnalysisSession session,
+    ResolvedUnitResult resolvedUnit,
     GetterElement element,
   ) {
-    return ConvertGetterToMethodRefactoringImpl(workspace, session, element);
+    return ConvertGetterToMethodRefactoringImpl(
+      workspace,
+      resolvedUnit,
+      element,
+    );
   }
 
   /// Return `true` if refactoring is available, possibly without checking all
@@ -65,10 +68,14 @@ abstract class ConvertMethodToGetterRefactoring implements Refactoring {
   /// [element] and all the corresponding hierarchy elements.
   factory ConvertMethodToGetterRefactoring(
     RefactoringWorkspace workspace,
-    AnalysisSession session,
+    ResolvedUnitResult resolvedUnit,
     ExecutableElement element,
   ) {
-    return ConvertMethodToGetterRefactoringImpl(workspace, session, element);
+    return ConvertMethodToGetterRefactoringImpl(
+      workspace,
+      resolvedUnit,
+      element,
+    );
   }
 
   /// Return `true` if refactoring is available, possibly without checking all
