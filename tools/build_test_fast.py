@@ -37,7 +37,7 @@ def get_minimal_build_targets(compiler, test_paths):
     if compiler == 'dart2wasm':
         targets.update([
             'dartaotruntime', 'dart2wasm_platform.dill', 'dart2wasm',
-            'create_common_sdk'
+            'create_common_sdk', 'wasm-opt'
         ])
     elif compiler == 'dart2js':
         # Often dart2js_bot or dart2js_platform.dill is enough, rather than create_sdk
@@ -151,14 +151,14 @@ def main():
         f"🎯 Determined minimal build targets for compiler '\033[1m{compiler}\033[0m': \033[1m{targets_str}\033[0m"
     )
 
-    stars_line = "⭐ " * 35
+    stars_line = "🔹 " * 35
 
     if build_args:
         # 3. Build Dart using the minimal targets, matching test.py's mode and arch defaults
         build_script = os.path.join(os.path.dirname(__file__), 'build.py')
         build_cmd = [sys.executable, build_script, '-m', mode, '-a', arch
                     ] + build_args
-        print(f"🚀 Running: python3 tools/build.py {' '.join(build_cmd[2:])}")
+        print(f"🚀 Building: python3 tools/build.py {' '.join(build_cmd[2:])}")
         print(stars_line)
 
         build_result = subprocess.run(build_cmd)
@@ -168,9 +168,9 @@ def main():
             print("❌ Build failed! Aborting test run.")
             sys.exit(build_result.returncode)
 
-        print("✅ Build succeeded!\n")
+        print("⭐⭐⭐ Build succeeded! ⭐⭐⭐\n")
     else:
-        print("✅ No build targets required!\n")
+        print("❓ No build targets required!\n")
 
     # 4. Run the tests
     test_script = os.path.join(os.path.dirname(__file__), 'test.py')
@@ -188,7 +188,7 @@ def main():
     print(stars_line)
 
     if test_result.returncode != 0:
-        print("\n" + "⚠️ " * 40)
+        print("\n" + "⚠️ " * 35)
         print("  TEST FAILED!")
         print(
             "If this failure looks like a missing file, missing snapshot, or compilation error,"
@@ -202,7 +202,9 @@ def main():
         print(
             "   (Check tools/bots/test_matrix.json to see what CI builds for this test suite!)"
         )
-        print("⚠️ " * 40 + "\n")
+        print("⚠️ " * 35 + "\n")
+    else:
+        print("⭐⭐⭐ Tests succeeded! ⭐⭐⭐")
 
     sys.exit(test_result.returncode)
 
