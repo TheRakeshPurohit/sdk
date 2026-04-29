@@ -5992,8 +5992,18 @@ extension MacroAssembler on w.InstructionsBuilder {
   }
 
   List<w.ValueType> invoke(CallTarget target, {bool forceInline = false}) {
-    if (target.supportsInlining && (target.shouldInline || forceInline)) {
-      return inlineCallTo(target);
+    if (target.supportsInlining) {
+      if (forceInline) {
+        comment('Inlining ${target.name}, reason: forced');
+        return inlineCallTo(target);
+      }
+      final decision = target.shouldInline;
+      if (decision.shouldInline) {
+        comment('Inlining ${target.name}, reason: ${decision.reason}');
+        return inlineCallTo(target);
+      } else {
+        comment('Not inlining, reason: ${decision.reason}');
+      }
     }
     comment('Direct call to ${target.name}');
     call(target.function);
@@ -6009,9 +6019,10 @@ extension MacroAssembler on w.InstructionsBuilder {
       local_set(local);
     }
     final w.Label callBlock = block(const [], target.signature.outputs);
-    comment('Inlined ${target.name}');
-    target.inliningCodeGen.generate(this, inlinedLocals, callBlock);
-    return emitUnreachableIfNoResult(target.signature.outputs);
+    return withInlinedFrame(target.name, () {
+      target.inliningCodeGen.generate(this, inlinedLocals, callBlock);
+      return emitUnreachableIfNoResult(target.signature.outputs);
+    });
   }
 
   /// Pushes fields common to all Dart objects (class id, id hash).
@@ -6106,7 +6117,8 @@ abstract class CallTarget {
   /// Whether we should inline (different call targets may have semantic
   /// knowledge about how big the body would be and whether we should inline or
   /// not).
-  bool get shouldInline => false;
+  InliningDecision get shouldInline =>
+      InliningDecision(false, 'no CallTarget support');
 
   /// The code generator to use for inlining the body.
   CodeGenerator get inliningCodeGen => throw 'No inlining support (yet).';
@@ -6140,7 +6152,8 @@ class AstCallTarget extends CallTarget {
   bool get supportsInlining => _translator.supportsInlining(_reference);
 
   @override
-  bool get shouldInline => _translator.shouldInline(_reference, signature);
+  InliningDecision get shouldInline =>
+      _translator.shouldInline(_reference, signature);
 
   @override
   CodeGenerator get inliningCodeGen => getInlinableMemberCodeGenerator(

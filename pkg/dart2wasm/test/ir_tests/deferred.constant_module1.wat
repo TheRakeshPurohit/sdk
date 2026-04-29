@@ -159,10 +159,10 @@
     call_indirect $module0.cross-module-funcs-0 (param i64) (result i32)
     drop
     block $label0 (result (ref $H0))
-      i32.const 9
+      i32.const 8
       call_indirect $module0.cross-module-funcs-0 (result (ref null $H0))
       br_on_non_null $label0
-      i32.const 10
+      i32.const 9
       call_indirect $module0.cross-module-funcs-0 (result (ref $H0))
     end $label0
     i32.const 5
@@ -172,15 +172,16 @@
     call_indirect $module0.cross-module-funcs-0 (param i64) (result i32)
     drop
     block $label1 (result (ref $H0))
-      i32.const 9
+      i32.const 8
       call_indirect $module0.cross-module-funcs-0 (result (ref null $H0))
       br_on_non_null $label1
-      i32.const 10
+      i32.const 9
       call_indirect $module0.cross-module-funcs-0 (result (ref $H0))
     end $label1
     drop
-    i64.const 1
-    i32.const 8
-    call_indirect $module0.cross-module-funcs-0 (param i64)
+    i32.const 10
+    call_indirect $module0.cross-module-funcs-0 (result (ref $JSExternWrapper))
+    i32.const 5
+    call_indirect $module0.cross-module-funcs-0 (param (ref null $#Top))
   )
 )
