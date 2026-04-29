@@ -1208,7 +1208,6 @@ static Dart_Isolate CreateIsolate(IsolateGroup* group,
   bool success = false;
   {
     StackZone zone(T);
-    HandleScope handle_scope(T);
 
 #if defined(SUPPORT_TIMELINE)
     TimelineBeginEndScope tbes(T, Timeline::GetIsolateStream(),
@@ -1408,7 +1407,6 @@ DART_EXPORT void Dart_ShutdownIsolate() {
 
   {
     StackZone zone(T);
-    HandleScope handle_scope(T);
     Dart::RunShutdownCallback();
   }
   Dart::ShutdownIsolate(T);

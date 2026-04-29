@@ -752,7 +752,6 @@ VM_UNIT_TEST_CASE(FullSnapshot) {
     Thread* thread = Thread::Current();
     TransitionNativeToVM transition(thread);
     StackZone zone(thread);
-    HandleScope scope(thread);
 
     Dart_Handle result = Api::CheckAndFinalizePendingClasses(thread);
     {
@@ -1010,7 +1009,6 @@ VM_UNIT_TEST_CASE(DartGeneratedListMessages) {
   {
     CHECK_API_SCOPE(thread);
     TransitionNativeToVM transition(thread);
-    HANDLESCOPE(thread);
     StackZone zone(thread);
     {
       // Generate a list of nulls from Dart code.
@@ -1134,7 +1132,6 @@ VM_UNIT_TEST_CASE(DartGeneratedArrayLiteralMessages) {
   {
     CHECK_API_SCOPE(thread);
     TransitionNativeToVM transition(thread);
-    HANDLESCOPE(thread);
     StackZone zone(thread);
     {
       // Generate a list of nulls from Dart code.
@@ -1367,7 +1364,6 @@ VM_UNIT_TEST_CASE(DartGeneratedListMessagesWithBackref) {
   {
     CHECK_API_SCOPE(thread);
     TransitionNativeToVM transition(thread);
-    HANDLESCOPE(thread);
     StackZone zone(thread);
     {
       // Generate a list of strings from Dart code.
@@ -1566,7 +1562,6 @@ VM_UNIT_TEST_CASE(DartGeneratedArrayLiteralMessagesWithBackref) {
   {
     CHECK_API_SCOPE(thread);
     TransitionNativeToVM transition(thread);
-    HANDLESCOPE(thread);
     StackZone zone(thread);
     {
       // Generate a list of strings from Dart code.
@@ -1807,7 +1802,6 @@ VM_UNIT_TEST_CASE(DartGeneratedListMessagesWithTypedData) {
   {
     CHECK_API_SCOPE(thread);
     TransitionNativeToVM transition(thread);
-    HANDLESCOPE(thread);
     StackZone zone(thread);
     {
       // Generate a list of Uint8Lists from Dart code.

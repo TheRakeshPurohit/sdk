@@ -1446,7 +1446,6 @@ MessageHandler::MessageStatus IsolateMessageHandler::HandleMessage(
   Thread* thread = Thread::Current();
   StackZone stack_zone(thread);
   Zone* zone = stack_zone.GetZone();
-  HandleScope handle_scope(thread);
 #if defined(SUPPORT_TIMELINE)
   TimelineBeginEndScope tbes(
       thread, Timeline::GetIsolateStream(),
@@ -1575,7 +1574,6 @@ void IsolateMessageHandler::NotifyPauseOnStart() {
   if (Service::debug_stream.enabled() || FLAG_warn_on_pause_with_no_debugger) {
     StartIsolateScope start_isolate(I);
     StackZone zone(T);
-    HandleScope handle_scope(T);
     ServiceEvent pause_event(I, ServiceEvent::kPauseStart);
     Service::HandleEvent(&pause_event);
   } else if (FLAG_trace_service) {
@@ -1591,7 +1589,6 @@ void IsolateMessageHandler::NotifyPauseOnExit() {
   if (Service::debug_stream.enabled() || FLAG_warn_on_pause_with_no_debugger) {
     StartIsolateScope start_isolate(I);
     StackZone zone(T);
-    HandleScope handle_scope(T);
     ServiceEvent pause_event(I, ServiceEvent::kPauseExit);
     Service::HandleEvent(&pause_event);
   } else if (FLAG_trace_service) {
@@ -2478,7 +2475,6 @@ void Isolate::RunAndCleanupFinalizersOnShutdown() {
   // but we no longer allocate new heap objects.
   Thread* thread = Thread::Current();
   StackZone stack_zone(thread);
-  HandleScope handle_scope(thread);
   NoSafepointScope no_safepoint_scope;
 
   // Set live finalizers isolate to null, before deleting the message handler.
@@ -2526,7 +2522,6 @@ void Isolate::LowLevelShutdown() {
   // but we no longer allocate new heap objects.
   Thread* thread = Thread::Current();
   StackZone stack_zone(thread);
-  HandleScope handle_scope(thread);
   NoSafepointScope no_safepoint_scope;
 
   // Notify exit listeners that this isolate is shutting down.
@@ -2612,7 +2607,6 @@ void Isolate::Shutdown() {
     StackZone zone(thread);
     ServiceIsolate::SendIsolateShutdownMessage();
 #if !defined(PRODUCT)
-    HandleScope handle_scope(thread);
     debugger()->Shutdown();
 #endif
 

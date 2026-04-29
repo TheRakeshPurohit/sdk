@@ -125,7 +125,6 @@ class RunKernelTask : public ThreadPool::Task {
       auto T = Thread::Current();
       TransitionNativeToVM transition(T);
       StackZone zone(T);
-      HandleScope handle_scope(T);
 
       auto I = T->isolate();
       ASSERT(I->is_kernel_isolate());

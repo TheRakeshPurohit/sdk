@@ -583,7 +583,6 @@ void Thread::EnterIsolateGroupAsMutator(IsolateGroup* isolate_group,
   thread->AssertDartMutatorInvariants();
 
   StackZone zone(thread);
-  HANDLESCOPE(thread);
   if (isolate_group->object_store()->tag_table() !=
       GrowableObjectArray::null()) {
     // Set up default UserTag.

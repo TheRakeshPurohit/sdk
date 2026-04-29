@@ -406,7 +406,6 @@ char* Dart::DartInit(const Dart_InitializeParams* params) {
     Thread* T = Thread::Current();
     ASSERT(T != nullptr);
     StackZone zone(T);
-    HandleScope handle_scope(T);
     Object::InitNullAndBool(vm_isolate_->group());
     vm_isolate_->isolate_group_->set_object_store(new ObjectStore());
     vm_isolate_->isolate_object_store()->Init();

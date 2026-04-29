@@ -171,7 +171,6 @@ class CidCheckerForRanges : public ValueObject {
     subtype_ = to_check_.RareType();
     // Create local zone because deep hierarchies may allocate lots of handles.
     StackZone stack_zone(thread_);
-    HANDLESCOPE(thread_);
     return subtype_.IsSubtypeOf(supertype_, Heap::kNew);
   }
 
