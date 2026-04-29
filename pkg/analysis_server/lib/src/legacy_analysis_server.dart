@@ -978,6 +978,7 @@ class LegacyAnalysisServer extends AnalysisServer {
     MessageType type,
     String message,
     List<String> actionLabels,
+    CancellationToken cancellationToken,
   ) async {
     assert(supportsShowMessageRequest);
     var requestId = (nextServerRequestId++).toString();
@@ -987,8 +988,18 @@ class LegacyAnalysisServer extends AnalysisServer {
       message,
       actions,
     ).toRequest(requestId, clientUriConverter: uriConverter);
-    var response = await sendRequest(request);
-    return response.result?['action'] as String?;
+    var responseFuture = sendRequest(request);
+
+    // Wait for either the result, or cancellation.
+    await Future.any([responseFuture, cancellationToken.whenCancelled]);
+
+    if (cancellationToken.isCancellationRequested) {
+      return null;
+    } else {
+      // If we didn't enter the branch above, we know this future completed.
+      var response = await responseFuture;
+      return response.result?['action'] as String?;
+    }
   }
 
   @override

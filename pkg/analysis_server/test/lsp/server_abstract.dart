@@ -1256,7 +1256,7 @@ mixin LspAnalysisServerTestMixin
       Method.client_registerCapability,
       RegistrationParams.fromJson,
       f,
-      handler: (registrationParams) {
+      handler: (registrationParams) async {
         registrations.addAll(registrationParams.registrations);
       },
     );
@@ -1281,7 +1281,7 @@ mixin LspAnalysisServerTestMixin
       Method.client_unregisterCapability,
       UnregistrationParams.fromJson,
       f,
-      handler: (unregistrationParams) {
+      handler: (unregistrationParams) async {
         registrations.removeWhere(
           (element) => unregistrationParams.unregisterations.any(
             (u) => u.id == element.id,
