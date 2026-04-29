@@ -1942,7 +1942,7 @@ class ElementAnnotationImpl
       'Exactly one of libraryName/libraryUri should be provided',
     );
     var element = this.element;
-    return element is PropertyAccessorElement &&
+    return element is GetterElement &&
         element.name == name &&
         (libraryName == null || element.library.name == libraryName) &&
         (libraryUri == null || element.library.uri == libraryUri);
