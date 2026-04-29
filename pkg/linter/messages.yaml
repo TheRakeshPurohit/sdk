@@ -1514,6 +1514,8 @@ LinterLintCode:
     categories: [style]
     hasPublishedDocs: false
     documentation: |-
+      NOTE: This rule is removed in Dart 3.13.0; it is no longer functional.
+
       #### Description
 
       The analyzer produces this diagnostic when a parameter declaration is
@@ -10139,6 +10141,8 @@ LinterLintCode:
     categories: [style]
     hasPublishedDocs: true
     documentation: |-
+      NOTE: This rule is removed in Dart 3.13.0; it is no longer functional.
+
       #### Description
 
       The analyzer produces this diagnostic when a parameter of a constructor,
@@ -13889,7 +13893,7 @@ LinterLintCode:
     problemMessage: "Unnecessary 'const' keyword in an enum constructor."
     correctionMessage: "Try removing the keyword."
     state:
-      experimental: "3.14"
+      experimental: "3.13"
     categories: [brevity, style]
     hasPublishedDocs: false
     documentation: |-
@@ -17357,6 +17361,8 @@ LinterLintCode:
     categories: [languageFeatureUsage]
     hasPublishedDocs: false
     documentation: |-
+      NOTE: This rule is removed in Dart 3.13.0; it is no longer functional.
+
       #### Description
 
       The analyzer produces this diagnostic when a parameter is
