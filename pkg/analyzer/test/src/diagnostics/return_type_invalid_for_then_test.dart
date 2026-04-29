@@ -1,4 +1,4 @@
-// Copyright (c) 2021, the Dart project authors. Please see the AUTHORS file
+// Copyright (c) 2026, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -9,25 +9,25 @@ import '../dart/resolution/context_collection_resolution.dart';
 
 main() {
   defineReflectiveSuite(() {
-    defineReflectiveTests(ReturnTypeInvalidForCatchErrorTest);
+    defineReflectiveTests(ReturnTypeInvalidForThenTest);
   });
 }
 
 @reflectiveTest
-class ReturnTypeInvalidForCatchErrorTest extends PubPackageResolutionTest {
+class ReturnTypeInvalidForThenTest extends PubPackageResolutionTest {
   test_dynamic_returnTypeIsUnrelatedFuture() async {
     await assertNoErrorsInCode('''
 void f(
-    Future<dynamic> future, Future<String> Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+    Future<int> future, Future<String> Function(dynamic, StackTrace) cb) {
+  future.then<dynamic>((_) => 1, onError: cb);
 }
 ''');
   }
 
   test_dynamic_unrelatedReturnType() async {
     await assertNoErrorsInCode('''
-void f(Future<dynamic> future, String Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+void f(Future<int> future, String Function(dynamic, StackTrace) cb) {
+  future.then<dynamic>((_) => 1, onError: cb);
 }
 ''');
   }
@@ -36,36 +36,28 @@ void f(Future<dynamic> future, String Function(dynamic, StackTrace) cb) {
     await assertErrorsInCode(
       '''
 void f(Future<int> future, String Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+  future.then<int>((_) => 1, onError: cb);
 }
 ''',
-      [error(diag.returnTypeInvalidForCatchError, 90, 2)],
+      [error(diag.returnTypeInvalidForThen, 108, 2)],
     );
-  }
-
-  test_Null_returnTypeIsVoid() async {
-    await assertNoErrorsInCode('''
-void f(Future<Null> future, void Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
-}
-''');
   }
 
   test_nullableReturnType() async {
     await assertErrorsInCode(
       '''
-void f(Future<int> future, String? Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+void f(Future<int> future, int? Function(dynamic, StackTrace) cb) {
+  future.then((_) => 1, onError: cb);
 }
 ''',
-      [error(diag.returnTypeInvalidForCatchError, 91, 2)],
+      [error(diag.returnTypeInvalidForThen, 101, 2)],
     );
   }
 
   test_returnTypeIsFuture() async {
     await assertNoErrorsInCode('''
 void f(Future<int> future, Future<int> Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+  future.then<int>((_) => 1, onError: cb);
 }
 ''');
   }
@@ -74,7 +66,26 @@ void f(Future<int> future, Future<int> Function(dynamic, StackTrace) cb) {
     await assertNoErrorsInCode('''
 import 'dart:async';
 void f(Future<int> future, FutureOr<int> Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+  future.then<int>((_) => 1, onError: cb);
+}
+''');
+  }
+
+  test_returnTypeIsVoid_int() async {
+    await assertErrorsInCode(
+      '''
+void f(Future<int> future, void Function(dynamic, StackTrace) cb) {
+  future.then<int>((_) => 1, onError: cb);
+}
+''',
+      [error(diag.returnTypeInvalidForThen, 106, 2)],
+    );
+  }
+
+  test_returnTypeIsVoid_nullableInt() async {
+    await assertNoErrorsInCode('''
+void f(Future<int> future, void Function(dynamic, StackTrace) cb) {
+  future.then<int?>((_) => 1, onError: cb);
 }
 ''');
   }
@@ -82,7 +93,7 @@ void f(Future<int> future, FutureOr<int> Function(dynamic, StackTrace) cb) {
   test_sameReturnType() async {
     await assertNoErrorsInCode('''
 void f(Future<int> future, int Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+  future.then<int>((_) => 1, onError: cb);
 }
 ''');
   }
@@ -90,7 +101,7 @@ void f(Future<int> future, int Function(dynamic, StackTrace) cb) {
   test_void_returnTypeIsUnrelatedFuture() async {
     await assertNoErrorsInCode('''
 void f(Future<void> future, Future<String> Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+  future.then<void>((_) => 1, onError: cb);
 }
 ''');
   }
@@ -98,7 +109,7 @@ void f(Future<void> future, Future<String> Function(dynamic, StackTrace) cb) {
   test_void_unrelatedReturnType() async {
     await assertNoErrorsInCode('''
 void f(Future<void> future, String Function(dynamic, StackTrace) cb) {
-  future.catchError(cb);
+  future.then<void>((_) => 1, onError: cb);
 }
 ''');
   }
