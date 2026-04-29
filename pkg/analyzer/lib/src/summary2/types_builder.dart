@@ -81,7 +81,7 @@ class TypesBuilder {
   /// Build types for all type annotations, and set types for declarations.
   void build(NodesToBuildType nodes) {
     DefaultTypesBuilder(
-      getTypeParameterNode: _linker.getLinkingNode2,
+      getTypeParameterNode: _linker.getLinkingNode,
     ).build(nodes.declarations);
 
     for (var builder in nodes.typeBuilders) {

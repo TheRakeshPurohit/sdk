@@ -269,7 +269,7 @@ class NamedTypeBuilder extends TypeBuilder {
       return element.aliasedType;
     }
 
-    var typedefNode = linker.getLinkingNode2(element.firstFragment)!;
+    var typedefNode = linker.getLinkingNode(element.firstFragment)!;
 
     // Break a possible recursion.
     var existing = element.aliasedTypeRaw;
