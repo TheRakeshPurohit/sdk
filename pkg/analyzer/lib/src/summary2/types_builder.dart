@@ -120,7 +120,7 @@ class TypesBuilder {
 
     return FunctionTypeImpl(
       typeParameters: typeParameters.map((f) => f.asElement2).toList(),
-      parameters: formalParameters,
+      formalParameters: formalParameters,
       returnType: returnType,
       nullabilitySuffix: nullabilitySuffix,
     );
@@ -460,7 +460,7 @@ class TypesBuilder {
   static FunctionTypeImpl _errorFunctionType() {
     return FunctionTypeImpl(
       typeParameters: const [],
-      parameters: const [],
+      formalParameters: const [],
       returnType: DynamicTypeImpl.instance,
       nullabilitySuffix: NullabilitySuffix.none,
     );
