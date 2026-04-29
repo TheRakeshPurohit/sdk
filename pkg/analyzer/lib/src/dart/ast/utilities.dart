@@ -164,13 +164,15 @@ class NodeLocator2 extends UnifyingAstVisitor<void> {
   }
 }
 
-/// An object that will replace one child node in an AST node with another node.
+/// An object that will replace one child node in an AST node with another node,
+/// or remove the old node if the child slot is nullable.
 class NodeReplacer extends ThrowingAstVisitor<bool> {
   /// The node being replaced.
   final AstNode _oldNode;
 
-  /// The node that is replacing the old node.
-  final AstNode _newNode;
+  /// The node that is replacing the old node, or `null` if the child slot is
+  /// nullable and the old node should be removed.
+  final AstNode? _newNode;
 
   /// Initialize a newly created node locator to replace the [_oldNode] with the
   /// [_newNode].
@@ -427,7 +429,7 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
   @override
   bool visitClassTypeAlias(covariant ClassTypeAliasImpl node) {
     if (identical(node.typeParameters, _oldNode)) {
-      node.typeParameters = _newNode as TypeParameterListImpl;
+      node.typeParameters = _newNode as TypeParameterListImpl?;
       return true;
     } else if (identical(node.superclass, _oldNode)) {
       node.superclass = _newNode as NamedTypeImpl;
@@ -701,7 +703,7 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
     } else if (_replaceInList(node.metadata)) {
       return true;
     } else if (identical(node.typeParameters, _oldNode)) {
-      node.typeParameters = _newNode as TypeParameterListImpl;
+      node.typeParameters = _newNode as TypeParameterListImpl?;
       return true;
     }
     return visitNode(node);
@@ -886,7 +888,7 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
       node.parameters = _newNode as FormalParameterListImpl;
       return true;
     } else if (identical(node.typeParameters, _oldNode)) {
-      node.typeParameters = _newNode as TypeParameterListImpl;
+      node.typeParameters = _newNode as TypeParameterListImpl?;
       return true;
     } else if (identical(node.body, _oldNode)) {
       node.body = _newNode as FunctionBodyImpl;
@@ -930,7 +932,7 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
       node.returnType = _newNode as TypeAnnotationImpl;
       return true;
     } else if (identical(node.typeParameters, _oldNode)) {
-      node.typeParameters = _newNode as TypeParameterListImpl;
+      node.typeParameters = _newNode as TypeParameterListImpl?;
       return true;
     } else if (identical(node.parameters, _oldNode)) {
       node.parameters = _newNode as FormalParameterListImpl;
@@ -959,7 +961,7 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
       node.returnType = _newNode as TypeAnnotationImpl;
       return true;
     } else if (identical(node.typeParameters, _oldNode)) {
-      node.typeParameters = _newNode as TypeParameterListImpl;
+      node.typeParameters = _newNode as TypeParameterListImpl?;
       return true;
     } else if (identical(node.parameters, _oldNode)) {
       node.parameters = _newNode as FormalParameterListImpl;
@@ -972,7 +974,7 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
   bool visitGenericTypeAlias(GenericTypeAlias node) {
     var nodeImpl = node as GenericTypeAliasImpl;
     if (identical(node.typeParameters, _oldNode)) {
-      nodeImpl.typeParameters = _newNode as TypeParameterListImpl;
+      nodeImpl.typeParameters = _newNode as TypeParameterListImpl?;
       return true;
     } else if (identical(node.type, _oldNode)) {
       nodeImpl.type = _newNode as TypeAnnotationImpl;
@@ -1155,6 +1157,24 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
   }
 
   @override
+  bool visitMethodDeclaration(covariant MethodDeclarationImpl node) {
+    if (identical(node.returnType, _oldNode)) {
+      node.returnType = _newNode as TypeAnnotationImpl;
+      return true;
+    } else if (identical(node.typeParameters, _oldNode)) {
+      node.typeParameters = _newNode as TypeParameterListImpl?;
+      return true;
+    } else if (identical(node.parameters, _oldNode)) {
+      node.parameters = _newNode as FormalParameterListImpl;
+      return true;
+    } else if (identical(node.body, _oldNode)) {
+      node.body = _newNode as FunctionBodyImpl;
+      return true;
+    }
+    return visitAnnotatedNode(node);
+  }
+
+  @override
   bool visitMethodInvocation(covariant MethodInvocationImpl node) {
     if (identical(node.target, _oldNode)) {
       node.target = _newNode as ExpressionImpl;
@@ -1170,6 +1190,24 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
       return true;
     }
     return visitNode(node);
+  }
+
+  @override
+  bool visitMixinDeclaration(covariant MixinDeclarationImpl node) {
+    if (identical(node.typeParameters, _oldNode)) {
+      node.typeParameters = _newNode as TypeParameterListImpl?;
+      return true;
+    } else if (identical(node.onClause, _oldNode)) {
+      node.onClause = _newNode as MixinOnClauseImpl;
+      return true;
+    } else if (identical(node.implementsClause, _oldNode)) {
+      node.implementsClause = _newNode as ImplementsClauseImpl;
+      return true;
+    } else if (identical(node.body, _oldNode)) {
+      node.body = _newNode as ClassBodyImpl;
+      return true;
+    }
+    return visitAnnotatedNode(node);
   }
 
   @override
@@ -1194,6 +1232,15 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
       return true;
     }
     return visitUriBasedDirective(node);
+  }
+
+  @override
+  bool visitNameWithTypeParameters(covariant NameWithTypeParametersImpl node) {
+    if (identical(node.typeParameters, _oldNode)) {
+      node.typeParameters = _newNode as TypeParameterListImpl?;
+      return true;
+    }
+    return visitNode(node);
   }
 
   @override
@@ -1290,6 +1337,23 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
   bool visitPrefixExpression(covariant PrefixExpressionImpl node) {
     if (identical(node.operand, _oldNode)) {
       node.operand = _newNode as ExpressionImpl;
+      return true;
+    }
+    return visitNode(node);
+  }
+
+  @override
+  bool visitPrimaryConstructorDeclaration(
+    covariant PrimaryConstructorDeclarationImpl node,
+  ) {
+    if (identical(node.typeParameters, _oldNode)) {
+      node.typeParameters = _newNode as TypeParameterListImpl?;
+      return true;
+    } else if (identical(node.constructorName, _oldNode)) {
+      node.constructorName = _newNode as PrimaryConstructorNameImpl?;
+      return true;
+    } else if (identical(node.formalParameters, _oldNode)) {
+      node.formalParameters = _newNode as FormalParameterListImpl;
       return true;
     }
     return visitNode(node);
@@ -1696,7 +1760,7 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
     int count = list.length;
     for (int i = 0; i < count; i++) {
       if (identical(_oldNode, list[i])) {
-        list[i] = _newNode;
+        list[i] = _newNode!;
         return true;
       }
     }
@@ -1706,13 +1770,13 @@ class NodeReplacer extends ThrowingAstVisitor<bool> {
   /// Replace the [oldNode] with the [newNode] in the AST structure containing
   /// the old node. Return `true` if the replacement was successful.
   ///
-  /// Throws an [ArgumentError] if either node is `null`, if the old node does
-  /// not have a parent node, or if the AST structure has been corrupted.
+  /// Throws an [ArgumentError] if [oldNode] does not have a parent node, or if
+  /// the AST structure has been corrupted.
   ///
   /// If [newNode] is the parent of [oldNode] already (because [newNode] became
   /// the parent of [oldNode] in its constructor), this action will loop
   /// infinitely; pass [oldNode]'s previous parent as [parent] to avoid this.
-  static bool replace(AstNode oldNode, AstNode newNode, {AstNode? parent}) {
+  static bool replace(AstNode oldNode, AstNode? newNode, {AstNode? parent}) {
     if (identical(oldNode, newNode)) {
       return true;
     }

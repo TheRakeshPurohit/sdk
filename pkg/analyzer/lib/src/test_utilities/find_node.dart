@@ -525,6 +525,12 @@ class FindNode {
     return _node(search, (n) => n is FunctionTypeAlias);
   }
 
+  FunctionTypedFormalParameterSuffix functionTypedFormalParameterSuffix(
+    String search,
+  ) {
+    return _node(search, (n) => n is FunctionTypedFormalParameterSuffix);
+  }
+
   GenericFunctionType genericFunctionType(String search) {
     return _node(search, (n) => n is GenericFunctionType);
   }
@@ -649,6 +655,10 @@ class FindNode {
     return _node(search, (n) => n is NamedType);
   }
 
+  NameWithTypeParameters nameWithTypeParameters(String search) {
+    return _node(search, (n) => n is NameWithTypeParameters);
+  }
+
   NativeClause nativeClause(String search) {
     return _node(search, (n) => n is NativeClause);
   }
@@ -734,6 +744,10 @@ class FindNode {
 
   PrefixedIdentifier prefixed(String search) {
     return _node(search, (n) => n is PrefixedIdentifier);
+  }
+
+  PrimaryConstructorDeclaration primaryConstructorDeclaration(String search) {
+    return _node(search, (n) => n is PrimaryConstructorDeclaration);
   }
 
   PropertyAccess propertyAccess(String search) {
