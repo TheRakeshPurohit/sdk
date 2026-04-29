@@ -19,6 +19,7 @@ import 'package:collection/collection.dart';
 
 class ElementBuilder {
   final LibraryBuilder libraryBuilder;
+  final _executableElements = <ExecutableElementImpl>[];
 
   ElementBuilder({required this.libraryBuilder});
 
@@ -30,6 +31,23 @@ class ElementBuilder {
   }) {
     _buildTopFragments(topFragments);
     _buildInstanceElementMembers(parentChildFragments);
+    _buildFormalParameterElements();
+  }
+
+  /// Builds elements for formal parameter fragment chains.
+  ///
+  /// This runs after fragment chains are formed for constructors, methods,
+  /// functions, and setters. Building those declaration chains also forms the
+  /// corresponding formal parameter fragment chains. A formal parameter that
+  /// starts as regular can later have a field-formal or super-formal formal
+  /// parameter fragment in the same chain, and the element class must be chosen
+  /// from the complete formal parameter fragment chain.
+  void _buildFormalParameterElements() {
+    for (var element in _executableElements) {
+      for (var formalParameter in element.firstFragment.formalParameters) {
+        formalParameter.initElement();
+      }
+    }
   }
 
   void _buildInstanceElementMembers(
@@ -341,6 +359,7 @@ class ElementBuilder {
       ),
       firstFragment: fragment,
     );
+    _executableElements.add(element);
 
     if (fragment.isAugmentation && lastFragment != null) {
       element.previousFragmentOfDifferentKind = lastFragment;
@@ -408,6 +427,7 @@ class ElementBuilder {
         ),
         getterFragment,
       );
+      _executableElements.add(getterElement);
       instanceElement.addGetter(getterElement);
 
       fieldElement.getter = getterElement;
@@ -437,9 +457,8 @@ class ElementBuilder {
         ),
         setterFragment,
       );
+      _executableElements.add(setterElement);
       instanceElement.addSetter(setterElement);
-
-      FormalParameterElementImpl(valueFragment);
 
       fieldElement.setter = setterElement;
       setterElement.variable = fieldElement;
@@ -473,6 +492,7 @@ class ElementBuilder {
       ),
       getterFragment,
     );
+    _executableElements.add(getterElement);
     if (getterFragment.isAugmentation && lastFragment != null) {
       getterElement.previousFragmentOfDifferentKind = lastFragment;
     }
@@ -550,6 +570,7 @@ class ElementBuilder {
       ),
       firstFragment: fragment,
     );
+    _executableElements.add(element);
 
     if (fragment.isAugmentation && lastFragment != null) {
       element.previousFragmentOfDifferentKind = lastFragment;
@@ -574,6 +595,10 @@ class ElementBuilder {
 
     if (setterFragment.isAugmentation && lastSetterFragment != null) {
       lastSetterFragment.addFragment(setterFragment);
+      setterFragment.formalParameters = _linkFormalParameters(
+        previousFragments: lastSetterFragment.formalParameters,
+        currentFragments: setterFragment.formalParameters,
+      );
       return;
     }
 
@@ -585,6 +610,7 @@ class ElementBuilder {
       ),
       setterFragment,
     );
+    _executableElements.add(setterElement);
     if (setterFragment.isAugmentation && lastFragment != null) {
       setterElement.previousFragmentOfDifferentKind = lastFragment;
     }
@@ -677,6 +703,7 @@ class ElementBuilder {
       libraryBuilder.references.declareTopLevelFunction(fragment.name),
       fragment,
     );
+    _executableElements.add(element);
 
     if (fragment.isAugmentation && lastFragment != null) {
       element.previousFragmentOfDifferentKind = lastFragment;
@@ -707,6 +734,7 @@ class ElementBuilder {
       getterFragment.name,
     );
     var getterElement = GetterElementImpl(getterReference, getterFragment);
+    _executableElements.add(getterElement);
     if (getterFragment.isAugmentation && lastFragment != null) {
       getterElement.previousFragmentOfDifferentKind = lastFragment;
     }
@@ -752,6 +780,10 @@ class ElementBuilder {
     if (setterFragment.isAugmentation &&
         lastSetterFragment is SetterFragmentImpl) {
       lastSetterFragment.addFragment(setterFragment);
+      setterFragment.formalParameters = _linkFormalParameters(
+        previousFragments: lastSetterFragment.formalParameters,
+        currentFragments: setterFragment.formalParameters,
+      );
       return;
     }
 
@@ -760,6 +792,7 @@ class ElementBuilder {
       setterFragment.name,
     );
     var setterElement = SetterElementImpl(setterReference, setterFragment);
+    _executableElements.add(setterElement);
     if (setterFragment.isAugmentation && lastFragment != null) {
       setterElement.previousFragmentOfDifferentKind = lastFragment;
     }
@@ -828,6 +861,7 @@ class ElementBuilder {
         variableFragment.name,
       );
       var getterElement = GetterElementImpl(getterReference, getterFragment);
+      _executableElements.add(getterElement);
       libraryElement.addGetter(getterElement);
       libraryBuilder.declare(getterElement, getterReference);
 
@@ -855,10 +889,9 @@ class ElementBuilder {
         variableFragment.name,
       );
       var setterElement = SetterElementImpl(setterReference, setterFragment);
+      _executableElements.add(setterElement);
       libraryElement.addSetter(setterElement);
       libraryBuilder.declare(setterElement, setterReference);
-
-      FormalParameterElementImpl(valueFragment);
 
       variableElement.setter = setterElement;
       setterElement.variable = variableElement;
@@ -927,6 +960,11 @@ class ElementBuilder {
 
     // Trim extra positional parameters.
     if (previousPositionalSize < currentPositionalSize) {
+      // Recovery: phases that use AST, get fragment and expect element.
+      // TODO(scheglov): switch these phases to fragments
+      for (var i = previousPositionalSize; i < currentPositionalSize; i++) {
+        resultPositional[i].initElement();
+      }
       resultPositional.length = previousPositional.length;
     }
 
@@ -957,6 +995,10 @@ class ElementBuilder {
         var previousParameter = previousParameters.removeAt(0);
         previousParameter.addFragment(currentParameter);
         resultNamed.add(currentParameter);
+      } else {
+        // Recovery: phases that use AST, get fragment and expect element.
+        // TODO(scheglov): switch these phases to fragments
+        currentParameter.initElement();
       }
     }
 
@@ -1621,6 +1663,9 @@ class FragmentBuilder extends ThrowingAstVisitor<void> {
     });
 
     fragment.typeParameters = holder.typeParameters;
+    for (var formalParameter in holder.formalParameters) {
+      formalParameter.initElement();
+    }
   }
 
   @override

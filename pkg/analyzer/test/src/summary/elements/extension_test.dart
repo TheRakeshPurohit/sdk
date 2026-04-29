@@ -1548,19 +1548,21 @@ library
               formalParameters
                 #F7 requiredPositional value (nameOffset:<null>) (firstTokenOffset:<null>) (offset:34)
                   element: <testLibrary>::@extension::A::@setter::foo::@formalParameter::value
-              nextFragment: #F8
+                  nextFragment: #F8
+              nextFragment: #F9
         #F2 isAugmentation extension A (nameOffset:64) (firstTokenOffset:46) (offset:64)
           element: <testLibrary>::@extension::A
           previousFragment: #F1
-          nextFragment: #F9
+          nextFragment: #F10
           setters
-            #F8 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:89) (firstTokenOffset:70) (offset:89)
+            #F9 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:89) (firstTokenOffset:70) (offset:89)
               element: <testLibrary>::@extension::A::@setter::foo
               formalParameters
-                #F10 requiredPositional isOriginDeclaration _ (nameOffset:97) (firstTokenOffset:93) (offset:97)
-                  element: <testLibrary>::@extension::A::@setter::foo::@formalParameter::_
+                #F8 requiredPositional isOriginDeclaration _ (nameOffset:97) (firstTokenOffset:93) (offset:97)
+                  element: <testLibrary>::@extension::A::@setter::foo::@formalParameter::value
+                  previousFragment: #F7
               previousFragment: #F6
-        #F9 isAugmentation extension A (nameOffset:124) (firstTokenOffset:106) (offset:124)
+        #F10 isAugmentation extension A (nameOffset:124) (firstTokenOffset:106) (offset:124)
           element: <testLibrary>::@extension::A
           previousFragment: #F2
           fields
@@ -3007,21 +3009,23 @@ library
               formalParameters
                 #F6 requiredPositional isOriginDeclaration _ (nameOffset:36) (firstTokenOffset:32) (offset:36)
                   element: <testLibrary>::@extension::A::@setter::foo1::@formalParameter::_
-              nextFragment: #F7
-            #F8 hasImplicitReturnType isCompleteDeclaration isOriginDeclaration foo2 (nameOffset:48) (firstTokenOffset:44) (offset:48)
+                  nextFragment: #F7
+              nextFragment: #F8
+            #F9 hasImplicitReturnType isCompleteDeclaration isOriginDeclaration foo2 (nameOffset:48) (firstTokenOffset:44) (offset:48)
               element: <testLibrary>::@extension::A::@setter::foo2
               formalParameters
-                #F9 requiredPositional isOriginDeclaration _ (nameOffset:57) (firstTokenOffset:53) (offset:57)
+                #F10 requiredPositional isOriginDeclaration _ (nameOffset:57) (firstTokenOffset:53) (offset:57)
                   element: <testLibrary>::@extension::A::@setter::foo2::@formalParameter::_
         #F2 isAugmentation extension A (nameOffset:84) (firstTokenOffset:66) (offset:84)
           element: <testLibrary>::@extension::A
           previousFragment: #F1
           setters
-            #F7 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo1 (nameOffset:102) (firstTokenOffset:90) (offset:102)
+            #F8 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo1 (nameOffset:102) (firstTokenOffset:90) (offset:102)
               element: <testLibrary>::@extension::A::@setter::foo1
               formalParameters
-                #F10 requiredPositional isOriginDeclaration _ (nameOffset:111) (firstTokenOffset:107) (offset:111)
+                #F7 requiredPositional isOriginDeclaration _ (nameOffset:111) (firstTokenOffset:107) (offset:111)
                   element: <testLibrary>::@extension::A::@setter::foo1::@formalParameter::_
+                  previousFragment: #F6
               previousFragment: #F5
   extensions
     extension A
@@ -3052,10 +3056,10 @@ library
           variable: <testLibrary>::@extension::A::@field::foo1
         isOriginDeclaration foo2
           reference: <testLibrary>::@extension::A::@setter::foo2
-          firstFragment: #F8
+          firstFragment: #F9
           formalParameters
             #E1 requiredPositional _
-              firstFragment: #F9
+              firstFragment: #F10
               type: int
           returnType: void
           variable: <testLibrary>::@extension::A::@field::foo2
@@ -3095,16 +3099,18 @@ library
               formalParameters
                 #F6 requiredPositional value (nameOffset:<null>) (firstTokenOffset:<null>) (offset:34)
                   element: <testLibrary>::@extension::A::@setter::foo::@formalParameter::value
-              nextFragment: #F7
+                  nextFragment: #F7
+              nextFragment: #F8
         #F2 isAugmentation extension A (nameOffset:64) (firstTokenOffset:46) (offset:64)
           element: <testLibrary>::@extension::A
           previousFragment: #F1
           setters
-            #F7 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:89) (firstTokenOffset:70) (offset:89)
+            #F8 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:89) (firstTokenOffset:70) (offset:89)
               element: <testLibrary>::@extension::A::@setter::foo
               formalParameters
-                #F8 requiredPositional isOriginDeclaration _ (nameOffset:97) (firstTokenOffset:93) (offset:97)
-                  element: <testLibrary>::@extension::A::@setter::foo::@formalParameter::_
+                #F7 requiredPositional isOriginDeclaration _ (nameOffset:97) (firstTokenOffset:93) (offset:97)
+                  element: <testLibrary>::@extension::A::@setter::foo::@formalParameter::value
+                  previousFragment: #F6
               previousFragment: #F5
   extensions
     extension A

@@ -200,12 +200,12 @@ class EncapsulateField extends ResolvedCorrectionProducer {
       return null;
     }
 
-    var fieldFragment = parameterDeclaration.declaredFragment;
-    if (fieldFragment is! FieldFormalParameterFragmentImpl) {
+    var parameterElement = parameterDeclaration.declaredFragment?.element;
+    if (parameterElement is! FieldFormalParameterElementImpl) {
       return null;
     }
 
-    var fieldElement = fieldFragment.element.field;
+    var fieldElement = parameterElement.field;
     if (fieldElement == null) {
       return null;
     }

@@ -425,19 +425,21 @@ library
               formalParameters
                 #F7 requiredPositional value (nameOffset:<null>) (firstTokenOffset:<null>) (offset:16)
                   element: <testLibrary>::@mixin::A::@setter::foo::@formalParameter::value
-              nextFragment: #F8
+                  nextFragment: #F8
+              nextFragment: #F9
         #F2 isAugmentation mixin A (nameOffset:42) (firstTokenOffset:28) (offset:42)
           element: <testLibrary>::@mixin::A
           previousFragment: #F1
-          nextFragment: #F9
+          nextFragment: #F10
           setters
-            #F8 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
+            #F9 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
               element: <testLibrary>::@mixin::A::@setter::foo
               formalParameters
-                #F10 requiredPositional isOriginDeclaration _ (nameOffset:68) (firstTokenOffset:64) (offset:68)
-                  element: <testLibrary>::@mixin::A::@setter::foo::@formalParameter::_
+                #F8 requiredPositional isOriginDeclaration _ (nameOffset:68) (firstTokenOffset:64) (offset:68)
+                  element: <testLibrary>::@mixin::A::@setter::foo::@formalParameter::value
+                  previousFragment: #F7
               previousFragment: #F6
-        #F9 isAugmentation mixin A (nameOffset:91) (firstTokenOffset:77) (offset:91)
+        #F10 isAugmentation mixin A (nameOffset:91) (firstTokenOffset:77) (offset:91)
           element: <testLibrary>::@mixin::A
           previousFragment: #F2
           fields
@@ -5661,21 +5663,23 @@ library
               formalParameters
                 #F6 requiredPositional isOriginDeclaration _ (nameOffset:25) (firstTokenOffset:21) (offset:25)
                   element: <testLibrary>::@mixin::A::@setter::foo1::@formalParameter::_
-              nextFragment: #F7
-            #F8 hasImplicitReturnType isCompleteDeclaration isOriginDeclaration foo2 (nameOffset:37) (firstTokenOffset:33) (offset:37)
+                  nextFragment: #F7
+              nextFragment: #F8
+            #F9 hasImplicitReturnType isCompleteDeclaration isOriginDeclaration foo2 (nameOffset:37) (firstTokenOffset:33) (offset:37)
               element: <testLibrary>::@mixin::A::@setter::foo2
               formalParameters
-                #F9 requiredPositional isOriginDeclaration _ (nameOffset:46) (firstTokenOffset:42) (offset:46)
+                #F10 requiredPositional isOriginDeclaration _ (nameOffset:46) (firstTokenOffset:42) (offset:46)
                   element: <testLibrary>::@mixin::A::@setter::foo2::@formalParameter::_
         #F2 isAugmentation mixin A (nameOffset:69) (firstTokenOffset:55) (offset:69)
           element: <testLibrary>::@mixin::A
           previousFragment: #F1
           setters
-            #F7 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo1 (nameOffset:87) (firstTokenOffset:75) (offset:87)
+            #F8 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo1 (nameOffset:87) (firstTokenOffset:75) (offset:87)
               element: <testLibrary>::@mixin::A::@setter::foo1
               formalParameters
-                #F10 requiredPositional isOriginDeclaration _ (nameOffset:96) (firstTokenOffset:92) (offset:96)
+                #F7 requiredPositional isOriginDeclaration _ (nameOffset:96) (firstTokenOffset:92) (offset:96)
                   element: <testLibrary>::@mixin::A::@setter::foo1::@formalParameter::_
+                  previousFragment: #F6
               previousFragment: #F5
   mixins
     isSimplyBounded mixin A
@@ -5706,10 +5710,10 @@ library
           variable: <testLibrary>::@mixin::A::@field::foo1
         isOriginDeclaration foo2
           reference: <testLibrary>::@mixin::A::@setter::foo2
-          firstFragment: #F8
+          firstFragment: #F9
           formalParameters
             #E1 requiredPositional _
-              firstFragment: #F9
+              firstFragment: #F10
               type: int
           returnType: void
           variable: <testLibrary>::@mixin::A::@field::foo2
@@ -5749,16 +5753,18 @@ library
               formalParameters
                 #F6 requiredPositional value (nameOffset:<null>) (firstTokenOffset:<null>) (offset:16)
                   element: <testLibrary>::@mixin::A::@setter::foo::@formalParameter::value
-              nextFragment: #F7
+                  nextFragment: #F7
+              nextFragment: #F8
         #F2 isAugmentation mixin A (nameOffset:42) (firstTokenOffset:28) (offset:42)
           element: <testLibrary>::@mixin::A
           previousFragment: #F1
           setters
-            #F7 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
+            #F8 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
               element: <testLibrary>::@mixin::A::@setter::foo
               formalParameters
-                #F8 requiredPositional isOriginDeclaration _ (nameOffset:68) (firstTokenOffset:64) (offset:68)
-                  element: <testLibrary>::@mixin::A::@setter::foo::@formalParameter::_
+                #F7 requiredPositional isOriginDeclaration _ (nameOffset:68) (firstTokenOffset:64) (offset:68)
+                  element: <testLibrary>::@mixin::A::@setter::foo::@formalParameter::value
+                  previousFragment: #F6
               previousFragment: #F5
   mixins
     hasNonFinalField isSimplyBounded mixin A

@@ -910,9 +910,11 @@ class _IndexContributor extends GeneralizingAstVisitor {
   @override
   visitFieldFormalParameter(covariant FieldFormalParameterImpl node) {
     var element = node.declaredFragment!.element;
-    var field = element.field;
-    if (field != null) {
-      recordRelation(field, IndexRelationKind.IS_WRITTEN_BY, node.name, true);
+    if (element is FieldFormalParameterElementImpl) {
+      var field = element.field;
+      if (field != null) {
+        recordRelation(field, IndexRelationKind.IS_WRITTEN_BY, node.name, true);
+      }
     }
 
     return super.visitFieldFormalParameter(node);

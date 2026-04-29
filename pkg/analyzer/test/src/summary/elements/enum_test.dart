@@ -19423,21 +19423,23 @@ library
               formalParameters
                 #F11 requiredPositional isOriginDeclaration _ (nameOffset:29) (firstTokenOffset:25) (offset:29)
                   element: <testLibrary>::@enum::A::@setter::foo1::@formalParameter::_
-              nextFragment: #F12
-            #F13 hasImplicitReturnType isCompleteDeclaration isOriginDeclaration foo2 (nameOffset:41) (firstTokenOffset:37) (offset:41)
+                  nextFragment: #F12
+              nextFragment: #F13
+            #F14 hasImplicitReturnType isCompleteDeclaration isOriginDeclaration foo2 (nameOffset:41) (firstTokenOffset:37) (offset:41)
               element: <testLibrary>::@enum::A::@setter::foo2
               formalParameters
-                #F14 requiredPositional isOriginDeclaration _ (nameOffset:50) (firstTokenOffset:46) (offset:50)
+                #F15 requiredPositional isOriginDeclaration _ (nameOffset:50) (firstTokenOffset:46) (offset:50)
                   element: <testLibrary>::@enum::A::@setter::foo2::@formalParameter::_
         #F2 isAugmentation enum A (nameOffset:72) (firstTokenOffset:59) (offset:72)
           element: <testLibrary>::@enum::A
           previousFragment: #F1
           setters
-            #F12 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo1 (nameOffset:91) (firstTokenOffset:79) (offset:91)
+            #F13 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration foo1 (nameOffset:91) (firstTokenOffset:79) (offset:91)
               element: <testLibrary>::@enum::A::@setter::foo1
               formalParameters
-                #F15 requiredPositional isOriginDeclaration _ (nameOffset:100) (firstTokenOffset:96) (offset:100)
+                #F12 requiredPositional isOriginDeclaration _ (nameOffset:100) (firstTokenOffset:96) (offset:100)
                   element: <testLibrary>::@enum::A::@setter::foo1::@formalParameter::_
+                  previousFragment: #F11
               previousFragment: #F10
   enums
     isSimplyBounded enum A
@@ -19499,10 +19501,10 @@ library
           variable: <testLibrary>::@enum::A::@field::foo1
         isOriginDeclaration foo2
           reference: <testLibrary>::@enum::A::@setter::foo2
-          firstFragment: #F13
+          firstFragment: #F14
           formalParameters
             #E1 requiredPositional _
-              firstFragment: #F14
+              firstFragment: #F15
               type: int
           returnType: void
           variable: <testLibrary>::@enum::A::@field::foo2

@@ -31,6 +31,26 @@ class AstBinaryReader {
     return node;
   }
 
+  void _bindFormalParameterFragment(
+    FormalParameterImpl node,
+    FormalParameterFragmentImpl fragment,
+  ) {
+    fragment.constantInitializer = node.defaultClause?.value;
+    if (node.functionTypedSuffix case var functionTypedSuffix?) {
+      fragment.formalParameters = functionTypedSuffix
+          .formalParameters
+          .parameters
+          .map((parameter) => parameter.declaredFragment!)
+          .toList();
+      fragment.typeParameters =
+          functionTypedSuffix.typeParameters?.typeParameters
+              .map((parameter) => parameter.declaredFragment!)
+              .toList() ??
+          const [];
+    }
+    node.declaredFragment = fragment;
+  }
+
   IntegerLiteral _createIntegerLiteral(String lexeme, int value) {
     var node = IntegerLiteralImpl(
       // TODO(srawlins): TokenType.INT_WITH_SEPARATORS?
@@ -333,8 +353,7 @@ class AstBinaryReader {
   FieldFormalParameter _readFieldFormalParameter() {
     var functionTypeParameters = _readOptionalNode() as TypeParameterListImpl?;
     var type = _readOptionalNode() as TypeAnnotationImpl?;
-    var functionFormalParameters =
-        _readOptionalNode() as FormalParameterListImpl?;
+    var functionFormalParameters = _readOptionalFormalParameterList();
     var flags = _readByte();
     var metadata = _readNodeList<AnnotationImpl>();
     var name = _readDeclarationName();
@@ -371,14 +390,13 @@ class AstBinaryReader {
       functionTypedSuffix: functionTypedSuffix,
       defaultClause: _readFormalParameterDefaultClause(flags),
     );
-    var actualType = _reader.readRequiredType();
     var fragment = FieldFormalParameterFragmentImpl(
       name: name.lexeme,
       nameOffset: null,
       parameterKind: kind,
       privateName: null,
     );
-    _readFormalParameterResolution(node, fragment, actualType);
+    _bindFormalParameterFragment(node, fragment);
     return node;
   }
 
@@ -430,7 +448,7 @@ class AstBinaryReader {
     }
   }
 
-  FormalParameterList _readFormalParameterList() {
+  FormalParameterListImpl _readFormalParameterList() {
     var flags = _readByte();
     var parameters = _readNodeList<FormalParameterImpl>();
 
@@ -453,32 +471,20 @@ class AstBinaryReader {
     );
   }
 
+  void _readFormalParameterListResolution(
+    List<FormalParameterFragmentImpl> fragments,
+  ) {
+    for (var fragment in fragments) {
+      assert(fragment.nextFragment == null);
+      fragment.element.type = _reader.readRequiredType();
+      _readFormalParameterListResolution(fragment.formalParameters);
+    }
+  }
+
   Token? _readFormalParameterRequiredKeyword(int flags, ParameterKind kind) {
     return !kind.isPositional && AstBinaryFlags.formalParameterIsRequired(flags)
         ? Tokens.required_()
         : null;
-  }
-
-  void _readFormalParameterResolution(
-    FormalParameterImpl node,
-    FormalParameterFragmentImpl fragment,
-    TypeImpl actualType,
-  ) {
-    fragment.element.type = actualType;
-    fragment.constantInitializer = node.defaultClause?.value;
-    if (node.functionTypedSuffix case var functionTypedSuffix?) {
-      fragment.formalParameters = functionTypedSuffix
-          .formalParameters
-          .parameters
-          .map((parameter) => parameter.declaredFragment!)
-          .toList();
-      fragment.typeParameters =
-          functionTypedSuffix.typeParameters?.typeParameters
-              .map((parameter) => parameter.declaredFragment!)
-              .toList() ??
-          const [];
-    }
-    node.declaredFragment = fragment;
   }
 
   ForPartsWithDeclarations _readForPartsWithDeclarations() {
@@ -538,7 +544,7 @@ class AstBinaryReader {
     // TODO(scheglov): add type parameters to locals
     var typeParameters = _readOptionalNode() as TypeParameterListImpl?;
     var returnType = _readOptionalNode() as TypeAnnotationImpl?;
-    var formalParameters = _readNode() as FormalParameterListImpl;
+    var formalParameters = _readRequiredFormalParameterList();
     var node = GenericFunctionTypeImpl(
       returnType: returnType,
       functionKeyword: Tokens.function(),
@@ -559,6 +565,7 @@ class AstBinaryReader {
     var element = GenericFunctionTypeElementImpl(fragment);
     element.returnType = type.returnType;
     element.type = type;
+    _readFormalParameterListResolution(fragment.formalParameters);
 
     return node;
   }
@@ -995,6 +1002,10 @@ class AstBinaryReader {
     return node;
   }
 
+  FormalParameterListImpl? _readOptionalFormalParameterList() {
+    return _readOptionalNode() as FormalParameterListImpl?;
+  }
+
   AstNode? _readOptionalNode() {
     if (_readOptionTag()) {
       return _readNode();
@@ -1196,8 +1207,7 @@ class AstBinaryReader {
   RegularFormalParameter _readRegularFormalParameter() {
     var functionTypeParameters = _readOptionalNode() as TypeParameterListImpl?;
     var type = _readOptionalNode() as TypeAnnotationImpl?;
-    var functionFormalParameters =
-        _readOptionalNode() as FormalParameterListImpl?;
+    var functionFormalParameters = _readOptionalFormalParameterList();
     var flags = _readByte();
     var metadata = _readNodeList<AnnotationImpl>();
     var name = AstBinaryFlags.formalParameterHasName(flags)
@@ -1235,16 +1245,18 @@ class AstBinaryReader {
       defaultClause: _readFormalParameterDefaultClause(flags),
       requiredKeyword: _readFormalParameterRequiredKeyword(flags, kind),
     );
-    var actualType = _reader.readRequiredType();
-
     var fragment = FormalParameterFragmentImpl(
       name: name?.lexeme,
       nameOffset: null,
       parameterKind: kind,
     );
-    _readFormalParameterResolution(node, fragment, actualType);
+    _bindFormalParameterFragment(node, fragment);
 
     return node;
+  }
+
+  FormalParameterListImpl _readRequiredFormalParameterList() {
+    return _readNode() as FormalParameterListImpl;
   }
 
   SetOrMapLiteral _readSetOrMapLiteral() {
@@ -1340,8 +1352,7 @@ class AstBinaryReader {
   SuperFormalParameter _readSuperFormalParameter() {
     var functionTypeParameters = _readOptionalNode() as TypeParameterListImpl?;
     var type = _readOptionalNode() as TypeAnnotationImpl?;
-    var functionFormalParameters =
-        _readOptionalNode() as FormalParameterListImpl?;
+    var functionFormalParameters = _readOptionalFormalParameterList();
     var flags = _readByte();
     var metadata = _readNodeList<AnnotationImpl>();
     var name = _readDeclarationName();
@@ -1379,14 +1390,12 @@ class AstBinaryReader {
       functionTypedSuffix: functionTypedSuffix,
       defaultClause: _readFormalParameterDefaultClause(flags),
     );
-    var actualType = _reader.readRequiredType();
-
     var fragment = SuperFormalParameterFragmentImpl(
       name: name.lexeme,
       nameOffset: null,
       parameterKind: kind,
     );
-    _readFormalParameterResolution(node, fragment, actualType);
+    _bindFormalParameterFragment(node, fragment);
 
     return node;
   }

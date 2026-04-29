@@ -325,6 +325,7 @@ class AstBinaryWriter extends ThrowingAstVisitor<void> {
       _writeOptionalNode(node.returnType);
       _writeNode(node.parameters);
       _sink.writeType(node.type);
+      _storeFormalParameterListResolution(node.parameters);
     });
   }
 
@@ -883,6 +884,20 @@ class AstBinaryWriter extends ThrowingAstVisitor<void> {
     _writeActualType(_sink, element.type);
   }
 
+  void _storeFormalParameterListResolution(FormalParameterListImpl node) {
+    for (var formalParameter in node.parameters) {
+      var functionTypedSuffix = formalParameter.functionTypedSuffix;
+      _withTypeParameters(functionTypedSuffix?.typeParameters, () {
+        _storeFormalParameter(formalParameter);
+        if (functionTypedSuffix != null) {
+          _storeFormalParameterListResolution(
+            functionTypedSuffix.formalParameters,
+          );
+        }
+      });
+    }
+  }
+
   void _storeForParts(ForParts node) {
     _writeOptionalNode(node.condition);
     _writeNodeList(node.updaters);
@@ -919,7 +934,6 @@ class AstBinaryWriter extends ThrowingAstVisitor<void> {
     if (node.defaultClause case var defaultClause?) {
       _writeNode(defaultClause.value);
     }
-    _storeFormalParameter(node);
   }
 
   void _withTypeParameters(TypeParameterListImpl? node, void Function() f) {

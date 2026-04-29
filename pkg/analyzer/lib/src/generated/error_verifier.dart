@@ -1800,8 +1800,11 @@ class ErrorVerifier extends RecursiveAstVisitor<void>
     }
 
     var element = node.declaredFragment!.element;
-    var superParameter = element.superConstructorParameter;
+    if (element is! SuperFormalParameterElementImpl) {
+      return;
+    }
 
+    var superParameter = element.superConstructorParameter;
     if (superParameter == null) {
       diagnosticReporter.report(
         (node.isNamed

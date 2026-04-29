@@ -239,6 +239,7 @@ class _ConstructorDeclaration {
       reference: classElement.reference.declareConstructor(header.name),
       firstFragment: fragment,
     );
+    formalParameters.createElements();
   }
 
   void resolve(_Scope scope) {
@@ -363,6 +364,10 @@ class _FormalParameterDeclaration {
 
   FormalParameterElementImpl get element => fragment.element;
 
+  void createElement() {
+    fragment.initElement();
+  }
+
   FormalParameterFragmentImpl createFragment() {
     return fragment = FormalParameterFragmentImpl(
       name: parsed.name,
@@ -386,14 +391,23 @@ class _FormalParameterDeclarations {
           _FormalParameterDeclaration(parsed),
       ];
 
-  List<FormalParameterElementImpl> get elements => [
-    for (var declaration in _declarations) declaration.element,
-  ];
+  void createElements() {
+    for (var declaration in _declarations) {
+      declaration.createElement();
+    }
+  }
 
   List<FormalParameterFragmentImpl> createFragments() {
     return [
       for (var declaration in _declarations) declaration.createFragment(),
     ];
+  }
+
+  List<FormalParameterElementImpl> materializeStandalone(_Scope scope) {
+    createFragments();
+    createElements();
+    resolve(scope);
+    return [for (var declaration in _declarations) declaration.element];
   }
 
   void resolve(_Scope scope) {
@@ -627,6 +641,7 @@ class _MethodDeclaration {
       reference: classElement.reference.declareMethod(header.name),
       firstFragment: fragment,
     );
+    formalParameters.createElements();
   }
 
   void resolve(_Scope classScope) {
@@ -792,16 +807,19 @@ class _ParsedFunctionType implements _ParsedType {
     var functionScope = _Scope.child(scope);
 
     var typeParameters = _TypeParameterDeclarations(this.typeParameters);
-    typeParameters.materializeStandalone(functionScope);
+    var typeParameterElements = typeParameters.materializeStandalone(
+      functionScope,
+    );
 
     var formalParameters = _FormalParameterDeclarations(this.formalParameters);
-    formalParameters.createFragments();
-    formalParameters.resolve(functionScope);
+    var formalParameterElements = formalParameters.materializeStandalone(
+      functionScope,
+    );
 
     return FunctionTypeImpl(
       returnType: returnType.materialize(functionScope),
-      typeParameters: typeParameters.elements,
-      formalParameters: formalParameters.elements,
+      typeParameters: typeParameterElements,
+      formalParameters: formalParameterElements,
       nullabilitySuffix: NullabilitySuffix.none,
     );
   }
@@ -1672,6 +1690,7 @@ class _TopLevelFunctionDeclaration {
       libraryReference.declareTopLevelFunction(header.name),
       fragment,
     );
+    formalParameters.createElements();
   }
 
   void resolve(_Scope libraryScope) {

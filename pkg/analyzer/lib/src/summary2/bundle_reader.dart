@@ -799,8 +799,10 @@ class LibraryReader {
       element.type = type;
       fragment.constantInitializer = reader.readOptionalExpression();
       if (fragment is FieldFormalParameterFragmentImpl) {
-        (element as FieldFormalParameterElementImpl).field =
-            reader.readElement() as FieldElementImpl?;
+        var field = reader.readElement() as FieldElementImpl?;
+        if (element is FieldFormalParameterElementImpl) {
+          element.field = field;
+        }
       }
     }
   }
@@ -1716,6 +1718,7 @@ class ResolutionReader {
         nameOffset: null,
         parameterKind: _formalParameterKind(_reader.readByte()),
       );
+      fragment.initElement();
       fragment.element.type = readRequiredType();
       return fragment;
     });

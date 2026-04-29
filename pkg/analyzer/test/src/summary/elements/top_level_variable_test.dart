@@ -3888,8 +3888,9 @@ library
           formalParameters
             #F3 requiredPositional isOriginDeclaration _ (nameOffset:33) (firstTokenOffset:29) (offset:33)
               element: <testLibrary>::@setter::foo::@formalParameter::_
-          nextFragment: #F4
-        #F4 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:55) (firstTokenOffset:39) (offset:55)
+              nextFragment: #F4
+          nextFragment: #F5
+        #F5 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:55) (firstTokenOffset:39) (offset:55)
           element: <testLibrary>::@setter::foo
           metadata
             Annotation
@@ -3900,11 +3901,13 @@ library
                 staticType: null
               element: package:test/a.dart::@getter::a2
           formalParameters
-            #F5 requiredPositional isOriginDeclaration _ (nameOffset:63) (firstTokenOffset:59) (offset:63)
+            #F4 requiredPositional isOriginDeclaration _ (nameOffset:63) (firstTokenOffset:59) (offset:63)
               element: <testLibrary>::@setter::foo::@formalParameter::_
+              previousFragment: #F3
+              nextFragment: #F6
           previousFragment: #F2
-          nextFragment: #F6
-        #F6 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:85) (firstTokenOffset:69) (offset:85)
+          nextFragment: #F7
+        #F7 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:85) (firstTokenOffset:69) (offset:85)
           element: <testLibrary>::@setter::foo
           metadata
             Annotation
@@ -3915,9 +3918,10 @@ library
                 staticType: null
               element: package:test/a.dart::@getter::a3
           formalParameters
-            #F7 requiredPositional isOriginDeclaration _ (nameOffset:93) (firstTokenOffset:89) (offset:93)
+            #F6 requiredPositional isOriginDeclaration _ (nameOffset:93) (firstTokenOffset:89) (offset:93)
               element: <testLibrary>::@setter::foo::@formalParameter::_
-          previousFragment: #F4
+              previousFragment: #F4
+          previousFragment: #F5
   topLevelVariables
     isOriginGetterSetter isStatic foo
       reference: <testLibrary>::@topLevelVariable::foo
@@ -3986,20 +3990,24 @@ library
           formalParameters
             #F3 requiredPositional isOriginDeclaration _ (nameOffset:16) (firstTokenOffset:12) (offset:16)
               element: <testLibrary>::@setter::foo::@formalParameter::_
-          nextFragment: #F4
-        #F4 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:34) (firstTokenOffset:22) (offset:34)
+              nextFragment: #F4
+          nextFragment: #F5
+        #F5 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:34) (firstTokenOffset:22) (offset:34)
           element: <testLibrary>::@setter::foo
           formalParameters
-            #F5 requiredPositional isOriginDeclaration _ (nameOffset:42) (firstTokenOffset:38) (offset:42)
+            #F4 requiredPositional isOriginDeclaration _ (nameOffset:42) (firstTokenOffset:38) (offset:42)
               element: <testLibrary>::@setter::foo::@formalParameter::_
+              previousFragment: #F3
+              nextFragment: #F6
           previousFragment: #F2
-          nextFragment: #F6
-        #F6 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
+          nextFragment: #F7
+        #F7 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
           element: <testLibrary>::@setter::foo
           formalParameters
-            #F7 requiredPositional isOriginDeclaration _ (nameOffset:68) (firstTokenOffset:64) (offset:68)
+            #F6 requiredPositional isOriginDeclaration _ (nameOffset:68) (firstTokenOffset:64) (offset:68)
               element: <testLibrary>::@setter::foo::@formalParameter::_
-          previousFragment: #F4
+              previousFragment: #F4
+          previousFragment: #F5
   topLevelVariables
     isOriginGetterSetter isStatic foo
       reference: <testLibrary>::@topLevelVariable::foo
@@ -4046,20 +4054,24 @@ library
           formalParameters
             #F3 requiredPositional isOriginDeclaration _ (nameOffset:16) (firstTokenOffset:12) (offset:16)
               element: <testLibrary>::@setter::foo::@formalParameter::_
-          nextFragment: #F4
-        #F4 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:34) (firstTokenOffset:22) (offset:34)
+              nextFragment: #F4
+          nextFragment: #F5
+        #F5 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:34) (firstTokenOffset:22) (offset:34)
           element: <testLibrary>::@setter::foo
           formalParameters
-            #F5 requiredPositional isOriginDeclaration _ (nameOffset:42) (firstTokenOffset:38) (offset:42)
+            #F4 requiredPositional isOriginDeclaration _ (nameOffset:42) (firstTokenOffset:38) (offset:42)
               element: <testLibrary>::@setter::foo::@formalParameter::_
+              previousFragment: #F3
+              nextFragment: #F6
           previousFragment: #F2
-          nextFragment: #F6
-        #F6 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
+          nextFragment: #F7
+        #F7 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:60) (firstTokenOffset:48) (offset:60)
           element: <testLibrary>::@setter::foo
           formalParameters
-            #F7 requiredPositional isOriginDeclaration _ (nameOffset:71) (firstTokenOffset:64) (offset:71)
+            #F6 requiredPositional isOriginDeclaration _ (nameOffset:71) (firstTokenOffset:64) (offset:71)
               element: <testLibrary>::@setter::foo::@formalParameter::_
-          previousFragment: #F4
+              previousFragment: #F4
+          previousFragment: #F5
   topLevelVariables
     isOriginGetterSetter isStatic foo
       reference: <testLibrary>::@topLevelVariable::foo
@@ -4149,12 +4161,14 @@ library
           formalParameters
             #F3 requiredPositional isOriginDeclaration _ (nameOffset:12) (firstTokenOffset:8) (offset:12)
               element: <testLibrary>::@setter::foo::@formalParameter::_
-          nextFragment: #F4
-        #F4 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:30) (firstTokenOffset:18) (offset:30)
+              nextFragment: #F4
+          nextFragment: #F5
+        #F5 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:30) (firstTokenOffset:18) (offset:30)
           element: <testLibrary>::@setter::foo
           formalParameters
-            #F5 requiredPositional isOriginDeclaration _ (nameOffset:38) (firstTokenOffset:34) (offset:38)
+            #F4 requiredPositional isOriginDeclaration _ (nameOffset:38) (firstTokenOffset:34) (offset:38)
               element: <testLibrary>::@setter::foo::@formalParameter::_
+              previousFragment: #F3
           previousFragment: #F2
   topLevelVariables
     isOriginGetterSetter isStatic foo
@@ -4204,12 +4218,14 @@ library
           formalParameters
             #F4 requiredPositional value (nameOffset:<null>) (firstTokenOffset:<null>) (offset:4)
               element: <testLibrary>::@setter::foo::@formalParameter::value
-          nextFragment: #F5
-        #F5 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:25) (firstTokenOffset:13) (offset:25)
+              nextFragment: #F5
+          nextFragment: #F6
+        #F6 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:25) (firstTokenOffset:13) (offset:25)
           element: <testLibrary>::@setter::foo
           formalParameters
-            #F6 requiredPositional isOriginDeclaration _ (nameOffset:33) (firstTokenOffset:29) (offset:33)
-              element: <testLibrary>::@setter::foo::@formalParameter::_
+            #F5 requiredPositional isOriginDeclaration _ (nameOffset:33) (firstTokenOffset:29) (offset:33)
+              element: <testLibrary>::@setter::foo::@formalParameter::value
+              previousFragment: #F4
           previousFragment: #F3
   topLevelVariables
     hasInitializer isOriginDeclaration isStatic foo
@@ -4401,12 +4417,14 @@ library
           formalParameters
             #F4 requiredPositional value (nameOffset:<null>) (firstTokenOffset:<null>) (offset:4)
               element: <testLibrary>::@setter::foo::@formalParameter::value
-          nextFragment: #F5
-        #F5 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:25) (firstTokenOffset:13) (offset:25)
+              nextFragment: #F5
+          nextFragment: #F6
+        #F6 hasImplicitReturnType isAugmentation isCompleteDeclaration isOriginDeclaration isStatic foo (nameOffset:25) (firstTokenOffset:13) (offset:25)
           element: <testLibrary>::@setter::foo
           formalParameters
-            #F6 requiredPositional isOriginDeclaration _ (nameOffset:36) (firstTokenOffset:29) (offset:36)
-              element: <testLibrary>::@setter::foo::@formalParameter::_
+            #F5 requiredPositional isOriginDeclaration _ (nameOffset:36) (firstTokenOffset:29) (offset:36)
+              element: <testLibrary>::@setter::foo::@formalParameter::value
+              previousFragment: #F4
           previousFragment: #F3
   topLevelVariables
     hasInitializer isOriginDeclaration isStatic foo

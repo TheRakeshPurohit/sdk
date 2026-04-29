@@ -86,6 +86,9 @@ class ElementBindingVisitor extends RecursiveAstVisitor<void> {
       super.visitAnonymousMethodInvocation(node);
       fragment.typeParameters = [];
       fragment.formalParameters = holder.formalParameters;
+      for (var formalParameter in fragment.formalParameters) {
+        formalParameter.initElement();
+      }
     });
 
     fragment.setCodeRange(node.offset, node.length);
@@ -434,6 +437,9 @@ class ElementBindingVisitor extends RecursiveAstVisitor<void> {
 
         node.functionExpression.parameters?.accept(this);
         fragment.formalParameters = holder.formalParameters;
+        for (var formalParameter in fragment.formalParameters) {
+          formalParameter.initElement();
+        }
 
         node.functionExpression.body.accept(this);
       }
@@ -492,6 +498,9 @@ class ElementBindingVisitor extends RecursiveAstVisitor<void> {
 
       node.parameters?.accept(this);
       fragment.formalParameters = holder.formalParameters;
+      for (var formalParameter in fragment.formalParameters) {
+        formalParameter.initElement();
+      }
 
       node.body.accept(this);
     });
@@ -515,6 +524,9 @@ class ElementBindingVisitor extends RecursiveAstVisitor<void> {
           node.returnType?.accept(this);
           node.parameters.accept(this);
           fragment.encloseElements(holder.formalParameters);
+          for (var formalParameter in holder.formalParameters) {
+            formalParameter.initElement();
+          }
         });
       });
     });

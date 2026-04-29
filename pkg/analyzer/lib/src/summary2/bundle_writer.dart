@@ -503,7 +503,10 @@ class BundleWriter {
 
       if (fragment is FieldFormalParameterFragmentImpl) {
         // TODO(scheglov): formal parameter types? Anything else?
-        _resolutionSink.writeElement(fragment.element.field);
+        var element = fragment.element;
+        _resolutionSink.writeElement(
+          element is FieldFormalParameterElementImpl ? element.field : null,
+        );
       }
     });
   }

@@ -252,6 +252,10 @@ class TypesBuilder {
 
   void _fieldFormalParameter(FieldFormalParameterImpl node) {
     var fragment = node.declaredFragment!;
+    if (fragment.previousFragment != null) {
+      return;
+    }
+
     var functionTypedSuffix = node.functionTypedSuffix;
     if (functionTypedSuffix case var functionTypedSuffix?) {
       var type = _buildFunctionType(
@@ -414,6 +418,10 @@ class TypesBuilder {
 
   void _superFormalParameter(SuperFormalParameterImpl node) {
     var fragment = node.declaredFragment!;
+    if (fragment.previousFragment != null) {
+      return;
+    }
+
     var functionTypedSuffix = node.functionTypedSuffix;
     if (functionTypedSuffix case var functionTypedSuffix?) {
       var type = _buildFunctionType(
