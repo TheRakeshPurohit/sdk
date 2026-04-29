@@ -544,6 +544,34 @@ void Object::InitNullAndBool(IsolateGroup* isolate_group) {
 #endif
   }
 
+  {
+    uword address =
+        heap->Allocate(thread, Sentinel::InstanceSize(), Heap::kOld);
+    Roots::set_sentinel_obj(static_cast<SentinelPtr>(address + kHeapObjectTag));
+    InitializeObject<Sentinel>(address);
+  }
+  {
+    uword address =
+        heap->Allocate(thread, Sentinel::InstanceSize(), Heap::kOld);
+    Roots::set_unknown_constant_obj(
+        static_cast<SentinelPtr>(address + kHeapObjectTag));
+    InitializeObject<Sentinel>(address);
+  }
+  {
+    uword address =
+        heap->Allocate(thread, Sentinel::InstanceSize(), Heap::kOld);
+    Roots::set_non_constant_obj(
+        static_cast<SentinelPtr>(address + kHeapObjectTag));
+    InitializeObject<Sentinel>(address);
+  }
+  {
+    uword address =
+        heap->Allocate(thread, Sentinel::InstanceSize(), Heap::kOld);
+    Roots::set_optimized_out_obj(
+        static_cast<SentinelPtr>(address + kHeapObjectTag));
+    InitializeObject<Sentinel>(address);
+  }
+
   // Check that the objects have been allocated at appropriate addresses.
   uword null_ = static_cast<uword>(Roots::null_obj());
   uword true_ = static_cast<uword>(Roots::true_obj());
@@ -696,6 +724,10 @@ void Object::Init(IsolateGroup* isolate_group) {
   Roots::null_compressed_stackmaps().initRO(CompressedStackMaps::null());
   Roots::bool_true().initRO(Roots::true_obj());
   Roots::bool_false().initRO(Roots::false_obj());
+  Roots::sentinel().initRO(Roots::sentinel_obj());
+  Roots::unknown_constant().initRO(Roots::unknown_constant_obj());
+  Roots::non_constant().initRO(Roots::non_constant_obj());
+  Roots::optimized_out().initRO(Roots::optimized_out_obj());
 
   // Initialize the empty array and empty instantiations cache array handles to
   // null_ in order to be able to check if the empty and zero arrays were
@@ -769,22 +801,8 @@ void Object::Init(IsolateGroup* isolate_group) {
   cls.set_is_declaration_loaded();
   cls.set_is_type_finalized();
 
-  // Allocate and initialize Sentinel class.
-  cls = Class::New<Sentinel, RTN::Sentinel>(isolate_group);
-
-  // Allocate and initialize the sentinel values.
-  {
-    Roots::sentinel().initRO(Sentinel::New());
-  }
-
-  // Allocate and initialize optimizing compiler constants.
-  {
-    Roots::unknown_constant().initRO(Sentinel::New());
-    Roots::non_constant().initRO(Sentinel::New());
-    Roots::optimized_out().initRO(Sentinel::New());
-  }
-
   // Allocate the remaining VM internal classes.
+  cls = Class::New<Sentinel, RTN::Sentinel>(isolate_group);
   cls = Class::New<TypeParameters, RTN::TypeParameters>(isolate_group);
   cls = Class::New<TypeArguments, RTN::TypeArguments>(isolate_group);
   cls = Class::New<PatchClass, RTN::PatchClass>(isolate_group);

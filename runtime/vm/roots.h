@@ -14,7 +14,11 @@ namespace dart {
 #define RAW_ROOTS_LIST(V)                                                      \
   V(ObjectPtr, null_obj)                                                       \
   V(BoolPtr, true_obj)                                                         \
-  V(BoolPtr, false_obj)
+  V(BoolPtr, false_obj)                                                        \
+  V(SentinelPtr, sentinel_obj)                                                 \
+  V(SentinelPtr, unknown_constant_obj)                                         \
+  V(SentinelPtr, non_constant_obj)                                             \
+  V(SentinelPtr, optimized_out_obj)
 
 #define HANDLE_ROOTS_LIST(V)                                                   \
   V(Object, null_object)                                                       \
