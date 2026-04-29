@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:analyzer/utilities/package_config_file_builder.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 
 /// A common interface that can be implemented by a set of base classes to
 /// allow tests to be written to run in different configurations

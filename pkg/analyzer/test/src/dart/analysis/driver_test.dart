@@ -23,7 +23,7 @@ import 'package:analyzer/src/dart/element/element.dart';
 import 'package:analyzer/src/diagnostic/diagnostic.dart' as diag;
 import 'package:analyzer/src/test_utilities/lint_registration_mixin.dart';
 import 'package:analyzer/src/utilities/extensions/async.dart';
-import 'package:analyzer/utilities/package_config_file_builder.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:analyzer_testing/utilities/utilities.dart';
 import 'package:analyzer_utilities/testing/tree_string_sink.dart';
 import 'package:linter/src/rules.dart';
@@ -1491,8 +1491,8 @@ final v = 2;
   test_discoverAvailableFiles_packages() {
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$packagesRootPath/aaa')
-        ..add(name: 'bbb', rootPath: '$packagesRootPath/bbb'),
+        ..add(name: 'aaa', rootFolder: getFolder('$packagesRootPath/aaa'))
+        ..add(name: 'bbb', rootFolder: getFolder('$packagesRootPath/bbb')),
     );
 
     var t1 = newFile('$testPackageLibPath/t1.dart', '');
@@ -1836,8 +1836,8 @@ void main() {}
   test_getFilesReferencingName_discover() async {
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$packagesRootPath/aaa')
-        ..add(name: 'bbb', rootPath: '$packagesRootPath/bbb'),
+        ..add(name: 'aaa', rootFolder: getFolder('$packagesRootPath/aaa'))
+        ..add(name: 'bbb', rootFolder: getFolder('$packagesRootPath/bbb')),
     );
 
     var t = newFile('$testPackageLibPath/t.dart', '''
@@ -4840,14 +4840,16 @@ class B2 {}
     var test1Path = '$workspaceRootPath/test1';
     writePackageConfig(
       test1Path,
-      PackageConfigFileBuilder()..add(name: 'test1', rootPath: test1Path),
+      PackageConfigFileBuilder()
+        ..add(name: 'test1', rootFolder: getFolder(test1Path)),
     );
 
     // Make sure that `test2` is its own analysis context.
     var test2Path = '$workspaceRootPath/test2';
     writePackageConfig(
       test2Path,
-      PackageConfigFileBuilder()..add(name: 'test2', rootPath: test2Path),
+      PackageConfigFileBuilder()
+        ..add(name: 'test2', rootFolder: getFolder(test2Path)),
     );
 
     // `b` imports `a`, so `b` is reanalyzed when `a` API changes.
@@ -4910,14 +4912,16 @@ class B2 {}
     var test1Path = '$workspaceRootPath/test1';
     writePackageConfig(
       test1Path,
-      PackageConfigFileBuilder()..add(name: 'test1', rootPath: test1Path),
+      PackageConfigFileBuilder()
+        ..add(name: 'test1', rootFolder: getFolder(test1Path)),
     );
 
     // Make sure that `test2` is its own analysis context.
     var test2Path = '$workspaceRootPath/test2';
     writePackageConfig(
       test2Path,
-      PackageConfigFileBuilder()..add(name: 'test2', rootPath: test2Path),
+      PackageConfigFileBuilder()
+        ..add(name: 'test2', rootFolder: getFolder(test2Path)),
     );
 
     var a = newFile('$test1Path/lib/a.dart', '');
@@ -4975,14 +4979,16 @@ class B2 {}
     var test1Path = '$workspaceRootPath/test1';
     writePackageConfig(
       test1Path,
-      PackageConfigFileBuilder()..add(name: 'test1', rootPath: test1Path),
+      PackageConfigFileBuilder()
+        ..add(name: 'test1', rootFolder: getFolder(test1Path)),
     );
 
     // Make sure that `test2` is its own analysis context.
     var test2Path = '$workspaceRootPath/test2';
     writePackageConfig(
       test2Path,
-      PackageConfigFileBuilder()..add(name: 'test2', rootPath: test2Path),
+      PackageConfigFileBuilder()
+        ..add(name: 'test2', rootFolder: getFolder(test2Path)),
     );
 
     var a = newFile('$test1Path/lib/a.dart', '');
@@ -84658,17 +84664,17 @@ class B extends A {}
     writePackageConfig(
       '$workspaceRootPath/test_1',
       PackageConfigFileBuilder()
-        ..add(name: 'foo', rootPath: '/packages/foo_v1')
-        ..add(name: 'bar', rootPath: '/packages/bar')
-        ..add(name: 'test', rootPath: '$workspaceRootPath/test_1'),
+        ..add(name: 'foo', rootFolder: getFolder('/packages/foo_v1'))
+        ..add(name: 'bar', rootFolder: getFolder('/packages/bar'))
+        ..add(name: 'test', rootFolder: getFolder('$workspaceRootPath/test_1')),
     );
 
     writePackageConfig(
       '$workspaceRootPath/test_2',
       PackageConfigFileBuilder()
-        ..add(name: 'foo', rootPath: '/packages/foo_v2')
-        ..add(name: 'bar', rootPath: '/packages/bar')
-        ..add(name: 'test', rootPath: '$workspaceRootPath/test_2'),
+        ..add(name: 'foo', rootFolder: getFolder('/packages/foo_v2'))
+        ..add(name: 'bar', rootFolder: getFolder('/packages/bar'))
+        ..add(name: 'test', rootFolder: getFolder('$workspaceRootPath/test_2')),
     );
 
     var testFile1 = newFile('$workspaceRootPath/test_1/lib/test.dart', r'''
@@ -84805,16 +84811,16 @@ class B extends A {}
     writePackageConfig(
       '$workspaceRootPath/test_1',
       PackageConfigFileBuilder()
-        ..add(name: 'foo', rootPath: '/packages/foo')
-        ..add(name: 'test', rootPath: '$workspaceRootPath/test_1'),
+        ..add(name: 'foo', rootFolder: getFolder('/packages/foo'))
+        ..add(name: 'test', rootFolder: getFolder('$workspaceRootPath/test_1')),
     );
 
     writePackageConfig(
       '$workspaceRootPath/test_2',
       PackageConfigFileBuilder()
-        ..add(name: 'foo', rootPath: '/packages/foo')
-        ..add(name: 'bar', rootPath: '/packages/bar')
-        ..add(name: 'test', rootPath: '$workspaceRootPath/test_2'),
+        ..add(name: 'foo', rootFolder: getFolder('/packages/foo'))
+        ..add(name: 'bar', rootFolder: getFolder('/packages/bar'))
+        ..add(name: 'test', rootFolder: getFolder('$workspaceRootPath/test_2')),
     );
 
     var testFile1 = newFile('$workspaceRootPath/test_1/lib/test.dart', r'''

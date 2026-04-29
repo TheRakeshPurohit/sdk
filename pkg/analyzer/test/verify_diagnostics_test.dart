@@ -4,7 +4,7 @@
 
 import 'package:analyzer/diagnostic/diagnostic.dart';
 import 'package:analyzer/error/error.dart';
-import 'package:analyzer/utilities/package_config_file_builder.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:analyzer_testing/utilities/utilities.dart';
 import 'package:analyzer_utilities/analyzer_messages.dart';
 import 'package:analyzer_utilities/lint_messages.dart';
@@ -647,7 +647,10 @@ class _SnippetTest extends PubPackageResolutionTest {
 
         String packageName = uri.pathSegments[0];
         String packageRootPath = '/packages/$packageName';
-        packageConfigBuilder.add(name: packageName, rootPath: packageRootPath);
+        packageConfigBuilder.add(
+          name: packageName,
+          rootFolder: getFolder(packageRootPath),
+        );
 
         String pathInLib = uri.pathSegments.skip(1).join('/');
         newFile('$packageRootPath/lib/$pathInLib', auxiliaryFiles[uriStr]!);

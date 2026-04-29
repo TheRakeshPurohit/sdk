@@ -3,7 +3,7 @@
 // BSD-style license that can be found in the LICENSE file.
 
 import 'package:analyzer/src/diagnostic/diagnostic.dart' as diag;
-import 'package:analyzer/utilities/package_config_file_builder.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:test/expect.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
 
@@ -140,7 +140,7 @@ void f(Object p) {
   test_class_isUsed_jsAnnotation() async {
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'js', rootPath: '$workspaceRootPath/js'),
+        ..add(name: 'js', rootFolder: getFolder('$workspaceRootPath/js')),
     );
 
     newFile('$workspaceRootPath/js/lib/js.dart', r'''

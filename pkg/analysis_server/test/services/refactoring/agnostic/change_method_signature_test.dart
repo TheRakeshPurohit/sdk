@@ -20,8 +20,8 @@ import 'package:analyzer/src/summary2/reference.dart';
 import 'package:analyzer/src/test_utilities/platform.dart';
 import 'package:analyzer/src/test_utilities/test_code_format.dart';
 import 'package:analyzer/src/utilities/extensions/file_system.dart';
-import 'package:analyzer/utilities/package_config_file_builder.dart';
 import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
@@ -600,7 +600,7 @@ void test(int a, int b) {}
 
     writeTestPackageConfig(
       config: PackageConfigFileBuilder()
-        ..add(name: 'foo', rootPath: '$packagesRootPath/foo'),
+        ..add(name: 'foo', rootFolder: getFolder('$packagesRootPath/foo')),
     );
 
     var availability = await _analyzeAvailability(r'''

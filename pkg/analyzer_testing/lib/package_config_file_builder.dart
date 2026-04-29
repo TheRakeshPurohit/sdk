@@ -1,11 +1,8 @@
-// Copyright (c) 2020, the Dart project authors. Please see the AUTHORS file
+// Copyright (c) 2026, the Dart project authors. Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
-@Deprecated('Use package:analyzer_testing/package_config_file_builder.dart.')
-library;
-
-import 'package:path/path.dart' as path;
+import 'package:analyzer/file_system/file_system.dart';
 
 /// Helper for building `.dart_tool/package_config.json` files.
 ///
@@ -14,23 +11,22 @@ import 'package:path/path.dart' as path;
 ///
 /// Use the [add] method to add package configurations. These configurations
 /// will accumulate into one package config file with the [toContent] method.
-@Deprecated('Use PackageConfigFileBuilder from analyzer_testing')
 class PackageConfigFileBuilder {
   final List<_PackageDescription> _packages = [];
 
-  /// The [rootPath] will be given to `toUriStr` of [toContent] to produce
-  /// the corresponding `file://` URI, normally a POSIX path.
+  /// Adds a package configuration.
   ///
-  /// The [packageUri] is optional (defaults to `'lib/'`), a relative path
-  /// resolved against the file URI of the [rootPath]. The result must be inside
-  /// the [rootPath].
+  /// The [rootFolder] is used to produce the package root URI.
+  ///
+  /// The [packageUriStr] is optional (defaults to `'lib/'`), a relative path
+  /// resolved against the root URI. The result must be inside the root URI.
   ///
   /// The [languageVersion] specifies the package's Dart language version, in
   /// the form of 'X.Y', such as '3.9'.
   void add({
     required String name,
-    required String rootPath,
-    String packageUri = 'lib/',
+    required Folder rootFolder,
+    String packageUriStr = 'lib/',
     String? languageVersion,
   }) {
     if (_packages.any((e) => e.name == name)) {
@@ -39,8 +35,8 @@ class PackageConfigFileBuilder {
     _packages.add(
       _PackageDescription(
         name: name,
-        rootPath: rootPath,
-        packageUri: packageUri,
+        rootFolder: rootFolder,
+        packageUriStr: packageUriStr,
         languageVersion: languageVersion,
       ),
     );
@@ -54,7 +50,7 @@ class PackageConfigFileBuilder {
   }
 
   /// Returns the contents of the built package config file.
-  String toContent({required path.Context pathContext}) {
+  String toContent() {
     var buffer = StringBuffer();
 
     buffer.writeln('{');
@@ -72,11 +68,10 @@ class PackageConfigFileBuilder {
       prefix = ' ' * 6;
       buffer.writeln('$prefix"name": "${package.name}",');
 
-      var rootUri = pathContext.toUri(package.rootPath).toString();
-      buffer.write('$prefix"rootUri": "$rootUri"');
+      buffer.write('$prefix"rootUri": "${package.rootFolder.toUri()}"');
 
       buffer.writeln(',');
-      buffer.write('$prefix"packageUri": "${package.packageUri}"');
+      buffer.write('$prefix"packageUri": "${package.packageUriStr}"');
 
       if (package.languageVersion != null) {
         buffer.writeln(',');
@@ -99,14 +94,14 @@ class PackageConfigFileBuilder {
 
 class _PackageDescription {
   final String name;
-  final String rootPath;
-  final String packageUri;
+  final Folder rootFolder;
+  final String packageUriStr;
   final String? languageVersion;
 
   _PackageDescription({
     required this.name,
-    required this.rootPath,
-    required this.packageUri,
+    required this.rootFolder,
+    required this.packageUriStr,
     required this.languageVersion,
   });
 }

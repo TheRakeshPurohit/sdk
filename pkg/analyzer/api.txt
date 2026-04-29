@@ -5016,8 +5016,8 @@ package:analyzer/utilities/extensions/uri.dart:
     isImplementation (getter: bool)
     isSamePackageAs (method: bool Function(Uri))
 package:analyzer/utilities/package_config_file_builder.dart:
-  PackageConfigFileBuilder (class extends Object):
-    new (constructor: PackageConfigFileBuilder Function())
+  PackageConfigFileBuilder (class extends Object, deprecated):
+    new (constructor: PackageConfigFileBuilder Function(), deprecated)
     add (method: void Function({String? languageVersion, required String name, String packageUri, required String rootPath}))
     copy (method: PackageConfigFileBuilder Function())
     toContent (method: String Function({required Context pathContext}))

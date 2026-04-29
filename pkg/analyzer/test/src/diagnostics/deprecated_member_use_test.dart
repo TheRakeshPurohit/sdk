@@ -4,7 +4,7 @@
 
 import 'package:analyzer/file_system/file_system.dart';
 import 'package:analyzer/src/diagnostic/diagnostic.dart' as diag;
-import 'package:analyzer/utilities/package_config_file_builder.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
 
 import '../dart/resolution/context_collection_resolution.dart';
@@ -145,7 +145,7 @@ class DeprecatedMemberUse_PackageBuildWorkspaceTest
   test_generated() async {
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$workspaceRootPath/aaa'),
+        ..add(name: 'aaa', rootFolder: getFolder('$workspaceRootPath/aaa')),
     );
 
     newPubspecYamlFile(testPackageRootPath, 'name: test');
@@ -171,7 +171,7 @@ void f(A a) {}
   test_lib() async {
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$workspaceRootPath/aaa'),
+        ..add(name: 'aaa', rootFolder: getFolder('$workspaceRootPath/aaa')),
     );
 
     newFile('$workspaceRootPath/aaa/lib/a.dart', r'''
@@ -231,7 +231,7 @@ $code
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$workspaceRootPath/aaa'),
+        ..add(name: 'aaa', rootFolder: getFolder('$workspaceRootPath/aaa')),
     );
   }
 

@@ -5,7 +5,7 @@
 import 'dart:async';
 
 import 'package:analysis_server/src/lsp/constants.dart';
-import 'package:analyzer/utilities/package_config_file_builder.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:language_server_protocol/protocol_custom_generated.dart';
 import 'package:language_server_protocol/protocol_generated.dart';
 import 'package:test/test.dart';
@@ -365,8 +365,8 @@ Widget b() => Text('B');
 
     var config = PackageConfigFileBuilder();
     // Do NOT add 'test' package here as writeTestPackageConfig will add it.
-    config.add(name: 'a', rootPath: join(projectFolderPath, 'pkgs', 'a'));
-    config.add(name: 'b', rootPath: join(projectFolderPath, 'pkgs', 'b'));
+    config.add(name: 'a', rootFolder: getFolder('$projectFolderPath/pkgs/a'));
+    config.add(name: 'b', rootFolder: getFolder('$projectFolderPath/pkgs/b'));
 
     writeTestPackageConfig(config: config, flutter: true);
 

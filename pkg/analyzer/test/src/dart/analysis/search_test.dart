@@ -10,7 +10,7 @@ import 'package:analyzer/src/dart/analysis/search.dart';
 import 'package:analyzer/src/test_utilities/find_element2.dart';
 import 'package:analyzer/src/util/performance/operation_performance.dart';
 import 'package:analyzer/src/utilities/cancellation.dart';
-import 'package:analyzer/utilities/package_config_file_builder.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:analyzer_utilities/testing/tree_string_sink.dart';
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
@@ -358,8 +358,8 @@ class {
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath)
-        ..add(name: 'bbb', rootPath: bbbPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath))
+        ..add(name: 'bbb', rootFolder: getFolder(bbbPackageRootPath)),
     );
 
     var file_a = newFile(aaaFilePath, 'class A {}');
@@ -905,7 +905,7 @@ class A {}
     // Configure `package:my`.
     writePackageConfig(
       myRoot.path,
-      PackageConfigFileBuilder()..add(name: 'my', rootPath: myRoot.path),
+      PackageConfigFileBuilder()..add(name: 'my', rootFolder: myRoot),
     );
 
     var myDriver = driverFor(myFile);
@@ -4545,7 +4545,7 @@ Random bar() => null;
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath)),
     );
 
     fileForContextSelection = testFile;
@@ -4643,7 +4643,7 @@ label:
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath)),
     );
 
     var libPath = convertPath('$aaaPackageRootPath/lib/a.dart');
@@ -4873,7 +4873,7 @@ main() {
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath)),
     );
 
     fileForContextSelection = testFile;
@@ -5913,7 +5913,7 @@ void f() {
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath)),
     );
 
     fileForContextSelection = testFile;
@@ -6018,7 +6018,7 @@ package:test/part2.dart v2@16
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath)),
     );
 
     fileForContextSelection = this.testFile;
@@ -6858,8 +6858,8 @@ class F {}
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath)
-        ..add(name: 'bbb', rootPath: bbbPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath))
+        ..add(name: 'bbb', rootFolder: getFolder(bbbPackageRootPath)),
     );
 
     var tUri = 'package:test/test.dart';
@@ -6928,8 +6928,8 @@ class A {
 
     writeTestPackageConfig(
       PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: aaaPackageRootPath)
-        ..add(name: 'bbb', rootPath: bbbPackageRootPath),
+        ..add(name: 'aaa', rootFolder: getFolder(aaaPackageRootPath))
+        ..add(name: 'bbb', rootFolder: getFolder(bbbPackageRootPath)),
     );
 
     addTestFile('class T implements List {}');

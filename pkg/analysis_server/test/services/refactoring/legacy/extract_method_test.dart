@@ -4,9 +4,9 @@
 
 import 'package:analysis_server/src/services/refactoring/legacy/extract_method.dart';
 import 'package:analyzer/source/source.dart';
-import 'package:analyzer/utilities/package_config_file_builder.dart';
 import 'package:analyzer_plugin/protocol/protocol_common.dart';
 import 'package:analyzer_plugin/src/utilities/string_utilities.dart';
+import 'package:analyzer_testing/package_config_file_builder.dart';
 import 'package:analyzer_testing/utilities/utilities.dart';
 import 'package:linter/src/rules.dart';
 import 'package:test/test.dart';
@@ -243,8 +243,8 @@ class A {}
 
     writeTestPackageConfig(
       config: PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$workspaceRootPath/aaa')
-        ..add(name: 'bbb', rootPath: '$workspaceRootPath/bbb'),
+        ..add(name: 'aaa', rootFolder: getFolder('$workspaceRootPath/aaa'))
+        ..add(name: 'bbb', rootFolder: getFolder('$workspaceRootPath/bbb')),
     );
 
     await resolveTestCode('''
@@ -270,8 +270,8 @@ import 'package:bbb/bbb.dart';
 
     writeTestPackageConfig(
       config: PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$workspaceRootPath/aaa')
-        ..add(name: 'bbb', rootPath: '$workspaceRootPath/bbb'),
+        ..add(name: 'aaa', rootFolder: getFolder('$workspaceRootPath/aaa'))
+        ..add(name: 'bbb', rootFolder: getFolder('$workspaceRootPath/bbb')),
     );
 
     await resolveTestCode('''
@@ -299,10 +299,10 @@ import 'package:bbb/bbb.dart';
 
     writeTestPackageConfig(
       config: PackageConfigFileBuilder()
-        ..add(name: 'aaa', rootPath: '$workspaceRootPath/aaa')
-        ..add(name: 'bbb', rootPath: '$workspaceRootPath/bbb')
-        ..add(name: 'ccc', rootPath: '$workspaceRootPath/ccc')
-        ..add(name: 'ddd', rootPath: '$workspaceRootPath/ddd'),
+        ..add(name: 'aaa', rootFolder: getFolder('$workspaceRootPath/aaa'))
+        ..add(name: 'bbb', rootFolder: getFolder('$workspaceRootPath/bbb'))
+        ..add(name: 'ccc', rootFolder: getFolder('$workspaceRootPath/ccc'))
+        ..add(name: 'ddd', rootFolder: getFolder('$workspaceRootPath/ddd')),
     );
 
     await resolveTestCode('''
