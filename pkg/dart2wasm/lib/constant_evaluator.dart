@@ -37,7 +37,7 @@ class ConstantEvaluator extends kernel.ConstantEvaluator
       _deferredLoadingEnabled =
           options.translatorOptions.enableDeferredLoading ||
           options.translatorOptions.enableMultiModuleStressTestMode,
-      _deferredLoadingViaEmbedderLoadId = options.loadsIdsUri != null,
+      _deferredLoadingViaEmbedderLoadId = options.useLoadIds,
       _dartInternalCheckBoundsGetter = libraryIndex.tryGetProcedure(
         "dart:_internal",
         LibraryIndex.topLevel,

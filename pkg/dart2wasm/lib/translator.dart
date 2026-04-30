@@ -599,12 +599,12 @@ class Translator with KernelNodes {
       getThisModuleGlobal(moduleBuilder);
     }
 
-    // This getter will be null if we pass e.g. `--load-ids=<uri>` as the
+    // This getter will be null if we pass e.g. `--use-load-ids` as the
     // runtime code will then be pruned to call out to embedder instead of
     // consulting the load mapping bundled in the app.
     final loadingMapGetter = dartInternalLoadingMapGetter;
     if (loadingMapGetter != null && !options.standalone) {
-      // This function will be null if we didn't pass `--load-ids=<uri>` but we
+      // This function will be null if we didn't pass `--use-load-ids` but we
       // ended up not having any actual deferred code (e.g. `await
       // foo.loadLibrary()` is never called anywhere).
       final function =

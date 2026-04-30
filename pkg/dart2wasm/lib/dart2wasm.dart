@@ -179,7 +179,8 @@ final List<Option> options = [
     (o, value) => o.translatorOptions.enableDeferredLoading = value,
     defaultsTo: _d.translatorOptions.enableDeferredLoading,
   ),
-  UriOption("load-ids", (o, value) => o.loadsIdsUri = value),
+  UriOption("deferred-map", (o, value) => o.deferredMapUri = value),
+  Flag("use-load-ids", (o, value) => o.useLoadIds = value),
   UriOption(
     "read-program-split",
     (o, value) => o.programSplitConstraintsUri = value,

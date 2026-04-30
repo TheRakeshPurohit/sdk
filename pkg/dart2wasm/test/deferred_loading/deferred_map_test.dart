@@ -1,4 +1,4 @@
-// Copyright (c) 2025, the Dart project authors.  Please see the AUTHORS file
+// Copyright (c) 2026, the Dart project authors.  Please see the AUTHORS file
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
@@ -15,7 +15,7 @@ const String helperJsLoadIdLookupToken = 'LOAD_ID_LOOKUP';
 const String helperJsModuleDirToken = 'MODULE_DIR';
 
 final String goldenPath =
-    '${path.dirname(Platform.script.path)}/data/deferred_load_ids.golden.json';
+    '${path.dirname(Platform.script.path)}/data/deferred_map.golden.json';
 final String mainDart = '${path.dirname(Platform.script.path)}/data/main.dart';
 final String helperJs = '${path.dirname(Platform.script.path)}/helper.js';
 
@@ -27,7 +27,7 @@ Future<void> main(List<String> args) async {
 
   await withTempDir((tmpDirPath) async {
     final tmpDir = File(tmpDirPath);
-    final loadIdsUri = tmpDir.uri.resolve('deferred_load_ids.json');
+    final deferredMapUri = tmpDir.uri.resolve('deferred_map.json');
     final outFilename = '${tmpDir.path}/out.wasm';
     // Compile the test
     await run([
@@ -36,25 +36,27 @@ Future<void> main(List<String> args) async {
       mainDart,
       '--platform=$platformDill',
       '--enable-deferred-loading',
-      '--load-ids=$loadIdsUri',
+      '--deferred-map=$deferredMapUri',
       outFilename,
     ]);
 
-    final loadIdsContent = await File.fromUri(loadIdsUri).readAsString();
+    final deferredMapContent = await File.fromUri(
+      deferredMapUri,
+    ).readAsString();
     final goldenFile = File(goldenPath);
 
     if (argsResult.flag('update-golden')) {
-      print('Updating golden:\n$loadIdsContent');
-      await goldenFile.writeAsString(loadIdsContent);
+      print('Updating golden:\n$deferredMapContent');
+      await goldenFile.writeAsString(deferredMapContent);
       return;
     }
 
-    // Ensure the load IDs JSON matches the golden.
-    Expect.equals(await goldenFile.readAsString(), loadIdsContent);
+    // Ensure the deferred map JSON matches the golden.
+    Expect.equals(await goldenFile.readAsString(), deferredMapContent);
 
     // Extract a map from each load ID to its corresponding module.
     final loadIdToModules = <String, List<String>>{};
-    final json = const JsonDecoder().convert(loadIdsContent);
+    final json = const JsonDecoder().convert(deferredMapContent);
     (json as Map).forEach((_, info) {
       ((info as Map)['imports'] as Map).forEach((loadId, modules) {
         loadIdToModules[loadId] = (modules as List).cast<String>();

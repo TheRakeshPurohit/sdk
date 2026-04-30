@@ -42,7 +42,8 @@ class WasmCompilerOptions {
   Uri mainUri;
   String outputFile;
   String? depFile;
-  Uri? loadsIdsUri;
+  Uri? deferredMapUri;
+  bool useLoadIds = false;
   Uri? programSplitConstraintsUri;
   Map<String, String> environment = {};
   Map<fe.ExperimentalFlag, bool> feExperimentalFlags = const {};
@@ -125,12 +126,20 @@ class WasmCompilerOptions {
     }
 
     if (!translatorOptions.enableDeferredLoading) {
-      if (loadsIdsUri != null) {
+      if (deferredMapUri != null) {
         throw ArgumentError(
-          "--load-ids can only be used with "
+          "--deferred-map can only be used with "
           "--enable-deferred-loading",
         );
       }
+      if (useLoadIds) {
+        throw ArgumentError(
+          "--use-load-ids can only be used with "
+          "--enable-deferred-loading",
+        );
+      }
+    } else if (useLoadIds && deferredMapUri == null) {
+      throw ArgumentError("--use-load-ids requires --deferred-map");
     }
 
     if (translatorOptions.standalone) {

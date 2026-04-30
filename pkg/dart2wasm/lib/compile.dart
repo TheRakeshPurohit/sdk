@@ -651,9 +651,9 @@ Future<CompilationResult> _runCodegenPhase(
 
   final supportJs = _generateSupportJs(options.translatorOptions);
 
-  final loadIdsFile = options.loadsIdsUri;
-  if (loadIdsFile != null) {
-    await writeLoadIdsFile(component, coreTypes, options, loadingMap);
+  final deferredMapFile = options.deferredMapUri;
+  if (deferredMapFile != null) {
+    await writeDeferredMapFile(component, coreTypes, options, loadingMap);
   }
 
   final wasmOutputFilename = path.basename(options.outputFile);
