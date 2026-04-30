@@ -164,36 +164,6 @@ class NodeLocator2 extends UnifyingAstVisitor<void> {
   }
 }
 
-/// An object that will replace one child node in an AST node with another node,
-/// or remove the old node if the child slot is nullable.
-class NodeReplacer {
-  /// Replace the [oldNode] with the [newNode] in the AST structure containing
-  /// the old node. Return `true` if the replacement was successful.
-  ///
-  /// Throws an [ArgumentError] if [oldNode] does not have a parent node, or if
-  /// the AST structure has been corrupted.
-  ///
-  /// If [newNode] is the parent of [oldNode] already (because [newNode] became
-  /// the parent of [oldNode] in its constructor), this action will loop
-  /// infinitely; pass [oldNode]'s previous parent as [parent] to avoid this.
-  static bool replace(AstNode oldNode, AstNode? newNode, {AstNode? parent}) {
-    if (identical(oldNode, newNode)) {
-      return true;
-    }
-    var parentImpl = parent ?? oldNode.parent;
-    if (parentImpl is! AstNodeImpl) {
-      throw ArgumentError("The old node is not a child of another node");
-    }
-    var oldNodeImpl = oldNode as AstNodeImpl;
-    if (newNode == null) {
-      parentImpl.removeChild(oldNodeImpl);
-    } else {
-      parentImpl.replaceChild(oldNodeImpl, newNode as AstNodeImpl);
-    }
-    return true;
-  }
-}
-
 /// Traverse the AST from initial child node to successive parents, building a
 /// collection of local variable and parameter names visible to the initial
 /// child node. In case of name shadowing, the first name seen is the most

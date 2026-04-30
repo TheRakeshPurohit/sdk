@@ -29,7 +29,6 @@ import 'package:analyzer/error/listener.dart';
 import 'package:analyzer/source/source.dart';
 import 'package:analyzer/src/dart/ast/ast.dart';
 import 'package:analyzer/src/dart/ast/extensions.dart';
-import 'package:analyzer/src/dart/ast/utilities.dart';
 import 'package:analyzer/src/dart/element/element.dart';
 import 'package:analyzer/src/dart/element/extensions.dart';
 import 'package:analyzer/src/dart/element/generic_inferrer.dart';
@@ -1380,9 +1379,9 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
   /// the parent of [oldNode] in its constructor), this action will loop
   /// infinitely; pass [oldNode]'s previous parent as [parent] to avoid this.
   void replaceExpression(
-    Expression oldNode,
+    ExpressionImpl oldNode,
     ExpressionImpl newNode, {
-    AstNode? parent,
+    AstNodeImpl? parent,
   }) {
     assert(() {
       assert(_replacements[oldNode] == null);
@@ -1399,7 +1398,8 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
       oldExpression: oldNode,
       newExpression: newNode,
     );
-    NodeReplacer.replace(oldNode, newNode, parent: parent);
+    parent ??= oldNode.parent;
+    parent!.replaceChild(oldNode, newNode);
     nullSafetyDeadCodeVerifier.maybeRewriteFirstDeadNode(oldNode, newNode);
   }
 
@@ -1507,7 +1507,7 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
           operator: node.period,
           propertyName: node.identifier,
         );
-        NodeReplacer.replace(node, propertyAccess);
+        node.replaceWith(propertyAccess);
         inferenceLogWriter?.exitLValue(node);
         return _propertyElementResolver.resolvePropertyAccess(
           node: propertyAccess,

@@ -5,7 +5,6 @@
 import 'package:analyzer/source/line_info.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer/src/dart/ast/ast.dart';
-import 'package:analyzer/src/dart/ast/utilities.dart';
 import 'package:analyzer/src/generated/utilities_collection.dart';
 import 'package:analyzer/src/test_utilities/find_node.dart';
 import 'package:test/test.dart';
@@ -2005,7 +2004,7 @@ void f() sync* {
     var child = childAccessor(destination)!;
     expect(child.parent, destination);
 
-    expect(NodeReplacer.replace(child, null), isTrue);
+    (child as AstNodeImpl).removeFromParent();
     expect(childAccessor(destination), isNull);
   }
 
@@ -2018,7 +2017,7 @@ void f() sync* {
   }) {
     expect(child.parent, destination);
 
-    NodeReplacer.replace(child, replacement);
+    (child as AstNodeImpl).replaceWith(replacement as AstNodeImpl);
     expect(replacement.parent, destination);
   }
 
@@ -2037,7 +2036,7 @@ void f() sync* {
       expect(child.parent, destination);
 
       var replacement = childAccessor(source);
-      NodeReplacer.replace(child, replacement);
+      (child as AstNodeImpl).replaceWith(replacement as AstNodeImpl);
       expect(childAccessor(destination), replacement);
       expect(replacement.parent, destination);
     }
