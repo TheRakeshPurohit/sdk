@@ -13,11 +13,11 @@ import 'package:analyzer/src/diagnostic/diagnostic_factory.dart';
 import 'package:analyzer/src/error/listener.dart';
 import 'package:analyzer/src/generated/source.dart';
 import 'package:analyzer/src/lint/registry.dart';
+import 'package:analyzer/src/util/uri.dart';
 import 'package:analyzer/src/util/yaml.dart';
 import 'package:analyzer/src/utilities/extensions/string.dart';
 import 'package:analyzer/src/utilities/uri_cache.dart';
 import 'package:collection/collection.dart';
-import 'package:path/path.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 
@@ -99,9 +99,7 @@ class LinterRuleOptionsValidator extends OptionsValidator {
     if (includePath.isEmpty) return null;
 
     if (sourceUri != null) {
-      var source = FileSource(
-        _resourceProvider.getFile(sourceUri.toFilePath()),
-      );
+      var source = FileSource(_fileFromFileUri(sourceUri));
       var resolved = _sourceFactory.resolveUri(source, includePath);
       if (resolved is FileSource) {
         return resolved.file.toUri();
@@ -171,6 +169,11 @@ class LinterRuleOptionsValidator extends OptionsValidator {
     return includeRules;
   }
 
+  File _fileFromFileUri(Uri uri) {
+    var path = fileUriToNormalizedPath(_resourceProvider.pathContext, uri);
+    return _resourceProvider.getFile(path);
+  }
+
   /// Returns the first rule that is incompatible with the given [rule].
   ///
   /// If the rule is found in the [rules] map, it returns the file path
@@ -238,16 +241,12 @@ class LinterRuleOptionsValidator extends OptionsValidator {
           case var localIncompatible when localIncompatible.isNotEmpty) {
         reporter.report(
           _diagnosticFactory.incompatibleLint(
-            source: FileSource(
-              _resourceProvider.getFile(
-                ruleData.node.span.sourceUrl!.toFilePath(),
-              ),
-            ),
+            source: FileSource(_fileFromFileUri(ruleData.node.span.sourceUrl!)),
             reference: ruleData.node,
             incompatibleRules: {
               for (var data in localIncompatible)
-                if (ruleData.node.span.sourceUrl!.toString() case var value)
-                  fromUri(value): data.ruleData.node,
+                if (ruleData.node.span.sourceUrl case var uri?)
+                  _fileFromFileUri(uri).path: data.ruleData.node,
             },
           ),
         );
@@ -256,18 +255,14 @@ class LinterRuleOptionsValidator extends OptionsValidator {
           case var includedIncompatible when includedIncompatible.isNotEmpty) {
         reporter.report(
           _diagnosticFactory.incompatibleLintFiles(
-            source: FileSource(
-              _resourceProvider.getFile(
-                ruleData.node.span.sourceUrl!.toFilePath(),
-              ),
-            ),
+            source: FileSource(_fileFromFileUri(ruleData.node.span.sourceUrl!)),
             reference: ruleData.node,
             incompatibleRules: {
               for (var data in includedIncompatible)
                 if (data.file?.value case String value)
                   if (_actualIncludePath(value, data.file?.span.sourceUrl)
                       case var uri?)
-                    fromUri(uri): data.ruleData.node,
+                    _fileFromFileUri(uri).path: data.ruleData.node,
             },
           ),
         );
@@ -310,7 +305,7 @@ class LinterRuleOptionsValidator extends OptionsValidator {
         if (pathStr.path == uri?.path) {
           continue;
         }
-        file = _resourceProvider.getFile(fromUri(pathStr));
+        file = _fileFromFileUri(pathStr);
       } catch (_) {
         // if files are invalid, we ignore them
         continue;
@@ -354,18 +349,14 @@ class LinterRuleOptionsValidator extends OptionsValidator {
       if (incompatible.isNotEmpty) {
         reporter.report(
           _diagnosticFactory.incompatibleLintIncluded(
-            source: FileSource(
-              _resourceProvider.getFile(
-                includeNode.span.sourceUrl!.toFilePath(),
-              ),
-            ),
+            source: FileSource(_fileFromFileUri(includeNode.span.sourceUrl!)),
             reference: includeNode,
             incompatibleRules: {
               for (var data in incompatible)
                 if (data.file?.value case String value)
                   if (_actualIncludePath(value, data.file?.span.sourceUrl)
                       case var uri?)
-                    fromUri(uri): data.ruleData.node,
+                    _fileFromFileUri(uri).path: data.ruleData.node,
             },
             fileCount: incompatible.map((data) => data.file).toSet().length,
           ),

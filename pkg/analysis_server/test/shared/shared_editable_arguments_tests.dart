@@ -803,7 +803,7 @@ class MyWidget extends StatelessWidget {
 
   Future<void> test_location_bad_nonDart() async {
     var textFilePath = pathContext.join(projectFolderPath, 'lib', 'test.txt');
-    var textFileUri = Uri.file(textFilePath);
+    var textFileUri = toUri(textFilePath);
 
     var content = 'my text';
     createFile(textFilePath, content);

@@ -52,7 +52,7 @@ class ExhaustiveFlutterWidgetPreviewsTest
 
   Future<void> test_addDeletePreviews() async {
     var filePath = join(projectFolderPath, 'lib', 'previews.dart');
-    var fileUri = Uri.file(filePath);
+    var fileUri = toUri(filePath);
     newFile(filePath, '''
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
@@ -120,7 +120,7 @@ Widget multiPreview() => Text('Multi');
 
     await initialize();
     var result = await getFlutterWidgetPreviews(
-      Uri.file(join(projectFolderPath, 'lib', 'previews.dart')),
+      toUri(join(projectFolderPath, 'lib', 'previews.dart')),
     );
 
     expect(result, isNotNull);
@@ -197,7 +197,7 @@ Widget multiPreview() => Text('Multi');
 
     await initialize();
     var result = await getFlutterWidgetPreviews(
-      Uri.file(join(projectFolderPath, 'lib', 'previews.dart')),
+      toUri(join(projectFolderPath, 'lib', 'previews.dart')),
     );
 
     expect(result, isNotNull);
@@ -239,7 +239,7 @@ Widget customPreview() => Text('Custom');
 
     await initialize();
     var result = await getFlutterWidgetPreviews(
-      Uri.file(join(projectFolderPath, 'lib', 'previews.dart')),
+      toUri(join(projectFolderPath, 'lib', 'previews.dart')),
     );
 
     expect(result, isNotNull);
@@ -256,7 +256,7 @@ Widget customPreview() => Text('Custom');
   Future<void> test_errorsAndPropagation() async {
     var depPath = join(projectFolderPath, 'lib', 'dep.dart');
     var mainPath = join(projectFolderPath, 'lib', 'main.dart');
-    var mainUri = Uri.file(mainPath);
+    var mainUri = toUri(mainPath);
 
     newFile(depPath, 'int x = "not an int"; // Error');
     newFile(mainPath, '''
@@ -297,7 +297,7 @@ Widget preview() => Text(x.toString()) // Missing semicolon
   Future<void> test_parts() async {
     var mainPath = join(projectFolderPath, 'lib', 'main.dart');
     var partPath = join(projectFolderPath, 'lib', 'part.dart');
-    var mainUri = Uri.file(mainPath);
+    var mainUri = toUri(mainPath);
 
     newFile(mainPath, '''
 import 'package:flutter/material.dart';

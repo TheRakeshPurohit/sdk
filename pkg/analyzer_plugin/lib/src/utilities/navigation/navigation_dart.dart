@@ -12,6 +12,7 @@ import 'package:analyzer/file_system/file_system.dart';
 import 'package:analyzer/src/dart/ast/ast.dart';
 import 'package:analyzer/src/dart/ast/extensions.dart';
 import 'package:analyzer/src/dart/element/element.dart';
+import 'package:analyzer/src/util/uri.dart';
 import 'package:analyzer_plugin/protocol/protocol_common.dart' as protocol;
 import 'package:analyzer_plugin/utilities/analyzer_converter.dart';
 import 'package:analyzer_plugin/utilities/navigation/document_links.dart';
@@ -286,11 +287,11 @@ class _DartNavigationComputerVisitor extends RecursiveAstVisitor<void> {
         in _documentLinkVisitor
             .findLinks(node)
             .where((link) => link.targetUri.isScheme('file'))) {
-      computer._addRegionForLibrary(
-        link.offset,
-        link.length,
-        link.targetUri.toFilePath(),
+      var targetPath = fileUriToNormalizedPath(
+        resourceProvider.pathContext,
+        link.targetUri,
       );
+      computer._addRegionForLibrary(link.offset, link.length, targetPath);
     }
   }
 

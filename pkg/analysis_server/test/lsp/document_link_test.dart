@@ -215,7 +215,7 @@ linter:
 
   Future<void> test_exampleLink() async {
     var exampleFolderPath = join(projectFolderPath, 'examples', 'api');
-    var exampleFileUri = Uri.file(join(exampleFolderPath, 'foo.dart'));
+    var exampleFileUri = toUri(join(exampleFolderPath, 'foo.dart'));
 
     var code = TestCode.parse('''
 /// {@tool dartpad}

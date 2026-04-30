@@ -8,13 +8,13 @@ import 'package:analyzer/analysis_rule/analysis_rule.dart';
 import 'package:analyzer/diagnostic/diagnostic.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
+import 'package:analyzer/source/file_source.dart';
 import 'package:analyzer/src/analysis_options/analysis_options_provider.dart';
 import 'package:analyzer/src/analysis_options/options_file_validator.dart';
 import 'package:analyzer/src/context/source.dart';
 import 'package:analyzer/src/diagnostic/diagnostic.dart' as diag;
 import 'package:analyzer/src/file_system/file_system.dart';
 import 'package:analyzer/src/generated/source.dart';
-import 'package:analyzer/src/string_source.dart';
 import 'package:analyzer/src/test_utilities/lint_registration_mixin.dart';
 import 'package:analyzer_testing/resource_provider_mixin.dart';
 import 'package:analyzer_testing/src/analysis_rule/pub_package_resolution.dart';
@@ -80,9 +80,9 @@ class ErrorCodeValuesTest {
 class OptionsFileValidatorTest
     with LintRegistrationMixin, ResourceProviderMixin {
   late final OptionsFileValidator validator = OptionsFileValidator(
-    TestSource(),
+    FileSource(newFile('/analysis_options.yaml', '')),
     isPrimarySource: true,
-    contextRoot: '/',
+    contextRoot: convertPath('/'),
     optionsProvider: optionsProvider,
     resourceProvider: resourceProvider,
     sourceFactory: SourceFactory([ResourceUriResolver(resourceProvider)]),
@@ -765,11 +765,16 @@ analyzer:
   }
 
   List<Diagnostic> validate(String source, List<DiagnosticCode> expected) {
-    var options = optionsProvider.getOptionsFromString(source);
+    var optionsFile = newFile('/analysis_options.yaml', source);
+    var sourceUrl = optionsFile.toUri();
+    var options = optionsProvider.getOptionsFromString(
+      source,
+      sourceUrl: sourceUrl,
+    );
     var diagnosticListener = RecordingDiagnosticListener();
     validator.validate(
       options,
-      DiagnosticReporter(diagnosticListener, StringSource(source, null)),
+      DiagnosticReporter(diagnosticListener, FileSource(optionsFile)),
     );
     var diagnostics = diagnosticListener.diagnostics;
     expect(
@@ -806,7 +811,7 @@ class OptionsProviderTest with ResourceProviderMixin {
     var diagnostics = AnalysisOptionsAnalyzer(
       initialSource: sourceFactory.forUri2(toUri(optionsFilePath))!,
       sourceFactory: sourceFactory,
-      contextRoot: '/',
+      contextRoot: convertPath('/'),
       sdkVersionConstraint: null,
       resourceProvider: resourceProvider,
     ).walkIncludes(content: code);
@@ -1164,7 +1169,7 @@ version: 0.0.1
     var diagnostics = AnalysisOptionsAnalyzer(
       initialSource: sourceFactory.forUri2(toUri(filePath))!,
       sourceFactory: sourceFactory,
-      contextRoot: '/',
+      contextRoot: convertPath('/'),
       sdkVersionConstraint: null,
       resourceProvider: resourceProvider,
     ).walkIncludes(content: code);
@@ -1191,7 +1196,7 @@ version: 0.0.1
     var diagnostics = AnalysisOptionsAnalyzer(
       initialSource: sourceFactory.forUri2(toUri(filePath))!,
       sourceFactory: sourceFactory,
-      contextRoot: '/',
+      contextRoot: convertPath('/'),
       sdkVersionConstraint: null,
       resourceProvider: resourceProvider,
     ).walkIncludes(content: code);
@@ -1217,7 +1222,7 @@ version: 0.0.1
     var diagnostics = AnalysisOptionsAnalyzer(
       initialSource: sourceFactory.forUri2(toUri(inner1Path))!,
       sourceFactory: sourceFactory,
-      contextRoot: '/',
+      contextRoot: convertPath('/'),
       sdkVersionConstraint: null,
       resourceProvider: resourceProvider,
     ).walkIncludes(content: code);
@@ -1228,9 +1233,9 @@ version: 0.0.1
   List<Diagnostic> validate(String code, List<DiagnosticCode> expected) {
     newFile(optionsFilePath, code);
     var diagnostics = AnalysisOptionsAnalyzer(
-      initialSource: sourceFactory.forUri('file://$optionsFilePath')!,
+      initialSource: sourceFactory.forUri2(toUri(optionsFilePath))!,
       sourceFactory: sourceFactory,
-      contextRoot: '/',
+      contextRoot: convertPath('/'),
       sdkVersionConstraint: null,
       resourceProvider: resourceProvider,
     ).walkIncludes(content: code);

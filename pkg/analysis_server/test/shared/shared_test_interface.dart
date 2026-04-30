@@ -73,6 +73,9 @@ abstract interface class SharedTestInterface {
 
   FutureOr<void> setUp();
 
+  /// Converts [filePath] to a file:/// URI.
+  Uri toUri(String filePath);
+
   /// Writes a package_config.json for the package under test (considered
   /// 'package:test').
   void writeTestPackageConfig({

@@ -193,7 +193,8 @@ class DartDocumentLinkVisitor extends RecursiveAstVisitor<void> {
         ]);
         var offset = contentsStart + startIndex;
         var length = endIndex - startIndex;
-        _documentLinks.add(DocumentLink(offset, length, Uri.file(examplePath)));
+        var exampleFile = resourceProvider.getFile(examplePath);
+        _documentLinks.add(DocumentLink(offset, length, exampleFile.toUri()));
       }
     }
   }

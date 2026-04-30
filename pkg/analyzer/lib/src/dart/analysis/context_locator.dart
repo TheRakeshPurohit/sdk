@@ -804,6 +804,18 @@ class _ContextLocator {
     return _roots;
   }
 
+  /// Picks a workspace with the most specific root.
+  ///
+  /// If any of [first] and [second] is null, returns the other one. If the root
+  /// of [first] is non-null and is within the root of [second], returns
+  /// [second]. If the roots aren't within each other, return [first].
+  Workspace? _mostSpecificWorkspace(Workspace? first, Workspace? second) {
+    if (first == null) return second;
+    if (second == null) return first;
+    var pathContext = _resourceProvider.pathContext;
+    return pathContext.isWithin(first.root, second.root) ? second : first;
+  }
+
   /// Sorts [includedFolders] into either pub workspace resolution or not.
   ///
   /// For each [Folder] in [includedFolders], sorts into either
@@ -909,20 +921,6 @@ class _ContextLocator {
     }
 
     return true;
-  }
-
-  /// Picks a workspace with the most specific root.
-  ///
-  /// If any of [first] and [second] is null, returns the other one. If the root
-  /// of [first] is non-null and is within the root of [second], returns
-  /// [second]. If the roots aren't within each other, return [first].
-  static Workspace? _mostSpecificWorkspace(
-    Workspace? first,
-    Workspace? second,
-  ) {
-    if (first == null) return second;
-    if (second == null) return first;
-    return isWithin(first.root, second.root) ? second : first;
   }
 }
 
