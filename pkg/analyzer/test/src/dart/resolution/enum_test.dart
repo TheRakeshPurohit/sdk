@@ -18,6 +18,25 @@ main() {
 
 @reflectiveTest
 class EnumDeclarationResolutionTest extends PubPackageResolutionTest {
+  test_constant_argumentList_functionExpression_flowAnalysis() async {
+    await assertErrorsInCode(
+      r'''
+enum E {
+  v(() {
+    Object? x = 0;
+    if (x is int) {
+      x.isEven;
+    }
+  });
+
+  final void Function() f;
+  const E(this.f);
+}
+''',
+      [error(diag.constWithNonConstantArgument, 13, 69)],
+    );
+  }
+
   test_constructor_argumentList_contextType() async {
     await assertNoErrorsInCode(r'''
 enum E {

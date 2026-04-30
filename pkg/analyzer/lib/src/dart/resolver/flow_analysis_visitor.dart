@@ -112,6 +112,9 @@ class FlowAnalysisHelper {
     required this.typeAnalyzerOptions,
   });
 
+  /// Whether flow analysis is currently available.
+  bool get isActive => flow != null;
+
   LocalVariableTypeProvider get localVariableTypeProvider {
     return _LocalVariableTypeProvider(this);
   }
@@ -352,6 +355,28 @@ class FlowAnalysisHelper {
           initialized: variable.initializer != null,
         );
       }
+    }
+  }
+
+  /// Runs [operation] with flow analysis available for [node].
+  ///
+  /// If flow analysis is already active, reuses it. Otherwise this method
+  /// creates a body-or-initializer flow context and closes it after
+  /// [operation].
+  T withFlowAnalysis<T>({
+    required AstNodeImpl node,
+    required List<FormalParameterElementImpl>? formalParameters,
+    required T Function() operation,
+  }) {
+    if (isActive) {
+      return operation();
+    }
+
+    bodyOrInitializer_enter(node, formalParameters);
+    try {
+      return operation();
+    } finally {
+      bodyOrInitializer_exit();
     }
   }
 

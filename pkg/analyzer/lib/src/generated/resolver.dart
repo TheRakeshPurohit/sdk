@@ -509,9 +509,9 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
     for (int i = 0; i < arguments.length; i++) {
       checkForArgumentTypeNotAssignableForArgument(
         arguments[i],
-        whyNotPromoted: flowAnalysis.flow == null
-            ? null
-            : whyNotPromotedArguments[i],
+        whyNotPromoted: flowAnalysis.isActive
+            ? whyNotPromotedArguments[i]
+            : null,
       );
     }
   }
@@ -637,7 +637,7 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
     SimpleIdentifier node,
     Element? element,
   ) {
-    if (flowAnalysis.flow == null) {
+    if (!flowAnalysis.isActive) {
       return;
     }
 
@@ -1867,24 +1867,22 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
     inferenceLogWriter?.enterAnnotation(node);
     // Annotations can contain expressions, so we need flow analysis to be
     // available to process those expressions.
-    var isTopLevel = flowAnalysis.flow == null;
-    if (isTopLevel) {
-      flowAnalysis.bodyOrInitializer_enter(node, null);
-    }
-    assert(flowAnalysis.flow != null);
-    var whyNotPromotedArguments =
-        <Map<SharedTypeView, NonPromotionReason> Function()>[];
-    _annotationResolver.resolve(node, whyNotPromotedArguments);
-    var arguments = node.arguments;
-    if (arguments != null) {
-      checkForArgumentTypesNotAssignableInList(
-        arguments,
-        whyNotPromotedArguments,
-      );
-    }
-    if (isTopLevel) {
-      flowAnalysis.bodyOrInitializer_exit();
-    }
+    flowAnalysis.withFlowAnalysis(
+      node: node,
+      formalParameters: null,
+      operation: () {
+        var whyNotPromotedArguments =
+            <Map<SharedTypeView, NonPromotionReason> Function()>[];
+        _annotationResolver.resolve(node, whyNotPromotedArguments);
+        var arguments = node.arguments;
+        if (arguments != null) {
+          checkForArgumentTypesNotAssignableInList(
+            arguments,
+            whyNotPromotedArguments,
+          );
+        }
+      },
+    );
     inferenceLogWriter?.exitAnnotation(node);
   }
 
@@ -2784,16 +2782,23 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
     var arguments = node.arguments;
     if (arguments != null) {
       var argumentList = arguments.argumentList;
-      for (var argument in argumentList.arguments) {
-        analyzeExpression(
-          argument.argumentExpression,
-          SharedTypeSchemaView(
-            argument.correspondingParameter?.type ??
-                UnknownInferredType.instance,
-          ),
-        );
-        popRewrite();
-      }
+      flowAnalysis.withFlowAnalysis(
+        node: node,
+        formalParameters: null,
+        operation: () {
+          for (var argument in argumentList.arguments) {
+            analyzeExpression(
+              argument.argumentExpression,
+              SharedTypeSchemaView(
+                argument.correspondingParameter?.type ??
+                    UnknownInferredType.instance,
+              ),
+            );
+            popRewrite();
+          }
+        },
+      );
+
       arguments.typeArguments?.accept(this);
 
       var whyNotPromotedArguments =
@@ -2988,15 +2993,14 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
     // Formal parameter lists can contain default values, which in turn contain
     // expressions, so we need flow analysis to be available to process those
     // expressions.
-    var isTopLevel = flowAnalysis.flow == null;
-    if (isTopLevel) {
-      flowAnalysis.bodyOrInitializer_enter(node, null);
-    }
-    checkUnreachableNode(node);
-    node.visitChildren(this);
-    if (isTopLevel) {
-      flowAnalysis.bodyOrInitializer_exit();
-    }
+    flowAnalysis.withFlowAnalysis(
+      node: node,
+      formalParameters: null,
+      operation: () {
+        checkUnreachableNode(node);
+        node.visitChildren(this);
+      },
+    );
   }
 
   @override
