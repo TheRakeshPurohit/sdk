@@ -175,6 +175,16 @@ static void Escape(std::string& dst, const char* src, int len) {
   }
 }
 
+// Splits two null-terminated strings into a common prefix and suffix
+// and the mismatched parts of the two strings, escaping the outputs.
+//
+// If the two strings are the same, then an escaped version of
+// the string is in the prefix and the other outputs are empty.
+//
+// If there is no common prefix and suffix or the size of the common
+// prefix and suffix combined is small in comparison to the size
+// of the two strings, then the prefix and suffix are empty to limit
+// the noise in the output of Expect::StringEquals.
 static void FindCommonPrefixAndSuffix(const char* expected,
                                       const char* actual,
                                       std::string& prefix,
@@ -185,12 +195,29 @@ static void FindCommonPrefixAndSuffix(const char* expected,
   const int actual_len = strlen(actual);
   int prefix_length = 0;
   while (expected[prefix_length] == actual[prefix_length]) {
+    // Either the prefix or actual string is a prefix of the other.
+    if (expected[prefix_length] == '\0' || actual[prefix_length] == '\0') {
+      break;
+    }
     prefix_length += 1;
+  }
+
+  if (prefix_length == expected_len && prefix_length == actual_len) {
+    // The two are equal, so just escape the whole string into the prefix.
+    Escape(prefix, expected, prefix_length);
+    return;
   }
 
   int suffix_length = 0;
   while (expected[(expected_len - 1) - suffix_length] ==
          actual[(actual_len - 1) - suffix_length]) {
+    if (prefix_length + suffix_length == expected_len ||
+        prefix_length + suffix_length == actual_len) {
+      // The prefix and suffix cover the entirety of one of the
+      // two strings, meaning the actual string either has missing
+      // or extra contents compared to the expected string.
+      break;
+    }
     suffix_length += 1;
   }
 
