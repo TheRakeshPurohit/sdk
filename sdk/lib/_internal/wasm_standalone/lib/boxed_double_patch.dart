@@ -2,65 +2,18 @@
 // for details. All rights reserved. Use of this source code is governed by a
 // BSD-style license that can be found in the LICENSE file.
 
+import 'dart:_embedder' as embedder;
 import "dart:_internal" show doubleToIntBits, intBitsToDouble, patch;
-import 'dart:_js_helper' show JS;
 import 'dart:_string';
+import 'dart:_wasm';
 
 @patch
 class BoxedDouble {
-  static const int CACHE_SIZE_LOG2 = 3;
-  static const int CACHE_LENGTH = 1 << (CACHE_SIZE_LOG2 + 1);
-  static const int CACHE_MASK = CACHE_LENGTH - 1;
-  // Each cached double value, represented as it's 64-bits.
-  @pragma("wasm:initialize-at-startup")
-  static final WasmArray<int> _cacheKeys = WasmArray<int>.filled(
-    CACHE_LENGTH,
-    doubleToIntBits(1.0),
-  );
-  // The toString() of the double value with same index in [_cacheKeys].
-  @pragma("wasm:initialize-at-startup")
-  static final WasmArray<String> _cacheValues = WasmArray<String>.filled(
-    CACHE_LENGTH,
-    '1.0',
-  );
-  static int _cacheEvictIndex = 0;
-
   @patch
   String toString() {
-    final int bits = doubleToIntBits(value);
-
-    if (bits == doubleToIntBits(0.0)) return '0.0';
-    if (bits == doubleToIntBits(-0.0)) return '-0.0';
-    if (bits == doubleToIntBits(1.0)) return '1.0';
-    if (bits == doubleToIntBits(-1.0)) return '-1.0';
-
-    for (int i = 0; i < CACHE_LENGTH; i++) {
-      // Special cases such as -0.0/0.0 and NaN are never inserted into the
-      // cache.
-      if (bits == _cacheKeys[i]) {
-        return _cacheValues[i];
-      }
-    }
-    if (isNaN) return "NaN";
-    if (isInfinite) {
-      if (isNegative) return "-Infinity";
-      return "Infinity";
-    }
-
-    String result = JSStringImpl.fromRefUnchecked(
-      JS<WasmExternRef?>(
-        'Function.prototype.call.bind(Number.prototype.toString)',
-        WasmF64.fromDouble(value),
-      ),
+    return JSStringImpl.fromRefUnchecked(
+      embedder.f64ToString(WasmF64.fromDouble(value)),
     );
-    if (this % 1.0 == 0.0 && result.indexOf('e') == -1) {
-      result = '$result.0';
-    }
-    // Replace the least recently inserted entry.
-    _cacheKeys[_cacheEvictIndex] = bits;
-    _cacheValues[_cacheEvictIndex] = result;
-    _cacheEvictIndex = (_cacheEvictIndex + 1) & CACHE_MASK;
-    return result;
   }
 
   @patch
@@ -96,10 +49,9 @@ class BoxedDouble {
   }
 
   String _toStringAsFixed(int fractionDigits) => JSStringImpl.fromRefUnchecked(
-    JS<WasmExternRef>(
-      "(d, digits) => d.toFixed(digits)",
-      value,
-      fractionDigits.toDouble(),
+    embedder.f64ToFixed(
+      WasmF64.fromDouble(this),
+      WasmI32.fromInt(fractionDigits),
     ),
   );
 
@@ -133,11 +85,10 @@ class BoxedDouble {
   String _toStringAsExponential(int? fractionDigits) =>
       JSStringImpl.fromRefUnchecked(
         fractionDigits == null
-            ? JS<WasmExternRef>("d => d.toExponential()", value)
-            : JS<WasmExternRef>(
-                "(d, f) => d.toExponential(f)",
-                value,
-                fractionDigits.toDouble(),
+            ? embedder.f64ToExponential(WasmF64.fromDouble(this))
+            : embedder.f64ToExponentialWithFractionDigits(
+                WasmF64.fromDouble(this),
+                WasmI32.fromInt(fractionDigits),
               ),
       );
 
@@ -163,10 +114,9 @@ class BoxedDouble {
 
   String _toStringAsPrecision(int fractionDigits) =>
       JSStringImpl.fromRefUnchecked(
-        JS<WasmExternRef>(
-          "(d, precision) => d.toPrecision(precision)",
-          value,
-          fractionDigits.toDouble(),
+        embedder.f64ToPrecision(
+          WasmF64.fromDouble(this),
+          WasmI32.fromInt(fractionDigits),
         ),
       );
 }

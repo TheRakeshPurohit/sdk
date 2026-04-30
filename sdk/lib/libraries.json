@@ -15,7 +15,8 @@
       "_internal": {
         "uri": "internal/internal.dart",
         "patches": [
-          "_internal/vm/lib/internal_patch.dart"
+          "_internal/vm/lib/internal_patch.dart",
+          "_internal/vm_shared/lib/check_valid_weak_target_patch.dart"
         ]
       },
       "async": {
@@ -53,7 +54,8 @@
           "_internal/vm_shared/lib/integers_patch.dart",
           "_internal/vm_shared/lib/map_patch.dart",
           "_internal/vm_shared/lib/null_patch.dart",
-          "_internal/vm_shared/lib/string_buffer_patch.dart"
+          "_internal/vm_shared/lib/string_buffer_patch.dart",
+          "_internal/vm_shared/lib/uri_encode_patch.dart"
         ]
       },
       "developer": {
@@ -285,18 +287,19 @@
           "_internal/wasm/lib/array_patch.dart",
           "_internal/wasm/lib/bigint_patch_patch.dart",
           "_internal/wasm/lib/core_patch.dart",
-          "_internal/wasm/lib/double_patch.dart",
-          "_internal/wasm/lib/date_patch_patch.dart",
+          "_internal/wasm_standalone/lib/double_patch.dart",
+          "_internal/wasm_standalone/lib/date_patch_patch.dart",
           "_internal/wasm/lib/int_common_patch.dart",
           "_internal/wasm/lib/int_patch.dart",
-          "_internal/wasm/lib/regexp_patch.dart",
-          "_internal/wasm/lib/stack_trace_patch.dart",
-          "_internal/wasm/lib/string_buffer_patch.dart",
+          "_internal/wasm_standalone/lib/regexp_patch.dart",
+          "_internal/wasm_standalone/lib/stack_trace_patch.dart",
+          "_internal/wasm_standalone/lib/string_buffer_patch.dart",
           "_internal/wasm/lib/string_patch.dart",
-          "_internal/wasm/lib/stopwatch_patch.dart",
+          "_internal/wasm_standalone/lib/stopwatch_patch.dart",
           "_internal/wasm/lib/sync_star_patch.dart",
-          "_internal/wasm/lib/uri_patch.dart",
-          "_internal/wasm/lib/weak_patch.dart"
+          "_internal/wasm_standalone/lib/uri_patch.dart",
+          "_internal/vm_shared/lib/uri_encode_patch.dart",
+          "_internal/wasm_standalone/lib/weak_patch.dart"
         ]
       },
       "convert": {
@@ -320,12 +323,12 @@
       },
       "_boxed_int": {
         "uri": "_internal/wasm/lib/boxed_int.dart",
-        "patches": "_internal/wasm/lib/boxed_int_patch.dart"
+        "patches": "_internal/wasm_standalone/lib/boxed_int_patch.dart"
       },
       "_boxed_double": {
         "uri": "_internal/wasm/lib/boxed_double.dart",
         "patches": [
-          "_internal/wasm/lib/boxed_double_patch.dart"
+          "_internal/wasm_standalone/lib/boxed_double_patch.dart"
         ]
       },
       "_string": {
@@ -350,7 +353,8 @@
           "_internal/wasm/lib/deferred_patch.dart",
           "_internal/wasm/lib/internal_json_encode_patch.dart",
           "_internal/wasm/lib/invoke_main_patch.dart",
-          "_internal/wasm/lib/print_patch.dart"
+          "_internal/wasm/lib/print_patch.dart",
+          "_internal/vm_shared/lib/check_valid_weak_target_patch.dart"
         ]
       },
       "_wasm": {
@@ -386,7 +390,8 @@
           "_internal/wasm/lib/deferred_patch.dart",
           "_internal/wasm/lib/internal_json_encode_patch.dart",
           "_internal/wasm/lib/invoke_main_patch.dart",
-          "_internal/wasm/lib/print_patch.dart"
+          "_internal/wasm/lib/print_patch.dart",
+          "_internal/vm_shared/lib/check_valid_weak_target_patch.dart"
         ]
       },
       "_wasm": {

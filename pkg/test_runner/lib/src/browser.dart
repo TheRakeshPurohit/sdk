@@ -424,6 +424,148 @@ String dart2wasmHtml(String title, String wasmPath, String mjsPath,
         const str = helperInstance.exports.stringFromCharCodeArray(chars, start, length);
         return str;
       },
+      monotonicClockFrequency: () => 1_000_000,
+      monotonicClockTicks: () => BigInt(Math.round(performance.now() * 1000)),
+      weakRefCreate: (dartValue) => new WeakRef(dartValue),
+      weakRefGet: (weakRef) => weakRef.deref() ?? null,
+      expandoCreate: () => new WeakMap(),
+      expandoGet: (expando, target, _hash) => expando.get(target) ?? null,
+      expandoSet: (expando, target, _hash, value) => expando.set(target, value),
+      finalizerCreate: (callback, firstParameter) => {
+        return new FinalizationRegistry((heldValue) => {
+          callback(heldValue, firstParameter);
+        });
+      },
+      finalizerAttach: (finalizer, object, token, detachToken) => {
+        if (detachToken) {
+          finalizer.register(object, token, detachToken);
+        } else {
+          finalizer.register(object, token);
+        }
+      },
+      finalizerDetach: (finalizer, detachToken) => finalizer.unregister(detachToken),
+      baseUri: () => globalThis.location.href,
+      isWindows: () => false,
+      stackTraceGetCurrent: () => new Error().stack,
+      stackTraceToString: (trace) => {
+        const stackString = trace.toString();
+        const frames = stackString.split('\\n');
+        // Format of stack traces is:
+        //   1. stackTraceGetCurrent (from this embedder object)
+        //   2. module0.StackTrace.current <noInline>
+        //   3. The callsite we care about.
+        const drop = 1 + frames.findIndex((l) => l.indexOf('stackTraceGetCurrent') > 0);
+        return frames.slice(drop).join('\\n');
+      },
+      doubleTryParse: (source) => {
+        if (!/${r'^\s*[+-]?(?:Infinity|NaN|(?:\.\d+|\d+(?:\.\d*)?)(?:[eE][+-]?\d+)?)\s*$'}/.test(source)) {
+          const trimmed = source.trim();
+          // parseFloat is more lenient than double.tryParse, see wasm/lib/double_patch.dart for details.
+          if (!(trimmed == 'NaN' || trimmed == '+NaN' || trimmed == '-NaN')) {
+            return null;
+          }
+          return { result: NaN };
+        } else {
+          return { result: parseFloat(source) };
+        }
+      },
+      tryParseResultGetDouble: ({result}) => result,
+      i64ToString: (source, radix) => source.toString(radix),
+      f64ToExponential: (source) => source.toExponential(),
+      f64ToExponentialWithFractionDigits: (source, digits) => {
+        return source.toExponential(digits);
+      },
+      f64ToPrecision: (source, digits) => source.toPrecision(digits),
+      f64ToFixed: (source, digits) => source.toFixed(digits),
+      f64ToString: (source) => {
+        if (Object.is(source, -0)) return '-0.0';
+        if (Number.isNaN(source)) return 'NaN';
+        if (source == Number.NEGATIVE_INFINITY) return '-Infinity';
+        if (source == Number.POSITIVE_INFINITY) return 'Infinity';
+
+        let formatted = source.toString();
+        if (source % 1.0 == 0 && formatted.indexOf('e') == -1) {
+          formatted += '.0';
+        }
+        return formatted;
+      },
+      stringBufferCreate: () => ({ contents: '' }),
+      stringBufferWriteString: (buffer, append) => {
+        buffer.contents += append;
+      },
+      stringBufferWriteCharCode: (buffer, code) => {
+        buffer.contents += String.fromCodePoint(code);
+      },
+      stringBufferClear: (buffer) => {
+        buffer.contents = ''
+      },
+      stringBufferLength: (buffer) => buffer.contents.length,
+      stringBufferToString: ({contents}) => contents,
+      regexpCreateOrFailWithString: (pattern, multiLine, caseSensitive, unicode, dotAll) => {
+        let flags = '';
+        if (multiLine) flags += 'm';
+        if (!caseSensitive) flags += 'i';
+        if (unicode) flags += 'u';
+        if (dotAll) flags += 's';
+
+        try {
+          // Prepare two regular expressions, one for regular matches and one
+          // for matchAsPrefix.
+          return {
+            regular: new RegExp(pattern, flags + 'g'),
+            asPrefix: new RegExp(pattern, flags + 'y'),
+          };
+        } catch (e) {
+          return String(e);
+        }
+      },
+      regexpIsRegexp: (source) => typeof(source) !== 'string',
+      regexpEscape: (source) => {
+        // Note: We can't use RegExp.escape here, it escapes too much and we
+        // have tests expecting that e.g. \t isn't escaped.
+        if (/${r'[[\]{}()*+?.\\^$|]'}/.test(source)) {
+          return source.replace(/${r'[[\]{}()*+?.\\^$|]'}/g, "${r'\\$&'}");
+        } else {
+          return source;
+        }
+      },
+      regexpMatch: (regexp, string, start, asPrefix) => {
+        const regex = asPrefix ? regexp.asPrefix : regexp.regular;
+        regex.lastIndex = start;
+        const match = regex.exec(string);
+        if (match) {
+          return {
+            start: match.index,
+            end: match.index + match[0].length,
+            groupNames: match.groups ? Object.keys(match.groups) : [],
+            groups: match,
+          };
+        } else {
+          return null;
+        }
+      },
+      regexpMatchGetStart: (match) => match.start,
+      regexpMatchGetEnd: (match) => match.end,
+      regexpMatchGetGroupCount: (match) => match.groups.length - 1,
+      regexpMatchGetGroup: (match, index) => match.groups[index] ?? null,
+      regexpMatchGetNamedGroups: (match) => match.groupNames.length,
+      regexpMatchGetGroupName: (match, index) => match.groupNames[index],
+      regexpMatchGetGroupByName: (match, index) => match.groups.groups[match.groupNames[index]] ?? null,
+      timeZoneNameForClampedSeconds: (secondsSinceEpoch) => {
+        const date = new Date(Number(secondsSinceEpoch * 1000n));
+        const match = /\\((.*)\\)/.exec(date.toString());
+        if (match == null) {
+            // This should never happen on any recent browser.
+            return '';
+        }
+        return match[1];
+      },
+      timeZoneOffsetInSecondsForClampedSeconds: (secondsSinceEpoch) => {
+        const date = new Date(Number(secondsSinceEpoch * 1000n));
+        // This needs to be negated because Dart wants the difference between
+        // local time and UTC.
+        return -date.getTimezoneOffset() * 60;
+      },
     };
 """;
   final additionalImports = standalone ? '{ dart: dartEmbedder }' : '{}';
