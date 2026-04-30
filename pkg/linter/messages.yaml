@@ -1151,6 +1151,65 @@ LinterLintCode:
       stable: "2.0"
     categories: [errorProne, web]
     hasPublishedDocs: false
+    documentation: |-
+      #### Description
+
+      The analyzer produces this diagnostic when an `if` statement
+      tests the type of a variable with `is double` and the
+      following `else if` tests the same variable with `is int`.
+
+      When compiled to JavaScript, both `int` and `double` values
+      are represented as JavaScript `Number` values.
+      Because every `int` value also satisfies the `is double` check,
+      the `is int` branch is unreachable.
+
+      To learn more about how Dart represents numbers on different platforms,
+      including when compiled to JavaScript, check out
+      [Numbers in Dart](https://dart.dev/resources/language/number-representation).
+
+      #### Example
+
+      The following code produces this diagnostic because
+      `x` is type tested with `is double` and then `is int`,
+      which makes the `is int` branch unreachable when compiled to JavaScript:
+
+      ```dart
+      void f(Object x) {
+        if (x is double) {
+          print('double');
+        } else if ([!x is int!]) {
+          print('int');
+        }
+      }
+      ```
+
+      #### Common fixes
+
+      If the distinction between `int` and `double` isn't meaningful,
+      then check if the type is `num` instead:
+
+      ```dart
+      void f(Object x) {
+        if (x is num) {
+          print('num');
+        }
+      }
+      ```
+
+      If both branches are needed and it's ok for
+      integer `double` values (such as `3.0`) to take the `is int` branch,
+      then check `is int` first. This ensures that
+      integer values take the `is int` branch on all platforms:
+
+      ```dart
+      void f(Object x) {
+        if (x is int) {
+          print('int');
+        } else if (x is double) {
+          print('double');
+        }
+      }
+      ```
     deprecatedDetails: |-
       **AVOID** to check if type is `double` or `int`.
 
@@ -1944,6 +2003,41 @@ LinterLintCode:
       stable: "2.0"
     categories: [errorProne, web]
     hasPublishedDocs: false
+    documentation: |-
+      #### Description
+
+      The analyzer produces this diagnostic when an `int` literal's value
+      can't be represented exactly as a JavaScript `Number`.
+
+      When Dart code is compiled to JavaScript,
+      integers whose values fall outside the range `-(2^53 - 1)` to `2^53 - 1`
+      might be rounded to the nearest representable value.
+      This silently changes the literal's value on the web.
+
+      To learn more about how Dart represents numbers on different platforms,
+      including when compiled to JavaScript, check out
+      [Numbers in Dart](https://dart.dev/resources/language/number-representation).
+
+      #### Example
+
+      The following code produces this diagnostic because
+      the literal `9007199254740993` (2^53 + 1) can't be
+      represented exactly as a JavaScript `Number` is rounded to
+      `9007199254740992` at run time when compiled to JavaScript:
+
+      ```dart
+      final i = [!9007199254740993!];
+      ```
+
+      #### Common fixes
+
+      If the value needs to be exact on all platforms,
+      including when compiled to JavaScript,
+      then use a `BigInt` to represent it:
+
+      ```dart
+      final i = BigInt.parse('9007199254740993');
+      ```
     deprecatedDetails: |-
       **AVOID** integer literals that cannot be represented exactly when compiled to
       JavaScript.
@@ -10756,6 +10850,45 @@ LinterLintCode:
       stable: "2.1"
     categories: [style]
     hasPublishedDocs: false
+    documentation: |-
+      #### Description
+
+      The analyzer produces this diagnostic when a `double` literal's value
+      has a fractional part of 0 (such as `8.0`)
+      and is used where the context type is `double`.
+
+      In these cases, you can use an `int` literal instead,
+      because it would evaluate to the same `double` value.
+
+      #### Examples
+
+      The following code produces this diagnostic because the literal `8.0`
+      is used to initialize a variable of type `double`,
+      but its value has a fractional part of `0`:
+
+      ```dart
+      double d = [!8.0!];
+      ```
+
+      The following code produces this diagnostic because the literal `7.1e2`
+      evaluates to `710.0`, which has a fractional part of `0`,
+      and is used to initialize a variable of type `double`:
+
+      ```dart
+      double d = [!7.1e2!];
+      ```
+
+      #### Common fixes
+
+      Replace the `double` literal with an equivalent `int` literal:
+
+      ```dart
+      double d = 8;
+      ```
+
+      ```dart
+      double d = 710;
+      ```
     deprecatedDetails: |-
       **DO** use int literals rather than the corresponding double literal.
 
