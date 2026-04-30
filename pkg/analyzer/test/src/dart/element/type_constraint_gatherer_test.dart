@@ -27,27 +27,27 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        parseType('int'),
-        parseType('int'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('int'),
+        Q: parseType('int'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
 
       _checkMatch(
-        [T],
-        parseFunctionType('void Function(int)'),
-        parseFunctionType('void Function(int)'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseFunctionType('void Function(int)'),
+        Q: parseFunctionType('void Function(int)'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
 
       _checkMatch(
-        [T],
-        parseFunctionType('T1 Function<T1>()'),
-        parseFunctionType('T2 Function<T2>()'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseFunctionType('T1 Function<T1>()'),
+        Q: parseFunctionType('T2 Function<T2>()'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
     });
   }
@@ -57,19 +57,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('T Function<T1>(T1)'),
-        parseFunctionType('int Function<S1>(S1)'),
-        false,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('T Function<T1>(T1)'),
+        Q: parseFunctionType('int Function<S1>(S1)'),
+        leftSchema: false,
+        expected: ['_ <: T <: int'],
       );
 
       _checkMatch(
-        [T],
-        parseFunctionType('int Function<T1>(T1)'),
-        scope.parseType('T Function<S1>(S1)'),
-        true,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: parseFunctionType('int Function<T1>(T1)'),
+        Q: scope.parseType('T Function<S1>(S1)'),
+        leftSchema: true,
+        expected: ['int <: T <: _'],
       );
 
       // We unified type formals, but still not match because return types.
@@ -98,11 +98,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        scope.parseType('T Function<T1 extends void>()'),
-        parseFunctionType('int Function<S1 extends dynamic>()'),
-        false,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('T Function<T1 extends void>()'),
+        Q: parseFunctionType('int Function<S1 extends dynamic>()'),
+        leftSchema: false,
+        expected: ['_ <: T <: int'],
       );
     });
   }
@@ -123,11 +123,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        scope.parseType('T Function<T1>()'),
-        parseFunctionType('int Function<S1>()'),
-        false,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('T Function<T1>()'),
+        Q: parseFunctionType('int Function<S1>()'),
+        leftSchema: false,
+        expected: ['_ <: T <: int'],
       );
     });
   }
@@ -136,11 +136,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        scope.parseType('T Function<T1>()'),
-        parseFunctionType('int Function<S1 extends Object?>()'),
-        false,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('T Function<T1>()'),
+        Q: parseFunctionType('int Function<S1 extends Object?>()'),
+        leftSchema: false,
+        expected: ['_ <: T <: int'],
       );
     });
   }
@@ -150,11 +150,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        scope.parseType('T Function<X>(X)'),
-        parseFunctionType('List<Y> Function<Y>(Y)'),
-        true,
-        ['_ <: T <: List<Object?>'],
+        typeParameters: [T],
+        P: scope.parseType('T Function<X>(X)'),
+        Q: parseFunctionType('List<Y> Function<Y>(Y)'),
+        leftSchema: true,
+        expected: ['_ <: T <: List<Object?>'],
       );
     });
   }
@@ -176,19 +176,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        parseFunctionType('void Function([int])'),
-        parseFunctionType('void Function()'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseFunctionType('void Function([int])'),
+        Q: parseFunctionType('void Function()'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
 
       _checkMatch(
-        [T],
-        parseFunctionType('void Function({int a})'),
-        parseFunctionType('void Function()'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseFunctionType('void Function({int a})'),
+        Q: parseFunctionType('void Function()'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
     });
   }
@@ -230,19 +230,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        parseFunctionType('void Function({int a})'),
-        scope.parseType('void Function({T a})'),
-        true,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: parseFunctionType('void Function({int a})'),
+        Q: scope.parseType('void Function({T a})'),
+        leftSchema: true,
+        expected: ['_ <: T <: int'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('void Function({T a})'),
-        parseFunctionType('void Function({int a})'),
-        false,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('void Function({T a})'),
+        Q: parseFunctionType('void Function({int a})'),
+        leftSchema: false,
+        expected: ['int <: T <: _'],
       );
 
       // int vs. String
@@ -255,11 +255,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
 
       // Skip left non-required named.
       _checkMatch(
-        [T],
-        parseFunctionType('void Function({int a, int b, int c})'),
-        scope.parseType('void Function({T b})'),
-        true,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: parseFunctionType('void Function({int a, int b, int c})'),
+        Q: scope.parseType('void Function({T b})'),
+        leftSchema: true,
+        expected: ['_ <: T <: int'],
       );
 
       // Not match if skip left required named.
@@ -285,34 +285,34 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('void Function([int])'),
-        scope.parseType('void Function(T)'),
-        true,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('void Function([int])'),
+        Q: scope.parseType('void Function(T)'),
+        leftSchema: true,
+        expected: ['_ <: T <: int'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('void Function([T])'),
-        scope.parseType('void Function(int)'),
-        false,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('void Function([T])'),
+        Q: scope.parseType('void Function(int)'),
+        leftSchema: false,
+        expected: ['int <: T <: _'],
       );
       _checkMatch(
-        [T],
-        scope.parseType('void Function([int])'),
-        scope.parseType('void Function([T])'),
-        true,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('void Function([int])'),
+        Q: scope.parseType('void Function([T])'),
+        leftSchema: true,
+        expected: ['_ <: T <: int'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('void Function([T])'),
-        scope.parseType('void Function([int])'),
-        false,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('void Function([T])'),
+        Q: scope.parseType('void Function([int])'),
+        leftSchema: false,
+        expected: ['int <: T <: _'],
       );
 
       _checkNotMatch(
@@ -350,19 +350,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('void Function(int)'),
-        scope.parseType('void Function(T)'),
-        true,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('void Function(int)'),
+        Q: scope.parseType('void Function(T)'),
+        leftSchema: true,
+        expected: ['_ <: T <: int'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('void Function(T)'),
-        scope.parseType('void Function(int)'),
-        false,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('void Function(T)'),
+        Q: scope.parseType('void Function(int)'),
+        leftSchema: false,
+        expected: ['int <: T <: _'],
       );
 
       _checkNotMatch(
@@ -393,11 +393,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('T Function()'),
-        parseFunctionType('int Function()'),
-        false,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('T Function()'),
+        Q: parseFunctionType('int Function()'),
+        leftSchema: false,
+        expected: ['_ <: T <: int'],
       );
 
       _checkNotMatch(
@@ -418,18 +418,18 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('List<T>'),
-        parseType('List<num>'),
-        false,
-        ['_ <: T <: num'],
+        typeParameters: [T],
+        P: scope.parseType('List<T>'),
+        Q: parseType('List<num>'),
+        leftSchema: false,
+        expected: ['_ <: T <: num'],
       );
       _checkMatch(
-        [T],
-        parseType('List<int>'),
-        scope.parseType('List<T>'),
-        true,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: parseType('List<int>'),
+        Q: scope.parseType('List<T>'),
+        leftSchema: true,
+        expected: ['int <: T <: _'],
       );
 
       _checkNotMatch(
@@ -440,18 +440,18 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('Map<int, List<T>>'),
-        parseType('Map<num, List<String>>'),
-        false,
-        ['_ <: T <: String'],
+        typeParameters: [T],
+        P: scope.parseType('Map<int, List<T>>'),
+        Q: parseType('Map<num, List<String>>'),
+        leftSchema: false,
+        expected: ['_ <: T <: String'],
       );
       _checkMatch(
-        [T],
-        parseType('Map<int, List<String>>'),
-        scope.parseType('Map<num, List<T>>'),
-        true,
-        ['String <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Map<int, List<String>>'),
+        Q: scope.parseType('Map<num, List<T>>'),
+        leftSchema: true,
+        expected: ['String <: T <: _'],
       );
 
       _checkNotMatch(
@@ -473,18 +473,18 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('List<T>'),
-        parseType('Iterable<num>'),
-        false,
-        ['_ <: T <: num'],
+        typeParameters: [T],
+        P: scope.parseType('List<T>'),
+        Q: parseType('Iterable<num>'),
+        leftSchema: false,
+        expected: ['_ <: T <: num'],
       );
       _checkMatch(
-        [T],
-        parseType('List<int>'),
-        scope.parseType('Iterable<T>'),
-        true,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: parseType('List<int>'),
+        Q: scope.parseType('Iterable<T>'),
+        leftSchema: true,
+        expected: ['int <: T <: _'],
       );
 
       _checkNotMatch(
@@ -525,11 +525,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       withTypeParameterScope('T', (scope) {
         var T = scope.typeParameter('T');
         _checkMatch(
-          [T],
-          parseType('C$index'),
-          scope.parseType('A$index<T>'),
-          true,
-          [expectedConstraint],
+          typeParameters: [T],
+          P: parseType('C$index'),
+          Q: scope.parseType('A$index<T>'),
+          leftSchema: true,
+          expected: [expectedConstraint],
         );
       });
     }
@@ -548,20 +548,20 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('FutureOr<T>'),
-        parseType('FutureOr<int>'),
-        false,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('FutureOr<T>'),
+        Q: parseType('FutureOr<int>'),
+        leftSchema: false,
+        expected: ['_ <: T <: int'],
       );
 
       // This is 'T <: int' and 'T <: Future<int>'.
       _checkMatch(
-        [T],
-        scope.parseType('FutureOr<T>'),
-        parseType('Future<int>'),
-        false,
-        ['_ <: T <: Never'],
+        typeParameters: [T],
+        P: scope.parseType('FutureOr<T>'),
+        Q: parseType('Future<int>'),
+        leftSchema: false,
+        expected: ['_ <: T <: Never'],
       );
 
       _checkNotMatch(
@@ -578,11 +578,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        parseType('Never'),
-        parseType('int'),
-        false,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Never'),
+        Q: parseType('int'),
+        leftSchema: false,
+        expected: ['_ <: T <: _'],
       );
     });
   }
@@ -596,23 +596,29 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       _checkNotMatch([T], parseType('Null'), parseType('int'), true);
 
       _checkMatch(
-        [T],
-        parseType('Null'),
-        scope.parseType('T'),
-        true,
-        ['Null <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Null'),
+        Q: scope.parseType('T'),
+        leftSchema: true,
+        expected: ['Null <: T <: _'],
       );
 
       _checkMatch(
-        [T],
-        parseType('Null'),
-        scope.parseType('FutureOr<T>'),
-        true,
-        ['Null <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Null'),
+        Q: scope.parseType('FutureOr<T>'),
+        leftSchema: true,
+        expected: ['Null <: T <: _'],
       );
 
       void matchNoConstraints(TypeImpl Q) {
-        _checkMatch([T], parseType('Null'), Q, true, ['_ <: T <: _']);
+        _checkMatch(
+          typeParameters: [T],
+          P: parseType('Null'),
+          Q: Q,
+          leftSchema: true,
+          expected: ['_ <: T <: _'],
+        );
       }
 
       matchNoConstraints(scope.parseType('List<T>?'));
@@ -634,11 +640,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
 
       // TODO(scheglov): any better test case?
       _checkMatch(
-        [T],
-        parseType('num?'),
-        parseType('dynamic'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('num?'),
+        Q: parseType('dynamic'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
 
       _checkNotMatch([T], scope.parseType('T?'), parseType('int'), true);
@@ -654,18 +660,18 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var U_question = scope.parseType('U?');
 
       _checkMatch(
-        [U],
-        parseType('dynamic'),
-        U_question,
-        false,
-        ['Object <: U <: _'],
+        typeParameters: [U],
+        P: parseType('dynamic'),
+        Q: U_question,
+        leftSchema: false,
+        expected: ['Object <: U <: _'],
       );
       _checkMatch(
-        [U],
-        parseType('void'),
-        U_question,
-        false,
-        ['Object <: U <: _'],
+        typeParameters: [U],
+        P: parseType('void'),
+        Q: U_question,
+        leftSchema: false,
+        expected: ['Object <: U <: _'],
       );
     });
   }
@@ -677,7 +683,13 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       void checkMatch(TypeImpl right, String expected) {
-        _checkMatch([T], scope.parseType('T'), right, false, [expected]);
+        _checkMatch(
+          typeParameters: [T],
+          P: scope.parseType('T'),
+          Q: right,
+          leftSchema: false,
+          expected: [expected],
+        );
       }
 
       checkMatch(parseType('num'), '_ <: T <: num');
@@ -695,21 +707,21 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
 
       scope.withTypeParameterScope('U extends int', (scope) {
         _checkMatch(
-          [T],
-          scope.parseType('U'),
-          parseType('num'),
-          false,
-          ['_ <: T <: _'],
+          typeParameters: [T],
+          P: scope.parseType('U'),
+          Q: parseType('num'),
+          leftSchema: false,
+          expected: ['_ <: T <: _'],
         );
       });
 
       scope.withTypeParameterScope('U', (scope) {
         _checkMatch(
-          [T],
-          scope.parseType('U & int'),
-          parseType('num'),
-          false,
-          ['_ <: T <: _'],
+          typeParameters: [T],
+          P: scope.parseType('U & int'),
+          Q: parseType('num'),
+          leftSchema: false,
+          expected: ['_ <: T <: _'],
         );
 
         _checkNotMatch([T], scope.parseType('U'), parseType('num'), false);
@@ -722,11 +734,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        parseType('UnknownInferredType'),
-        parseType('num'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('UnknownInferredType'),
+        Q: parseType('num'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
     });
   }
@@ -783,11 +795,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        scope.parseType('(T,)'),
-        parseType('Record'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('(T,)'),
+        Q: parseType('Record'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
     });
   }
@@ -797,19 +809,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('({T f1})'),
-        scope.parseType('({int f1})'),
-        true,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('({T f1})'),
+        Q: scope.parseType('({int f1})'),
+        leftSchema: true,
+        expected: ['_ <: T <: int'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('({int f1})'),
-        scope.parseType('({T f1})'),
-        false,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('({int f1})'),
+        Q: scope.parseType('({T f1})'),
+        leftSchema: false,
+        expected: ['int <: T <: _'],
       );
 
       _checkNotMatch(
@@ -820,19 +832,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('({int f1, T f2})'),
-        scope.parseType('({num f1, String f2})'),
-        true,
-        ['_ <: T <: String'],
+        typeParameters: [T],
+        P: scope.parseType('({int f1, T f2})'),
+        Q: scope.parseType('({num f1, String f2})'),
+        leftSchema: true,
+        expected: ['_ <: T <: String'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('({int f1, String f2})'),
-        scope.parseType('({num f1, T f2})'),
-        false,
-        ['String <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('({int f1, String f2})'),
+        Q: scope.parseType('({num f1, T f2})'),
+        leftSchema: false,
+        expected: ['String <: T <: _'],
       );
 
       _checkNotMatch(
@@ -849,19 +861,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        scope.parseType('(T,)'),
-        scope.parseType('(num,)'),
-        true,
-        ['_ <: T <: num'],
+        typeParameters: [T],
+        P: scope.parseType('(T,)'),
+        Q: scope.parseType('(num,)'),
+        leftSchema: true,
+        expected: ['_ <: T <: num'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('(int,)'),
-        scope.parseType('(T,)'),
-        false,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('(int,)'),
+        Q: scope.parseType('(T,)'),
+        leftSchema: false,
+        expected: ['int <: T <: _'],
       );
 
       _checkNotMatch(
@@ -872,19 +884,19 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('(int, T)'),
-        scope.parseType('(num, String)'),
-        true,
-        ['_ <: T <: String'],
+        typeParameters: [T],
+        P: scope.parseType('(int, T)'),
+        Q: scope.parseType('(num, String)'),
+        leftSchema: true,
+        expected: ['_ <: T <: String'],
       );
 
       _checkMatch(
-        [T],
-        scope.parseType('(int, String)'),
-        scope.parseType('(num, T)'),
-        false,
-        ['String <: T <: _'],
+        typeParameters: [T],
+        P: scope.parseType('(int, String)'),
+        Q: scope.parseType('(num, T)'),
+        leftSchema: false,
+        expected: ['String <: T <: _'],
       );
 
       _checkNotMatch(
@@ -900,11 +912,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        parseFunctionType('void Function()'),
-        parseType('Function'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseFunctionType('void Function()'),
+        Q: parseType('Function'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
     });
   }
@@ -917,18 +929,18 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       // If `P` is `FutureOr<P0>` and `P0` is a subtype match for `Q0` under
       // constraint set `C`.
       _checkMatch(
-        [T],
-        scope.parseType('FutureOr<T>'),
-        parseType('FutureOr<num>'),
-        false,
-        ['_ <: T <: num'],
+        typeParameters: [T],
+        P: scope.parseType('FutureOr<T>'),
+        Q: parseType('FutureOr<num>'),
+        leftSchema: false,
+        expected: ['_ <: T <: num'],
       );
       _checkMatch(
-        [T],
-        parseType('FutureOr<num>'),
-        scope.parseType('FutureOr<T>'),
-        true,
-        ['num <: T <: _'],
+        typeParameters: [T],
+        P: parseType('FutureOr<num>'),
+        Q: scope.parseType('FutureOr<T>'),
+        leftSchema: true,
+        expected: ['num <: T <: _'],
       );
       _checkNotMatch(
         [T],
@@ -940,25 +952,25 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       // Or if `P` is a subtype match for `Future<Q0>` under non-empty
       // constraint set `C`.
       _checkMatch(
-        [T],
-        scope.parseType('Future<T>'),
-        parseType('FutureOr<num>'),
-        false,
-        ['_ <: T <: num'],
+        typeParameters: [T],
+        P: scope.parseType('Future<T>'),
+        Q: parseType('FutureOr<num>'),
+        leftSchema: false,
+        expected: ['_ <: T <: num'],
       );
       _checkMatch(
-        [T],
-        parseType('Future<int>'),
-        scope.parseType('FutureOr<T>'),
-        true,
-        ['int <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Future<int>'),
+        Q: scope.parseType('FutureOr<T>'),
+        leftSchema: true,
+        expected: ['int <: T <: _'],
       );
       _checkMatch(
-        [T],
-        parseType('Future<int>'),
-        parseType('FutureOr<Object>'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Future<int>'),
+        Q: parseType('FutureOr<Object>'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
       _checkNotMatch(
         [T],
@@ -969,28 +981,28 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
 
       // Or if `P` is a subtype match for `Q0` under constraint set `C`.
       _checkMatch(
-        [T],
-        scope.parseType('List<T>'),
-        parseType('FutureOr<List<int>>'),
-        false,
-        ['_ <: T <: int'],
+        typeParameters: [T],
+        P: scope.parseType('List<T>'),
+        Q: parseType('FutureOr<List<int>>'),
+        leftSchema: false,
+        expected: ['_ <: T <: int'],
       );
       _checkMatch(
-        [T],
-        parseType('Never'),
-        scope.parseType('FutureOr<T>'),
-        true,
-        ['Never <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Never'),
+        Q: scope.parseType('FutureOr<T>'),
+        leftSchema: true,
+        expected: ['Never <: T <: _'],
       );
 
       // Or if `P` is a subtype match for `Future<Q0>` under empty
       // constraint set `C`.
       _checkMatch(
-        [T],
-        parseType('Future<int>'),
-        parseType('FutureOr<num>'),
-        false,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Future<int>'),
+        Q: parseType('FutureOr<num>'),
+        leftSchema: false,
+        expected: ['_ <: T <: _'],
       );
 
       // Otherwise.
@@ -1010,11 +1022,11 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       _checkMatch(
-        [T],
-        parseType('int'),
-        parseType('Object'),
-        false,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('int'),
+        Q: parseType('Object'),
+        leftSchema: false,
+        expected: ['_ <: T <: _'],
       );
       _checkNotMatch([T], parseType('int?'), parseType('Object'), false);
 
@@ -1034,30 +1046,48 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
 
       // If `P` is `P0?` and `P0` is a subtype match for `Q0` under
       // constraint set `C`.
-      _checkMatch([T], T_question, parseType('num?'), false, ['_ <: T <: num']);
-      _checkMatch([T], parseType('int?'), T_question, true, ['int <: T <: _']);
+      _checkMatch(
+        typeParameters: [T],
+        P: T_question,
+        Q: parseType('num?'),
+        leftSchema: false,
+        expected: ['_ <: T <: num'],
+      );
+      _checkMatch(
+        typeParameters: [T],
+        P: parseType('int?'),
+        Q: T_question,
+        leftSchema: true,
+        expected: ['int <: T <: _'],
+      );
 
       // Or if `P` is a subtype match for `Q0` under non-empty
       // constraint set `C`.
-      _checkMatch([T], parseType('int'), T_question, false, ['int <: T <: _']);
+      _checkMatch(
+        typeParameters: [T],
+        P: parseType('int'),
+        Q: T_question,
+        leftSchema: false,
+        expected: ['int <: T <: _'],
+      );
 
       // Or if `P` is a subtype match for `Null` under constraint set `C`.
       _checkMatch(
-        [T],
-        parseType('Null'),
-        parseType('int?'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('Null'),
+        Q: parseType('int?'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
 
       // Or if `P` is a subtype match for `Q0` under empty
       // constraint set `C`.
       _checkMatch(
-        [T],
-        parseType('int'),
-        parseType('int?'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('int'),
+        Q: parseType('int?'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
 
       _checkNotMatch([T], parseType('int'), parseType('String?'), true);
@@ -1071,25 +1101,25 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        parseType('int'),
-        parseType('dynamic'),
-        false,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('int'),
+        Q: parseType('dynamic'),
+        leftSchema: false,
+        expected: ['_ <: T <: _'],
       );
       _checkMatch(
-        [T],
-        parseType('int'),
-        parseType('Object?'),
-        false,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('int'),
+        Q: parseType('Object?'),
+        leftSchema: false,
+        expected: ['_ <: T <: _'],
       );
       _checkMatch(
-        [T],
-        parseType('int'),
-        parseType('void'),
-        false,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('int'),
+        Q: parseType('void'),
+        leftSchema: false,
+        expected: ['_ <: T <: _'],
       );
     });
   }
@@ -1101,7 +1131,13 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
       var T = scope.typeParameter('T');
 
       void checkMatch(TypeImpl left, String expected) {
-        _checkMatch([T], left, scope.parseType('T'), true, [expected]);
+        _checkMatch(
+          typeParameters: [T],
+          P: left,
+          Q: scope.parseType('T'),
+          leftSchema: true,
+          expected: [expected],
+        );
       }
 
       checkMatch(parseType('num'), 'num <: T <: _');
@@ -1114,29 +1150,29 @@ class TypeConstraintGathererTest extends AbstractTypeSystemTest {
     withTypeParameterScope('T', (scope) {
       var T = scope.typeParameter('T');
       _checkMatch(
-        [T],
-        parseType('num'),
-        parseType('UnknownInferredType'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('num'),
+        Q: parseType('UnknownInferredType'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
       _checkMatch(
-        [T],
-        parseType('num'),
-        parseType('UnknownInferredType'),
-        true,
-        ['_ <: T <: _'],
+        typeParameters: [T],
+        P: parseType('num'),
+        Q: parseType('UnknownInferredType'),
+        leftSchema: true,
+        expected: ['_ <: T <: _'],
       );
     });
   }
 
-  void _checkMatch(
-    List<TypeParameterElementImpl> typeParameters,
-    TypeImpl P,
-    TypeImpl Q,
-    bool leftSchema,
-    List<String> expected,
-  ) {
+  void _checkMatch({
+    required List<TypeParameterElementImpl> typeParameters,
+    required TypeImpl P,
+    required TypeImpl Q,
+    required bool leftSchema,
+    required List<String> expected,
+  }) {
     var gatherer = TypeConstraintGatherer(
       typeParameters: typeParameters,
       typeSystemOperations: TypeSystemOperations(
