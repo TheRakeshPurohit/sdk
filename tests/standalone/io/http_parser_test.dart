@@ -718,6 +718,27 @@ Content-Length: 38\r
 GET /admin HTTP/1.1\r\nHost: backend\r\n\r\n""";
     _testParseInvalidRequest(request);
 
+    // RFC 7230 section 3.2.6 forbids SP/HT inside a token. With the tokenizer
+    // treating "x chunked" as a single token (not "chunked"), the request has
+    // a Transfer-Encoding header whose final coding is not chunked, so it
+    // MUST be rejected (RFC 7230 section 3.3.3 rule 3) rather than falling
+    // back to Content-Length.
+    request = """
+POST /test HTTP/1.1\r
+Content-Length: 10\r
+Transfer-Encoding: x chunked\r
+\r
+0123456789""";
+    _testParseInvalidRequest(request);
+
+    request = """
+POST /test HTTP/1.1\r
+Content-Length: 10\r
+Transfer-Encoding: x\tchunked\r
+\r
+0123456789""";
+    _testParseInvalidRequest(request);
+
     // Content-Length and "Transfer-Encoding: chunked" are specified.
     request = """
 POST /test HTTP/1.1\r
