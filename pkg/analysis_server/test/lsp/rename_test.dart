@@ -1469,14 +1469,11 @@ final a = new MyNewClass();
     int renameRequestFileVersion = 222,
     bool supportsWindowShowMessageRequest = true,
   }) async {
+    setSupportsWindowShowMessageRequest(supportsWindowShowMessageRequest);
     setDocumentChangesSupport();
 
     var code = TestCode.parse(content);
-    await initialize(
-      experimentalCapabilities: supportsWindowShowMessageRequest
-          ? const {'supportsWindowShowMessageRequest': true}
-          : null,
-    );
+    await initialize();
     await openFile(mainFileUri, code.code, version: openFileVersion);
 
     var result = await renameRaw(
@@ -1504,14 +1501,11 @@ final a = new MyNewClass();
     int renameRequestFileVersion = 222,
     bool supportsWindowShowMessageRequest = true,
   }) async {
+    setSupportsWindowShowMessageRequest(supportsWindowShowMessageRequest);
     setDocumentChangesSupport();
 
     var code = TestCode.parseNormalized(content);
-    await initialize(
-      experimentalCapabilities: supportsWindowShowMessageRequest
-          ? const {'supportsWindowShowMessageRequest': true}
-          : null,
-    );
+    await initialize();
     await openFile(mainFileUri, code.code, version: openFileVersion);
 
     // Expect the server to call us back with a ShowMessageRequest prompt about
@@ -1572,16 +1566,12 @@ final a = new MyNewClass();
     var documentVersion = 222;
     var expectedVersions = {fileUri: documentVersion};
 
+    setSupportsWindowShowMessageRequest(supportsWindowShowMessageRequest);
     setDocumentChangesSupport();
     setFileRenameSupport();
 
     var code = TestCode.parse(content);
-    await initialize(
-      experimentalCapabilities: supportsWindowShowMessageRequest
-          ? const {'supportsWindowShowMessageRequest': true}
-          : null,
-      workspaceFolders: workspaceFolders,
-    );
+    await initialize(workspaceFolders: workspaceFolders);
     await openFile(fileUri, code.code, version: documentVersion);
     await initialAnalysis;
 

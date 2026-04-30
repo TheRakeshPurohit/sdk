@@ -9,7 +9,6 @@ import 'package:analysis_server/src/services/refactoring/remove_constructor_name
 import 'package:test/test.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
 
-import '../../../lsp/request_helpers_mixin.dart';
 import '../../../tool/lsp_spec/matchers.dart';
 import 'refactoring_test_support.dart';
 
@@ -408,8 +407,7 @@ void f() {
   }
 }
 
-abstract class _RemoveConstructorNameTest extends RefactoringTest
-    with LspProgressNotificationsMixin {
+abstract class _RemoveConstructorNameTest extends RefactoringTest {
   @override
   String get refactoringName => RemoveConstructorName.commandName;
 

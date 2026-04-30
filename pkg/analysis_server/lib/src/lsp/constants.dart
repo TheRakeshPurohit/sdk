@@ -399,4 +399,5 @@ abstract final class UserPromptActions {
   static const String ok = 'Ok';
   static const String cancel = 'Cancel';
   static const String renameAnyway = 'Rename Anyway';
+  static const String refactorAnyway = 'Refactor Anyway';
 }

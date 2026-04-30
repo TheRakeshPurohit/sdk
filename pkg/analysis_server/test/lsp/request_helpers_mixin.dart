@@ -94,7 +94,18 @@ mixin LspEditHelpersMixin {
 /// The kind of IDs that can be used for messages.
 enum LspMessageIdMode { integer, string }
 
-mixin LspProgressNotificationsMixin {
+mixin LspNotificationsMixin {
+  /// Whether to fail tests if any error notifications are received from the
+  /// server.
+  ///
+  /// This is set automatically when using [expectErrorNotification].
+  var failTestOnAnyErrorNotification = true;
+
+  /// A stream of [NotificationMessage]s from the server that may be errors.
+  Stream<NotificationMessage> get errorNotificationsFromServer {
+    return notificationsFromServer.where(_isErrorNotification);
+  }
+
   Stream<NotificationMessage> get notificationsFromServer;
 
   /// A stream of strings (CREATE, BEGIN, END) corresponding to progress
@@ -136,6 +147,58 @@ mixin LspProgressNotificationsMixin {
   }
 
   Stream<RequestMessage> get requestsFromServer;
+
+  /// Calls [f] and expects an error notification (`window/showMessage`) within
+  /// 5s.
+  Future<ShowMessageParams> expectErrorNotification(
+    FutureOr<void> Function() f, {
+    Duration timeout = const Duration(seconds: 5),
+  }) async {
+    var firstError = errorNotificationsFromServer.first;
+
+    failTestOnAnyErrorNotification = false;
+
+    await f();
+    var notificationFromServer = await firstError.timeout(timeout);
+
+    failTestOnAnyErrorNotification = true;
+
+    expect(notificationFromServer, isNotNull);
+    return ShowMessageParams.fromJson(
+      notificationFromServer.params as Map<String, Object?>,
+    );
+  }
+
+  /// Calls [f] and expects a notification matching [test] within 5s.
+  Future<T> expectNotification<T>(
+    bool Function(NotificationMessage) test,
+    FutureOr<void> Function() f, {
+    Duration timeout = const Duration(seconds: 5),
+  }) async {
+    var firstError = notificationsFromServer.firstWhere(test);
+    await f();
+
+    var notificationFromServer = await firstError.timeout(timeout);
+
+    expect(notificationFromServer, isNotNull);
+    return notificationFromServer.params as T;
+  }
+
+  /// Checks whether a notification is likely an error from the server (for
+  /// example a window/showMessage). This is useful for tests that want to
+  /// ensure no errors come from the server in response to notifications (which
+  /// don't have their own responses).
+  bool _isErrorNotification(NotificationMessage notification) {
+    var method = notification.method;
+    var params = notification.params as Map<String, Object?>?;
+    if (method == Method.window_logMessage && params != null) {
+      return LogMessageParams.fromJson(params).type == MessageType.Error;
+    } else if (method == Method.window_showMessage && params != null) {
+      return ShowMessageParams.fromJson(params).type == MessageType.Error;
+    } else {
+      return false;
+    }
+  }
 }
 
 /// Helpers to simplify building LSP requests for use in tests.

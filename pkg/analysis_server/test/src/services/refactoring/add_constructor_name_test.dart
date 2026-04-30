@@ -7,7 +7,6 @@ import 'package:analysis_server/src/lsp/extensions/code_action.dart';
 import 'package:analysis_server/src/services/refactoring/add_constructor_name.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
 
-import '../../../lsp/request_helpers_mixin.dart';
 import 'refactoring_test_support.dart';
 
 void main() {
@@ -481,8 +480,7 @@ void f() {
   }
 }
 
-abstract class _AddConstructorNameTest extends RefactoringTest
-    with LspProgressNotificationsMixin {
+abstract class _AddConstructorNameTest extends RefactoringTest {
   @override
   String get refactoringName => AddConstructorName.commandName;
 

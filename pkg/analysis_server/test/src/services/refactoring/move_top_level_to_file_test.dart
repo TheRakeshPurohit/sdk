@@ -9,7 +9,6 @@ import 'package:analyzer/src/test_utilities/test_code_format.dart';
 import 'package:test/test.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
 
-import '../../../lsp/request_helpers_mixin.dart';
 import 'refactoring_test_support.dart';
 
 void main() {
@@ -19,8 +18,7 @@ void main() {
 }
 
 @reflectiveTest
-class MoveTopLevelToFileTest extends RefactoringTest
-    with LspProgressNotificationsMixin {
+class MoveTopLevelToFileTest extends RefactoringTest {
   /// Simple file content with a single class named 'A'.
   static const simpleClassContent = '''
 class ^A {}
