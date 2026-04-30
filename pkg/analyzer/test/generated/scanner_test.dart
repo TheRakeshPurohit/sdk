@@ -6,6 +6,7 @@ import 'package:_fe_analyzer_shared/src/scanner/error_token.dart';
 import 'package:analyzer/dart/analysis/features.dart';
 import 'package:analyzer/dart/ast/token.dart';
 import 'package:analyzer/error/listener.dart';
+import 'package:analyzer/source/file_source.dart';
 import 'package:analyzer/source/line_info.dart';
 import 'package:analyzer/src/dart/scanner/scanner.dart';
 import 'package:analyzer/src/string_source.dart';
@@ -23,7 +24,7 @@ main() {
 }
 
 @reflectiveTest
-class LineInfoTest {
+class LineInfoTest with ResourceProviderMixin {
   final featureSet = FeatureSet.latestLanguageVersion();
 
   void test_lineInfo_multilineComment() {
@@ -75,11 +76,13 @@ class LineInfoTest {
     String source = "var\r\ni\n=\n1;\n";
     GatheringDiagnosticListener listener = GatheringDiagnosticListener();
     Scanner scanner =
-        Scanner(source, DiagnosticReporter(listener, TestSource()))
-          ..configureFeatures(
-            featureSetForOverriding: featureSet,
-            featureSet: featureSet,
-          );
+        Scanner(
+          source,
+          DiagnosticReporter(listener, FileSource(newFile('/test.dart', ''))),
+        )..configureFeatures(
+          featureSetForOverriding: featureSet,
+          featureSet: featureSet,
+        );
     var token = scanner.tokenize();
     expect(token.lexeme, 'var');
     var lineStarts = scanner.lineStarts;
@@ -93,11 +96,13 @@ class LineInfoTest {
     String source = '<!-- @Component(';
     GatheringDiagnosticListener listener = GatheringDiagnosticListener();
     Scanner scanner =
-        Scanner(source, DiagnosticReporter(listener, TestSource()))
-          ..configureFeatures(
-            featureSetForOverriding: featureSet,
-            featureSet: featureSet,
-          );
+        Scanner(
+          source,
+          DiagnosticReporter(listener, FileSource(newFile('/test.dart', ''))),
+        )..configureFeatures(
+          featureSetForOverriding: featureSet,
+          featureSet: featureSet,
+        );
     Token token = scanner.tokenize(reportScannerErrors: false);
     expect(token, TypeMatcher<UnmatchedToken>());
     token = token.next!;
@@ -113,7 +118,9 @@ class LineInfoTest {
     GatheringDiagnosticListener listener = GatheringDiagnosticListener();
     _scanWithListener(source, listener);
     listener.assertNoErrors();
-    LineInfo info = listener.getLineInfo(TestSource())!;
+    LineInfo info = listener.getLineInfo(
+      FileSource(newFile('/test.dart', '')),
+    )!;
     expect(info, isNotNull);
     int count = expectedLocations.length;
     for (int i = 0; i < count; i++) {
@@ -133,15 +140,15 @@ class LineInfoTest {
   }
 
   Token _scanWithListener(String source, GatheringDiagnosticListener listener) {
-    Scanner scanner =
-        Scanner(source, DiagnosticReporter(listener, TestSource()))
-          ..configureFeatures(
-            featureSetForOverriding: featureSet,
-            featureSet: featureSet,
-          );
+    var testSource = FileSource(newFile('/test.dart', ''));
+    Scanner scanner = Scanner(source, DiagnosticReporter(listener, testSource))
+      ..configureFeatures(
+        featureSetForOverriding: featureSet,
+        featureSet: featureSet,
+      );
     Token result = scanner.tokenize();
     LineInfo lineInfo = LineInfo(scanner.lineStarts);
-    listener.setLineInfo(TestSource(), lineInfo);
+    listener.setLineInfo(testSource, lineInfo);
     return result;
   }
 }

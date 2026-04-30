@@ -15,7 +15,6 @@ import 'package:analyzer_testing/resource_provider_mixin.dart';
 import 'package:test/test.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
 
-import '../../generated/test_support.dart';
 import 'workspace_test_support.dart';
 
 main() {
@@ -667,7 +666,7 @@ class PubPackageTest extends WorkspacePackageTest {
     var package = findPackage('/workspace/project/lib/code.dart')!;
     expect(
       package.contains(
-        TestSource(convertPath('$myWorkspacePath/project/lib/file.dart')),
+        FileSource(newFile('$myWorkspacePath/project/lib/file.dart', '')),
       ),
       isFalse,
     );
@@ -704,15 +703,21 @@ class PubPackageTest extends WorkspacePackageTest {
 
     var package = findPackage('/workspace/project/lib/code.dart')!;
     expect(
-      package.contains(_sourceWithFileUri('/workspace/project/lib/file2.dart')),
+      package.contains(
+        FileSource(newFile('/workspace/project/lib/file2.dart', '')),
+      ),
       isTrue,
     );
     expect(
-      package.contains(_sourceWithFileUri('/workspace/project/bin/bin.dart')),
+      package.contains(
+        FileSource(newFile('/workspace/project/bin/bin.dart', '')),
+      ),
       isTrue,
     );
     expect(
-      package.contains(_sourceWithFileUri('/workspace/project/test/test.dart')),
+      package.contains(
+        FileSource(newFile('/workspace/project/test/test.dart', '')),
+      ),
       isTrue,
     );
   }
@@ -824,28 +829,11 @@ class PubPackageTest extends WorkspacePackageTest {
   }
 
   Source _sourceWithFileUri(String path) {
-    return _MockSource(path: convertPath(path), uri: toUri(path));
+    return FileSource(newFile(path, ''), toUri(path));
   }
 
   Source _sourceWithPackageUriWithoutPath(String uriStr) {
     var uri = Uri.parse(uriStr);
-    return _MockSource(path: convertPath('/test/lib/test.dart'), uri: uri);
+    return FileSource(newFile('/test/lib/test.dart', ''), uri);
   }
-}
-
-class _MockSource implements Source {
-  final String path;
-
-  @override
-  final Uri uri;
-
-  _MockSource({required this.path, required this.uri});
-
-  @override
-  String get fullName {
-    return path;
-  }
-
-  @override
-  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

@@ -8,10 +8,11 @@ import 'package:analyzer/src/dart/element/type_provider.dart';
 import 'package:analyzer/src/dart/element/type_system.dart';
 import 'package:analyzer/src/dart/resolver/flow_analysis_visitor.dart';
 import 'package:analyzer/src/test_utilities/test_library_builder.dart';
+import 'package:analyzer_testing/resource_provider_mixin.dart';
 
 import 'test_analysis_context.dart';
 
-abstract class AbstractTypeSystemTest {
+abstract class AbstractTypeSystemTest with ResourceProviderMixin {
   static const _testLibraryUri = 'package:test/test.dart';
 
   bool _hasTestLibrary = false;
@@ -128,7 +129,7 @@ abstract class AbstractTypeSystemTest {
   }
 
   void setUp() {
-    analysisContext = TestAnalysisContext();
+    analysisContext = TestAnalysisContext(this);
     _hasTestLibrary = false;
     typeProvider = analysisContext.typeProvider;
     typeSystem = analysisContext.typeSystem;

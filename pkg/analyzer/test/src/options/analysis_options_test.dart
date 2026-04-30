@@ -4,7 +4,7 @@
 
 import 'package:analyzer/diagnostic/diagnostic.dart';
 import 'package:analyzer/error/error.dart';
-import 'package:analyzer/file_system/memory_file_system.dart';
+import 'package:analyzer/source/file_source.dart';
 import 'package:analyzer/src/analysis_options/analysis_options_provider.dart';
 import 'package:analyzer/src/context/source.dart';
 import 'package:analyzer/src/dart/analysis/analysis_options.dart';
@@ -12,13 +12,11 @@ import 'package:analyzer/src/diagnostic/diagnostic.dart' as diag;
 import 'package:analyzer/src/file_system/file_system.dart';
 import 'package:analyzer/src/generated/source.dart';
 import 'package:analyzer/src/lint/registry.dart';
-import 'package:analyzer_testing/utilities/extensions/resource_provider.dart';
+import 'package:analyzer_testing/resource_provider_mixin.dart';
 import 'package:collection/collection.dart';
 import 'package:linter/src/rules.dart';
 import 'package:test/test.dart';
 import 'package:test_reflective_loader/test_reflective_loader.dart';
-
-import '../../generated/test_support.dart';
 
 main() {
   defineReflectiveSuite(() {
@@ -27,24 +25,17 @@ main() {
 }
 
 @reflectiveTest
-class AnalysisOptionsTest {
+class AnalysisOptionsTest with ResourceProviderMixin {
   final AnalysisOptionsProvider optionsProvider = AnalysisOptionsProvider(
     SourceFactoryImpl([]),
   );
-
-  final resourceProvider = MemoryResourceProvider();
-
-  String convertPath(String filePath) =>
-      ResourceProviderExtension(resourceProvider).convertPath(filePath);
 
   // TODO(srawlins): Add tests that exercise
   // `optionsProvider.getOptionsFromString` throwing an exception.
   AnalysisOptionsImpl parseOptions(String content) =>
       AnalysisOptionsImpl.fromYaml(
         optionsMap: optionsProvider.getOptionsFromString(content),
-        file: resourceProvider.getFile(
-          convertPath('/project/analysis_options.yaml'),
-        ),
+        file: getFile('/project/analysis_options.yaml'),
         resourceProvider: resourceProvider,
       );
 
@@ -132,7 +123,7 @@ analyzer:
     expect(processors, hasLength(1));
 
     var warning = Diagnostic.tmp(
-      source: TestSource(),
+      source: FileSource(newFile('/test.dart', '')),
       offset: 0,
       length: 1,
       diagnosticCode: diag.returnTypeInvalidForCatchError,
@@ -157,7 +148,7 @@ analyzer:
     expect(processors, hasLength(1));
 
     var warning = Diagnostic.tmp(
-      source: TestSource(),
+      source: FileSource(newFile('/test.dart', '')),
       offset: 0,
       length: 1,
       diagnosticCode: diag.unusedLocalVariable,
@@ -182,7 +173,7 @@ analyzer:
     expect(processors, hasLength(1));
 
     var error = Diagnostic.tmp(
-      source: TestSource(),
+      source: FileSource(newFile('/test.dart', '')),
       offset: 0,
       length: 1,
       diagnosticCode: diag.invalidAssignment,
@@ -208,7 +199,7 @@ analyzer:
     expect(processors, hasLength(1));
 
     var warning = Diagnostic.tmp(
-      source: TestSource(),
+      source: FileSource(newFile('/test.dart', '')),
       offset: 0,
       length: 1,
       diagnosticCode: diag.returnTypeInvalidForCatchError,
