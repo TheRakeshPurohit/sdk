@@ -1186,8 +1186,11 @@ class ResolutionVisitor extends RecursiveAstVisitor<void> {
       return;
     }
 
-    var element = type.element;
-    switch (element) {
+    if (namedType.isSynthetic) {
+      return;
+    }
+
+    switch (type.element) {
       case ClassElement():
         return;
       case MixinElement():
