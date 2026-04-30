@@ -111,6 +111,21 @@ enum MethodContravarianceCheckKind {
   checkGetterReturn,
 }
 
+Expression _hoist(
+  Expression expression,
+  DartType type,
+  List<VariableDeclaration>? hoistedExpressions,
+) {
+  if (hoistedExpressions != null &&
+      !isThisExpression(expression) &&
+      expression is! FunctionExpression) {
+    VariableDeclaration variable = createVariable(expression, type);
+    hoistedExpressions.add(variable);
+    return createVariableGet(variable);
+  }
+  return expression;
+}
+
 abstract class InferenceVisitorBase implements InferenceVisitor {
   final TypeInferrerImpl _inferrer;
 
@@ -1937,17 +1952,12 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
         undeferredArguments.add(argumentInfo);
         ExpressionInferenceResult result = inferArgument(argumentInfo);
         DartType inferredType = result.inferredType;
-        Expression expression = _hoist(
-          result.expression,
-          inferredType,
-          index < hoistingEndIndex ? hoistedExpressions : null,
-        );
         if (isIdenticalCall) {
           argumentInfo.identicalInfo = flowAnalysis.getExpressionInfo(
-            expression,
+            result.expression,
           );
         }
-        argument.expression = expression;
+        argument.expression = result.expression;
         gatherer?.tryConstrainLower(
           formalType,
           inferredType,
@@ -2027,8 +2037,13 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
         fileOffset: offset,
       );
       if (argMessage != null) {
-        var (List<Expression> positional, List<NamedExpression> named) =
-            argumentsInfo.computeArguments();
+        var (
+          List<Expression> positional,
+          List<NamedExpression> named,
+        ) = argumentsInfo.computeArguments(
+          hoistedExpressions: hoistedExpressions,
+          hoistingEndIndex: hoistingEndIndex,
+        );
         return new WrapInProblemInferenceResult(
           message: argMessage,
           problemReporting: problemReporting,
@@ -2167,8 +2182,13 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       fileOffset: offset,
     );
     if (argMessage != null) {
-      var (List<Expression> positional, List<NamedExpression> named) =
-          argumentsInfo.computeArguments();
+      var (
+        List<Expression> positional,
+        List<NamedExpression> named,
+      ) = argumentsInfo.computeArguments(
+        hoistedExpressions: hoistedExpressions,
+        hoistingEndIndex: hoistingEndIndex,
+      );
       return new WrapInProblemInferenceResult(
         message: argMessage,
         problemReporting: problemReporting,
@@ -2210,8 +2230,13 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       "Inferred function type: $calleeType.",
     );
 
-    var (List<Expression> positional, List<NamedExpression> named) =
-        argumentsInfo.computeArguments();
+    var (
+      List<Expression> positional,
+      List<NamedExpression> named,
+    ) = argumentsInfo.computeArguments(
+      hoistedExpressions: hoistedExpressions,
+      hoistingEndIndex: hoistingEndIndex,
+    );
     return new SuccessfulInferenceResult(
       inferredType: inferredType,
       functionType: calleeType,
@@ -3459,21 +3484,6 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       hoistedExpressions: hoistedExpressions,
       isExpressionInvocation: isExpressionInvocation,
     );
-  }
-
-  Expression _hoist(
-    Expression expression,
-    DartType type,
-    List<VariableDeclaration>? hoistedExpressions,
-  ) {
-    if (hoistedExpressions != null &&
-        !isThisExpression(expression) &&
-        expression is! FunctionExpression) {
-      VariableDeclaration variable = createVariable(expression, type);
-      hoistedExpressions.add(variable);
-      return createVariableGet(variable);
-    }
-    return expression;
   }
 
   ExpressionInferenceResult _insertHoistedExpression(
@@ -5915,15 +5925,27 @@ class _ArgumentInfo {
 }
 
 extension on List<_ArgumentInfo> {
-  (List<Expression> positional, List<NamedExpression> named)
-  computeArguments() {
+  (List<Expression> positional, List<NamedExpression> named) computeArguments({
+    required List<VariableDeclaration>? hoistedExpressions,
+    required int hoistingEndIndex,
+  }) {
     List<Expression> positional = [];
     List<NamedExpression> named = [];
-    for (_ArgumentInfo argumentInfo in this) {
+    for (int index = 0; index < length; index++) {
+      _ArgumentInfo argumentInfo = this[index];
       if (argumentInfo.isDuplicateNamed) {
         continue;
       }
       Argument argument = argumentInfo.argument;
+      if (index < hoistingEndIndex) {
+        ExpressionInferenceResult inferenceResult =
+            argumentInfo.argumentInferenceResult!;
+        argument.expression = _hoist(
+          inferenceResult.expression,
+          inferenceResult.postCoercionType ?? inferenceResult.inferredType,
+          hoistedExpressions,
+        );
+      }
       switch (argument) {
         case PositionalArgument():
           positional.add(argument.expression);
