@@ -1790,7 +1790,7 @@ abstract class Listener implements UnescapeErrorListener {
 
   /// Called when the parser has consumed a binary pattern, consisting of a LHS
   /// pattern, `&&` or `||` operator, and a RHS pattern.
-  void endBinaryPattern(Token token) {
+  void endBinaryPattern(Token operatorToken) {
     logEvent("BinaryPattern");
   }
 

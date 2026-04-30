@@ -3348,12 +3348,12 @@ class ParserTestListener implements Listener {
   }
 
   @override
-  void endBinaryPattern(Token token) {
+  void endBinaryPattern(Token operatorToken) {
     indent--;
-    seen(token);
+    seen(operatorToken);
     doPrint(
       'endBinaryPattern('
-      '$token)',
+      '$operatorToken)',
     );
   }
 

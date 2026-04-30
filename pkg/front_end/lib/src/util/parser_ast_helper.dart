@@ -2937,10 +2937,10 @@ abstract class AbstractParserAstListener implements Listener {
   }
 
   @override
-  void endBinaryPattern(Token token) {
+  void endBinaryPattern(Token operatorToken) {
     BinaryPatternEnd data = new BinaryPatternEnd(
       ParserAstType.END,
-      token: token,
+      operatorToken: operatorToken,
     );
     seen(data);
   }
@@ -8915,13 +8915,15 @@ class BinaryPatternBegin extends ParserAstNode {
 }
 
 class BinaryPatternEnd extends ParserAstNode {
-  final Token token;
+  final Token operatorToken;
 
-  BinaryPatternEnd(ParserAstType type, {required this.token})
+  BinaryPatternEnd(ParserAstType type, {required this.operatorToken})
     : super("BinaryPattern", type);
 
   @override
-  Map<String, Object?> get deprecatedArguments => {"token": token};
+  Map<String, Object?> get deprecatedArguments => {
+    "operatorToken": operatorToken,
+  };
 
   @override
   R accept<R>(ParserAstVisitor<R> v) => v.visitBinaryPatternEnd(this);

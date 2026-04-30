@@ -1934,10 +1934,10 @@ class BodyBuilderImpl extends StackListenerImpl
   }
 
   @override
-  void endBinaryPattern(Token token) {
+  void endBinaryPattern(Token operatorToken) {
     debugEvent("BinaryPattern");
     assert(
-      checkState(token, [
+      checkState(operatorToken, [
         unionOfKinds([
           ValueKinds.Expression,
           ValueKinds.Generator,
@@ -1952,16 +1952,16 @@ class BodyBuilderImpl extends StackListenerImpl
     );
     reportIfNotEnabled(
       libraryFeatures.patterns,
-      token.charOffset,
-      token.charCount,
+      operatorToken.charOffset,
+      operatorToken.charCount,
     );
     Pattern right = toPattern(pop());
     Pattern left = toPattern(pop());
 
-    String operator = token.lexeme;
+    String operator = operatorToken.lexeme;
     switch (operator) {
       case '&&':
-        push(intern.createAndPattern(token.charOffset, left, right));
+        push(intern.createAndPattern(operatorToken.charOffset, left, right));
         break;
       case '||':
         Map<String, VariableDeclaration> leftVariablesByName = {
@@ -2007,7 +2007,7 @@ class BodyBuilderImpl extends StackListenerImpl
         }
         push(
           intern.createOrPattern(
-            token.charOffset,
+            operatorToken.charOffset,
             left,
             right,
             orPatternJointVariables: jointVariables,
@@ -2021,7 +2021,7 @@ class BodyBuilderImpl extends StackListenerImpl
             what: operator,
             where: 'endBinaryPattern',
           ),
-          token.charOffset,
+          operatorToken.charOffset,
           uri,
         );
     }
@@ -3064,7 +3064,7 @@ class BodyBuilderImpl extends StackListenerImpl
         }
       }
       push(
-        intern.createStringConcatenation(offsetForToken(endToken), expressions),
+        intern.createStringConcatenation(offsetForToken(first), expressions),
       );
     }
   }

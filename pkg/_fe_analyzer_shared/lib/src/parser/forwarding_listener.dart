@@ -708,8 +708,8 @@ class ForwardingListener implements Listener {
   }
 
   @override
-  void endBinaryPattern(Token token) {
-    listener?.endBinaryPattern(token);
+  void endBinaryPattern(Token operatorToken) {
+    listener?.endBinaryPattern(operatorToken);
   }
 
   @override

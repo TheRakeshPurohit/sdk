@@ -9106,7 +9106,7 @@ class Parser {
       next = token.next!;
       kind = next.kind;
     }
-    listener.endLiteralString(interpolationCount, next);
+    listener.endLiteralString(interpolationCount, token);
     return token;
   }
 
@@ -9395,7 +9395,7 @@ class Parser {
             // Shortcut common cases:
             // "STRING COMMA" and "STRING CLOSE_PAREN"
             listener.beginLiteralString(next1);
-            listener.endLiteralString(0, next2);
+            listener.endLiteralString(0, next1);
             token = next1;
             expressionHandled = true;
           }
@@ -11449,6 +11449,8 @@ class Parser {
             patternContext,
             precedence: tokenLevel + 1,
           );
+          // Note that "next" here is before "token" and the one that had either
+          // "&&" or "||".
           listener.endBinaryPattern(next);
           break;
         default:

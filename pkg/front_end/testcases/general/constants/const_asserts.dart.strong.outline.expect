@@ -55,8 +55,8 @@ static method main() → dynamic
 
 Extra constant evaluation status:
 Evaluated: EqualsCall @ org-dartlang-testcase:///const_asserts.dart:11:50 -> BoolConstant(true)
-Evaluated: StringConcatenation @ org-dartlang-testcase:///const_asserts.dart:12:59 -> StringConstant("foo was false")
+Evaluated: StringConcatenation @ org-dartlang-testcase:///const_asserts.dart:12:13 -> StringConstant("foo was false")
 Evaluated: EqualsCall @ org-dartlang-testcase:///const_asserts.dart:13:50 -> BoolConstant(true)
-Evaluated: StringConcatenation @ org-dartlang-testcase:///const_asserts.dart:15:73 -> StringConstant("btw foo was false")
+Evaluated: StringConcatenation @ org-dartlang-testcase:///const_asserts.dart:15:23 -> StringConstant("btw foo was false")
 Evaluated: ConstructorInvocation @ org-dartlang-testcase:///const_asserts.dart:27:24 -> InstanceConstant(const Foo{Foo.x: 1})
 Extra constant evaluation: evaluated: 39, effectively constant: 5
