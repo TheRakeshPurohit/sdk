@@ -25,7 +25,7 @@ class FunctionExpressionResolver {
 
   void resolve(FunctionExpressionImpl node, {required DartType contextType}) {
     var parent = node.parent;
-    var isFunctionDeclaration = parent is FunctionDeclaration;
+    var isFunctionDeclaration = parent is FunctionDeclarationImpl;
     var body = node.body;
     var isClosure = _resolver.flowAnalysis.isActive && !isFunctionDeclaration;
 

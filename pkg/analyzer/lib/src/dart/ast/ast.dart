@@ -436,7 +436,7 @@ final class AnnotationImpl extends AstNodeImpl implements Annotation {
   }
 
   @override
-  AstNode get parent => super.parent!;
+  AstNodeImpl get parent => super.parent!;
 
   @generated
   @override
@@ -2333,7 +2333,7 @@ abstract final class AstNode implements SyntacticEntity {
 }
 
 sealed class AstNodeImpl extends SyntacticEntity implements AstNode {
-  AstNode? _parent;
+  AstNodeImpl? _parent;
 
   @override
   Iterable<SyntacticEntity> get childEntities =>
@@ -2357,11 +2357,11 @@ sealed class AstNodeImpl extends SyntacticEntity implements AstNode {
   int get offset => beginToken.offset;
 
   @override
-  AstNode? get parent => _parent;
+  AstNodeImpl? get parent => _parent;
 
   @override
   AstNode get root {
-    AstNode root = this;
+    AstNodeImpl root = this;
     var rootParent = parent;
     while (rootParent != null) {
       root = rootParent;
@@ -8135,7 +8135,7 @@ sealed class DartPatternImpl extends AstNodeImpl
   AstNodeImpl? get patternContext {
     for (DartPatternImpl current = this; ;) {
       var parent = current.parent;
-      if (parent is MapPatternEntry) {
+      if (parent is MapPatternEntryImpl) {
         parent = parent.parent;
       } else if (parent is PatternFieldImpl) {
         parent = parent.parent;
@@ -18923,8 +18923,7 @@ final class IndexExpressionImpl extends ExpressionImpl
   InternalFormalParameterElement? get _staticParameterElementForIndex {
     Element? element = this.element;
 
-    var parent = this.parent;
-    if (parent is CompoundAssignmentExpression) {
+    if (parent case CompoundAssignmentExpression parent) {
       element = parent.writeElement ?? parent.readElement;
     }
 
@@ -18959,11 +18958,11 @@ final class IndexExpressionImpl extends ExpressionImpl
   bool inSetterContext() {
     // TODO(brianwilkerson): Convert this to a getter.
     var parent = this.parent!;
-    if (parent is PrefixExpression) {
+    if (parent is PrefixExpressionImpl) {
       return parent.operator.type.isIncrementOperator;
-    } else if (parent is PostfixExpression) {
+    } else if (parent is PostfixExpressionImpl) {
       return parent.operator.type.isIncrementOperator;
-    } else if (parent is AssignmentExpression) {
+    } else if (parent is AssignmentExpressionImpl) {
       return identical(parent.leftHandSide, this);
     }
     return false;
@@ -19374,7 +19373,7 @@ final class IntegerLiteralImpl extends LiteralImpl implements IntegerLiteral {
   /// is always positive.
   bool get immediatelyNegated {
     var parent = this.parent!;
-    return parent is PrefixExpression &&
+    return parent is PrefixExpressionImpl &&
         parent.operator.type == TokenType.MINUS;
   }
 
@@ -19685,7 +19684,7 @@ final class InterpolationStringImpl extends InterpolationElementImpl
   }
 
   @override
-  StringInterpolation get parent => super.parent as StringInterpolation;
+  StringInterpolationImpl get parent => super.parent as StringInterpolationImpl;
 
   @generated
   @override
@@ -30061,13 +30060,13 @@ final class SimpleIdentifierImpl extends IdentifierImpl
   @override
   bool get isQualified {
     var parent = this.parent!;
-    if (parent is PrefixedIdentifier) {
+    if (parent is PrefixedIdentifierImpl) {
       return identical(parent.identifier, this);
-    } else if (parent is PropertyAccess) {
+    } else if (parent is PropertyAccessImpl) {
       return identical(parent.propertyName, this);
-    } else if (parent is ConstructorName) {
+    } else if (parent is ConstructorNameImpl) {
       return identical(parent.name, this);
-    } else if (parent case MethodInvocation invocation) {
+    } else if (parent case MethodInvocationImpl invocation) {
       return identical(invocation.methodName, this) &&
           invocation.realTarget != null;
     }
@@ -30095,11 +30094,13 @@ final class SimpleIdentifierImpl extends IdentifierImpl
   bool inDeclarationContext() {
     var parent = this.parent;
     switch (parent) {
-      case ImportDirective():
+      case ImportDirectiveImpl():
         return parent.prefix == this;
-      case Label():
+      case LabelImpl():
         var parent2 = parent.parent;
-        return parent2 is Statement || parent2 is SwitchMember;
+        return parent2 is StatementImpl || parent2 is SwitchMemberImpl;
+      default:
+        break;
     }
     return false;
   }
@@ -34169,19 +34170,19 @@ final class VariableDeclarationImpl extends DeclarationImpl
   @override
   bool get isConst {
     var parent = this.parent;
-    return parent is VariableDeclarationList && parent.isConst;
+    return parent is VariableDeclarationListImpl && parent.isConst;
   }
 
   @override
   bool get isFinal {
     var parent = this.parent;
-    return parent is VariableDeclarationList && parent.isFinal;
+    return parent is VariableDeclarationListImpl && parent.isFinal;
   }
 
   @override
   bool get isLate {
     var parent = this.parent;
-    return parent is VariableDeclarationList && parent.isLate;
+    return parent is VariableDeclarationListImpl && parent.isLate;
   }
 
   @generated

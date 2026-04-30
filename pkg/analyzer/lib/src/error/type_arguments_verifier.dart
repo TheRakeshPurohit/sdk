@@ -243,8 +243,8 @@ class TypeArgumentsVerifier {
   void checkNamedType(NamedTypeImpl node) {
     _checkForTypeArgumentNotMatchingBounds(node);
     var parent = node.parent;
-    if (parent is! ConstructorName ||
-        parent.parent is! InstanceCreationExpression) {
+    if (parent is! ConstructorNameImpl ||
+        parent.parent is! InstanceCreationExpressionImpl) {
       _checkForRawTypeName(node);
     }
   }

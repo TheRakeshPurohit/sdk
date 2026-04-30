@@ -262,7 +262,7 @@ class AstRewriter {
   /// [ConstructorReference].
   AstNode prefixedIdentifier(Scope nameScope, PrefixedIdentifierImpl node) {
     var parent = node.parent;
-    if (parent is Annotation) {
+    if (parent is AnnotationImpl) {
       // An annotations which is a const constructor invocation can initially be
       // represented with a [PrefixedIdentifier]. Do not rewrite such nodes.
       return node;
@@ -284,7 +284,7 @@ class AstRewriter {
     }
     var prefix = node.prefix;
     var prefixElement = nameScope.lookup(prefix.name).getter;
-    if (parent is ConstantPattern && prefixElement is PrefixElement) {
+    if (parent is ConstantPatternImpl && prefixElement is PrefixElement) {
       var element = prefixElement.scope.lookup(node.identifier.name).getter;
       switch (element) {
         case DynamicElementImpl():
@@ -438,7 +438,7 @@ class AstRewriter {
 
   AstNode simpleIdentifier(Scope nameScope, SimpleIdentifierImpl node) {
     var parent = node.parent;
-    if (parent is ConstantPattern) {
+    if (parent is ConstantPatternImpl) {
       var element = nameScope.lookup(node.name).getter;
       switch (element) {
         case DynamicElementImpl():

@@ -1905,10 +1905,10 @@ class _OpTypeAstVisitor extends GeneralizingAstVisitor<void> {
     var parent = node.parent;
     DartType parentMatchedValueType;
     List<PatternField> existingFields;
-    if (parent is ObjectPattern) {
+    if (parent is ObjectPatternImpl) {
       parentMatchedValueType = parent.type.typeOrThrow;
       existingFields = parent.fields;
-    } else if (parent is RecordPattern) {
+    } else if (parent is RecordPatternImpl) {
       parentMatchedValueType = parent.matchedValueTypeOrThrow;
       existingFields = parent.fields;
     } else {

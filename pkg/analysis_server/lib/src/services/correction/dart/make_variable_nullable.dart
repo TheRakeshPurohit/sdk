@@ -213,7 +213,7 @@ class MakeVariableNullable extends ResolvedCorrectionProducer {
   Future<void> _forVariableDeclaration(
     ChangeBuilder builder,
     Expression node,
-    VariableDeclarationImpl parent,
+    VariableDeclaration parent,
   ) async {
     var declarationList = parent.parent;
     if (declarationList is! VariableDeclarationList) {

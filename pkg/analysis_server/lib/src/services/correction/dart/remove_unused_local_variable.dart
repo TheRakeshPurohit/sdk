@@ -232,9 +232,9 @@ class RemoveUnusedLocalVariable extends ResolvedCorrectionProducer {
         // Remove completely `var A(:notUsed) = x;`
         if (fields.length == 1) {
           var patternDeclaration = objectPattern.parent;
-          if (patternDeclaration is PatternVariableDeclaration) {
+          if (patternDeclaration is PatternVariableDeclarationImpl) {
             var patternStatement = patternDeclaration.parent;
-            if (patternStatement is PatternVariableDeclarationStatement) {
+            if (patternStatement is PatternVariableDeclarationStatementImpl) {
               _commands.add(
                 _DeleteStatementCommand(
                   utils: utils,
