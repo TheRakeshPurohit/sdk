@@ -24,7 +24,6 @@ import 'package:analyzer/dart/ast/visitor.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
-import 'package:analyzer/source/source.dart';
 import 'package:analyzer/source/source_range.dart';
 import 'package:analyzer/src/dart/analysis/session_helper.dart';
 import 'package:analyzer/src/dart/ast/ast.dart';
@@ -81,7 +80,7 @@ final class ExtractMethodRefactoringImpl extends RefactoringImpl
   final int _selectionLength;
   SourceRange _selectionRange;
   final CorrectionUtils _utils;
-  final Set<Source> _librariesToImport = <Source>{};
+  final Set<LibraryElement> _librariesToImport = <LibraryElement>{};
 
   @override
   String returnType = '';
@@ -1589,7 +1588,7 @@ extension on LibraryElement {
   /// used by the generated source, but not imported.
   String? getTypeSource(
     DartType type,
-    Set<Source> librariesToImport, {
+    Set<LibraryElement> librariesToImport, {
     StringBuffer? parametersBuffer,
   }) {
     var alias = type.alias;
@@ -1679,7 +1678,7 @@ extension on LibraryElement {
   }
 
   String? _getTypeCodeElementArguments({
-    required Set<Source> librariesToImport,
+    required Set<LibraryElement> librariesToImport,
     required Element element,
     required bool isNullable,
     required List<DartType> typeArguments,
@@ -1702,7 +1701,7 @@ extension on LibraryElement {
           sb.write('.');
         }
       } else {
-        librariesToImport.add(library.firstFragment.source);
+        librariesToImport.add(library);
       }
     }
 
@@ -1737,7 +1736,7 @@ extension on LibraryElement {
   }
 
   String _getTypeCodeRecord({
-    required Set<Source> librariesToImport,
+    required Set<LibraryElement> librariesToImport,
     required RecordType type,
   }) {
     var buffer = StringBuffer();
