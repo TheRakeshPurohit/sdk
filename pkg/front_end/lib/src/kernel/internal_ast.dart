@@ -386,6 +386,43 @@ class ActualArguments extends TreeNode with InternalTreeNode {
 
   bool get hasNamedBeforePositional => _hasNamedBeforePositional;
 
+  /// Determines how many argument expressions should be hoisted when
+  /// implementing the "named arguments anywhere" feature.
+  ///
+  /// The reason argument expressions need to be hoisted when implementing this
+  /// feature is that in kernel semantics, positional arguments are evaluated
+  /// before named arguments, so if any named argument appears before a
+  /// positional argument, it needs to be hoisted to ensure that it is evaluated
+  /// before the positional arguments that follow it.
+  int computeHoistingEndIndexForNamedArgumentsAnywhere() {
+    // The computation is based on the following observation: the largest suffix
+    // of the argument vector, such that every positional argument in that
+    // suffix comes before any named argument, retains the evaluation order
+    // after the rest of the arguments are hoisted, and therefore doesn't need
+    // to be hoisted itself. The loop below finds the starting position of such
+    // suffix and returns it. In case all positional arguments come before all
+    // named arguments, the suffix coincides with the entire argument vector,
+    // and none of the arguments is hoisted. That way the legacy behavior is
+    // preserved.
+    if (hasNamedBeforePositional) {
+      int hoistingEndIndex = argumentList.length - 1;
+      for (
+        int i = argumentList.length - 2;
+        i >= 0 && hoistingEndIndex == i + 1;
+        i--
+      ) {
+        int previousWeight = argumentList[i + 1] is NamedArgument ? 1 : 0;
+        int currentWeight = argumentList[i] is NamedArgument ? 1 : 0;
+        if (currentWeight <= previousWeight) {
+          --hoistingEndIndex;
+        }
+      }
+      return hoistingEndIndex;
+    } else {
+      return 0;
+    }
+  }
+
   void prependArguments(List<Argument> list, {required int positionalCount}) {
     assert(list.whereType<PositionalArgument>().length == positionalCount);
     argumentList.insertAll(0, list);
