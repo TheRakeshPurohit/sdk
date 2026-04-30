@@ -129,6 +129,26 @@ final class AdjacentStringsImpl extends StringLiteralImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (strings.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'strings' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (strings.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitAdjacentStrings(this, contextType: contextType);
   }
@@ -450,6 +470,49 @@ final class AnnotationImpl extends AstNodeImpl implements Annotation {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(name, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'name'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(constructorName, oldNode)) {
+      constructorName = null;
+      return;
+    }
+    if (identical(arguments, oldNode)) {
+      arguments = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(name, oldNode)) {
+      name = newNode as IdentifierImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(constructorName, oldNode)) {
+      constructorName = newNode as SimpleIdentifierImpl?;
+      return;
+    }
+    if (identical(arguments, oldNode)) {
+      arguments = newNode as ArgumentListImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     name.accept(visitor);
     typeArguments?.accept(visitor);
@@ -585,6 +648,25 @@ final class AnonymousBlockBodyImpl extends AnonymousMethodBodyImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(block, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'block'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(block, oldNode)) {
+      block = newNode as BlockImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   TypeImpl resolve(ResolverVisitor resolver, TypeImpl? imposedType) =>
       resolver.visitAnonymousBlockBody(this, imposedType: imposedType);
@@ -696,6 +778,25 @@ final class AnonymousExpressionBodyImpl extends AnonymousMethodBodyImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -950,6 +1051,41 @@ final class AnonymousMethodInvocationImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(target, oldNode)) {
+      target = null;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(target, oldNode)) {
+      target = newNode as ExpressionImpl?;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = newNode as FormalParameterListImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as AnonymousMethodBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitAnonymousMethodInvocation(this, contextType: contextType);
   }
@@ -1148,6 +1284,26 @@ final class ArgumentListImpl extends AstNodeImpl implements ArgumentList {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (arguments.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'arguments' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (arguments.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     arguments.accept(visitor);
   }
@@ -1304,6 +1460,32 @@ final class AsExpressionImpl extends ExpressionImpl implements AsExpression {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitAsExpression(this, contextType: contextType);
   }
@@ -1456,6 +1638,33 @@ final class AssertInitializerImpl extends ConstructorInitializerImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(condition, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'condition'.");
+    }
+    if (identical(message, oldNode)) {
+      message = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(message, oldNode)) {
+      message = newNode as ExpressionImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -1643,6 +1852,33 @@ final class AssertStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(condition, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'condition'.");
+    }
+    if (identical(message, oldNode)) {
+      message = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(message, oldNode)) {
+      message = newNode as ExpressionImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -1918,6 +2154,32 @@ final class AssignmentExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(leftHandSide, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'leftHandSide'.");
+    }
+    if (identical(rightHandSide, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'rightHandSide'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(leftHandSide, oldNode)) {
+      leftHandSide = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(rightHandSide, oldNode)) {
+      rightHandSide = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitAssignmentExpression(this, contextType: contextType);
   }
@@ -2126,6 +2388,52 @@ sealed class AstNodeImpl extends SyntacticEntity implements AstNode {
   /// in a value expression slot.
   bool isInValueExpressionSlot(AstNode child) => false;
 
+  /// Remove [oldNode] from one of this node's nullable child slots.
+  ///
+  /// Throws an [ArgumentError] if [oldNode] is not a child of this node, and an
+  /// [UnsupportedError] if [oldNode] is a child but is not removable.
+  void removeChild(AstNodeImpl oldNode) {
+    throw ArgumentError('The old node is not a child of this node.');
+  }
+
+  /// Remove this node from the child slot in which it is held by its parent.
+  ///
+  /// This is only supported for nullable child slots. It is not supported for
+  /// required child slots or for elements of a [NodeList].
+  void removeFromParent() {
+    var parent = this.parent;
+    if (parent is! AstNodeImpl) {
+      throw ArgumentError('The node is not a child of another node.');
+    }
+    parent.removeChild(this);
+  }
+
+  /// Replace [oldNode], which must be one of this node's children, with
+  /// [newNode].
+  ///
+  /// This method is useful when building [newNode] has already moved children
+  /// out of [oldNode], causing `oldNode.parent` to no longer point to this
+  /// node.
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(oldNode, newNode)) {
+      return;
+    }
+    throw ArgumentError('The old node is not a child of this node.');
+  }
+
+  /// Replace this node with the [newNode] in the child slot in which this node
+  /// is held by its parent.
+  void replaceWith(AstNodeImpl newNode) {
+    if (identical(this, newNode)) {
+      return;
+    }
+    var parent = this.parent;
+    if (parent is! AstNodeImpl) {
+      throw ArgumentError('The node is not a child of another node.');
+    }
+    parent.replaceChild(this, newNode);
+  }
+
   @override
   E? thisOrAncestorMatching<E extends AstNode>(
     bool Function(AstNode) predicate,
@@ -2331,6 +2639,25 @@ final class AwaitExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitAwaitExpression(this, contextType: contextType);
   }
@@ -2478,6 +2805,32 @@ final class BinaryExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(leftOperand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'leftOperand'.");
+    }
+    if (identical(rightOperand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'rightOperand'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(leftOperand, oldNode)) {
+      leftOperand = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(rightOperand, oldNode)) {
+      rightOperand = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitBinaryExpression(this, contextType: contextType);
   }
@@ -2612,6 +2965,26 @@ final class BlockClassBodyImpl extends ClassBodyImpl implements BlockClassBody {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (members.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'members' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (members.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     members.accept(visitor);
   }
@@ -2729,6 +3102,34 @@ final class BlockEnumBodyImpl extends EnumBodyImpl implements BlockEnumBody {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (constants.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'constants' because NodeList cannot be resized.",
+      );
+    }
+    if (members.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'members' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (constants.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (members.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -2869,6 +3270,25 @@ final class BlockFunctionBodyImpl extends FunctionBodyImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(block, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'block'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(block, oldNode)) {
+      block = newNode as BlockImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   TypeImpl resolve(ResolverVisitor resolver, TypeImpl? imposedType) =>
       resolver.visitBlockFunctionBody(this, imposedType: imposedType);
@@ -2965,6 +3385,26 @@ final class BlockImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (statements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'statements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (statements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -3185,6 +3625,26 @@ final class BreakStatementImpl extends StatementImpl implements BreakStatement {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(label, oldNode)) {
+      label = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(label, oldNode)) {
+      label = newNode as LabelReferenceImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     label?.accept(visitor);
   }
@@ -3323,6 +3783,33 @@ final class CascadeExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(target, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'target'.");
+    }
+    if (cascadeSections.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'cascadeSections' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(target, oldNode)) {
+      target = newNode as ExpressionImpl;
+      return;
+    }
+    if (cascadeSections.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitCascadeExpression(this, contextType: contextType);
   }
@@ -3444,6 +3931,25 @@ final class CaseClauseImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(guardedPattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'guardedPattern'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(guardedPattern, oldNode)) {
+      guardedPattern = newNode as GuardedPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -3585,6 +4091,32 @@ final class CastPatternImpl extends DartPatternImpl implements CastPattern {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -3862,6 +4394,49 @@ final class CatchClauseImpl extends AstNodeImpl implements CatchClause {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(exceptionType, oldNode)) {
+      exceptionType = null;
+      return;
+    }
+    if (identical(exceptionParameter, oldNode)) {
+      exceptionParameter = null;
+      return;
+    }
+    if (identical(stackTraceParameter, oldNode)) {
+      stackTraceParameter = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(exceptionType, oldNode)) {
+      exceptionType = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(exceptionParameter, oldNode)) {
+      exceptionParameter = newNode as CatchClauseParameterImpl?;
+      return;
+    }
+    if (identical(stackTraceParameter, oldNode)) {
+      stackTraceParameter = newNode as CatchClauseParameterImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as BlockImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -4378,6 +4953,64 @@ final class ClassDeclarationImpl extends CompilationUnitMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(namePart, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'namePart'.");
+    }
+    if (identical(extendsClause, oldNode)) {
+      extendsClause = null;
+      return;
+    }
+    if (identical(withClause, oldNode)) {
+      withClause = null;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = null;
+      return;
+    }
+    if (identical(nativeClause, oldNode)) {
+      nativeClause = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(namePart, oldNode)) {
+      namePart = newNode as ClassNamePartImpl;
+      return;
+    }
+    if (identical(extendsClause, oldNode)) {
+      extendsClause = newNode as ExtendsClauseImpl?;
+      return;
+    }
+    if (identical(withClause, oldNode)) {
+      withClause = newNode as WithClauseImpl?;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = newNode as ImplementsClauseImpl?;
+      return;
+    }
+    if (identical(nativeClause, oldNode)) {
+      nativeClause = newNode as NativeClauseImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as ClassBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     namePart.accept(visitor);
@@ -4760,6 +5393,48 @@ final class ClassTypeAliasImpl extends TypeAliasImpl implements ClassTypeAlias {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(superclass, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'superclass'.");
+    }
+    if (identical(withClause, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'withClause'.");
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(superclass, oldNode)) {
+      superclass = newNode as NamedTypeImpl;
+      return;
+    }
+    if (identical(withClause, oldNode)) {
+      withClause = newNode as WithClauseImpl;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = newNode as ImplementsClauseImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     typeParameters?.accept(visitor);
@@ -4963,6 +5638,24 @@ final class CommentImpl extends AstNodeImpl
   E? accept<E>(AstVisitor<E> visitor) => visitor.visitComment(this);
 
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (references.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'references' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (references.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @override
   void visitChildren(AstVisitor visitor) {
     _references.accept(visitor);
   }
@@ -5074,6 +5767,25 @@ final class CommentReferenceImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as CommentReferableExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -5335,6 +6047,40 @@ final class CompilationUnitImpl extends AstNodeImpl
   }
 
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(scriptTag, oldNode)) {
+      scriptTag = null;
+      return;
+    }
+    if (directives.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'directives' because NodeList cannot be resized.",
+      );
+    }
+    if (declarations.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'declarations' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(scriptTag, oldNode)) {
+      scriptTag = newNode as ScriptTagImpl;
+      return;
+    }
+    if (directives.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (declarations.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @override
   void visitChildren(AstVisitor visitor) {
     _scriptTag?.accept(visitor);
     if (_directivesAreBeforeDeclarations) {
@@ -5583,6 +6329,39 @@ final class ConditionalExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(condition, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'condition'.");
+    }
+    if (identical(thenExpression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'thenExpression'.");
+    }
+    if (identical(elseExpression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'elseExpression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(thenExpression, oldNode)) {
+      thenExpression = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(elseExpression, oldNode)) {
+      elseExpression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitConditionalExpression(this, contextType: contextType);
   }
@@ -5801,6 +6580,40 @@ final class ConfigurationImpl extends AstNodeImpl implements Configuration {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(name, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'name'.");
+    }
+    if (identical(value, oldNode)) {
+      value = null;
+      return;
+    }
+    if (identical(uri, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'uri'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(name, oldNode)) {
+      name = newNode as DottedNameImpl;
+      return;
+    }
+    if (identical(value, oldNode)) {
+      value = newNode as StringLiteralImpl?;
+      return;
+    }
+    if (identical(uri, oldNode)) {
+      uri = newNode as StringLiteralImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     name.accept(visitor);
     value?.accept(visitor);
@@ -5971,6 +6784,25 @@ final class ConstantPatternImpl extends DartPatternImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -6318,6 +7150,56 @@ final class ConstructorDeclarationImpl extends ClassMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeName, oldNode)) {
+      typeName = null;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'parameters'.");
+    }
+    if (initializers.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'initializers' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(redirectedConstructor, oldNode)) {
+      redirectedConstructor = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeName, oldNode)) {
+      typeName = newNode as SimpleIdentifierImpl?;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = newNode as FormalParameterListImpl;
+      return;
+    }
+    if (initializers.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(redirectedConstructor, oldNode)) {
+      redirectedConstructor = newNode as ConstructorNameImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as FunctionBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     typeName?.accept(visitor);
@@ -6528,6 +7410,32 @@ final class ConstructorFieldInitializerImpl extends ConstructorInitializerImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(fieldName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'fieldName'.");
+    }
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(fieldName, oldNode)) {
+      fieldName = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     fieldName.accept(visitor);
     expression.accept(visitor);
@@ -6688,6 +7596,33 @@ final class ConstructorNameImpl extends AstNodeImpl implements ConstructorName {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    if (identical(name, oldNode)) {
+      name = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as NamedTypeImpl;
+      return;
+    }
+    if (identical(name, oldNode)) {
+      name = newNode as SimpleIdentifierImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     type.accept(visitor);
     name?.accept(visitor);
@@ -6798,6 +7733,25 @@ final class ConstructorReferenceImpl extends CommentReferableExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(constructorName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'constructorName'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(constructorName, oldNode)) {
+      constructorName = newNode as ConstructorNameImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -6922,6 +7876,25 @@ final class ConstructorSelectorImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(name, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'name'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(name, oldNode)) {
+      name = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -7053,6 +8026,26 @@ final class ContinueStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(label, oldNode)) {
+      label = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(label, oldNode)) {
+      label = newNode as LabelReferenceImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -7329,6 +8322,26 @@ final class DeclaredIdentifierImpl extends DeclarationImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     type?.accept(visitor);
@@ -7481,6 +8494,26 @@ final class DeclaredVariablePatternImpl extends VariablePatternImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -7709,6 +8742,32 @@ final class DoStatementImpl extends StatementImpl implements DoStatement {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    if (identical(condition, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'condition'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(body, oldNode)) {
+      body = newNode as StatementImpl;
+      return;
+    }
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     body.accept(visitor);
     condition.accept(visitor);
@@ -7895,6 +8954,40 @@ final class DotShorthandConstructorInvocationImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(constructorName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'constructorName'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(constructorName, oldNode)) {
+      constructorName = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitDotShorthandConstructorInvocation(
       this,
@@ -8048,6 +9141,40 @@ final class DotShorthandInvocationImpl extends InvocationExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(memberName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'memberName'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(memberName, oldNode)) {
+      memberName = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -8208,6 +9335,25 @@ final class DotShorthandPropertyAccessImpl extends ExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(propertyName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'propertyName'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(propertyName, oldNode)) {
+      propertyName = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -8794,6 +9940,41 @@ final class EnumConstantArgumentsImpl extends AstNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(constructorSelector, oldNode)) {
+      constructorSelector = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(constructorSelector, oldNode)) {
+      constructorSelector = newNode as ConstructorSelectorImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     typeArguments?.accept(visitor);
     constructorSelector?.accept(visitor);
@@ -8958,6 +10139,26 @@ final class EnumConstantDeclarationImpl extends DeclarationImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(arguments, oldNode)) {
+      arguments = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(arguments, oldNode)) {
+      arguments = newNode as EnumConstantArgumentsImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -9167,6 +10368,48 @@ final class EnumDeclarationImpl extends CompilationUnitMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(namePart, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'namePart'.");
+    }
+    if (identical(withClause, oldNode)) {
+      withClause = null;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(namePart, oldNode)) {
+      namePart = newNode as ClassNamePartImpl;
+      return;
+    }
+    if (identical(withClause, oldNode)) {
+      withClause = newNode as WithClauseImpl?;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = newNode as ImplementsClauseImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as EnumBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     namePart.accept(visitor);
@@ -9315,6 +10558,41 @@ final class ExportDirectiveImpl extends NamespaceDirectiveImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(uri, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'uri'.");
+    }
+    if (configurations.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'configurations' because NodeList cannot be resized.",
+      );
+    }
+    if (combinators.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'combinators' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(uri, oldNode)) {
+      uri = newNode as StringLiteralImpl;
+      return;
+    }
+    if (configurations.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (combinators.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -9588,6 +10866,25 @@ final class ExpressionFunctionBodyImpl extends FunctionBodyImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -9946,6 +11243,25 @@ final class ExpressionStatementImpl extends StatementImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     expression.accept(visitor);
   }
@@ -10048,6 +11364,25 @@ final class ExtendsClauseImpl extends AstNodeImpl implements ExtendsClause {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(superclass, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'superclass'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(superclass, oldNode)) {
+      superclass = newNode as NamedTypeImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -10247,6 +11582,41 @@ final class ExtensionDeclarationImpl extends CompilationUnitMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(onClause, oldNode)) {
+      onClause = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(onClause, oldNode)) {
+      onClause = newNode as ExtensionOnClauseImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as ClassBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     typeParameters?.accept(visitor);
@@ -10382,6 +11752,25 @@ final class ExtensionOnClauseImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(extendedType, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'extendedType'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(extendedType, oldNode)) {
+      extendedType = newNode as TypeAnnotationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -10577,6 +11966,41 @@ final class ExtensionOverrideImpl extends ExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(importPrefix, oldNode)) {
+      importPrefix = null;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(importPrefix, oldNode)) {
+      importPrefix = newNode as ImportPrefixReferenceImpl?;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -10809,6 +12233,42 @@ final class ExtensionTypeDeclarationImpl extends CompilationUnitMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(primaryConstructor, oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove required child 'primaryConstructor'.",
+      );
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(primaryConstructor, oldNode)) {
+      primaryConstructor = newNode as PrimaryConstructorDeclarationImpl;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = newNode as ImplementsClauseImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as ClassBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     primaryConstructor.accept(visitor);
@@ -11031,6 +12491,25 @@ final class FieldDeclarationImpl extends ClassMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(fields, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'fields'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(fields, oldNode)) {
+      fields = newNode as VariableDeclarationListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     fields.accept(visitor);
@@ -11194,6 +12673,42 @@ final class FieldFormalParameterImpl extends FormalParameterImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = null;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = newNode as FunctionTypedFormalParameterSuffixImpl?;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = newNode as FormalParameterDefaultClauseImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -11397,6 +12912,32 @@ final class ForEachPartsWithDeclarationImpl extends ForEachPartsImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(loopVariable, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'loopVariable'.");
+    }
+    if (identical(iterable, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'iterable'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(loopVariable, oldNode)) {
+      loopVariable = newNode as DeclaredIdentifierImpl;
+      return;
+    }
+    if (identical(iterable, oldNode)) {
+      iterable = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     loopVariable.accept(visitor);
     iterable.accept(visitor);
@@ -11512,6 +13053,32 @@ final class ForEachPartsWithIdentifierImpl extends ForEachPartsImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return identical(iterable, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(identifier, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'identifier'.");
+    }
+    if (identical(iterable, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'iterable'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(identifier, oldNode)) {
+      identifier = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    if (identical(iterable, oldNode)) {
+      iterable = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -11665,6 +13232,40 @@ final class ForEachPartsWithPatternImpl extends ForEachPartsImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return identical(iterable, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (metadata.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'metadata' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    if (identical(iterable, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'iterable'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (metadata.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    if (identical(iterable, oldNode)) {
+      iterable = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -11829,6 +13430,32 @@ final class ForElementImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return identical(body, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(forLoopParts, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'forLoopParts'.");
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(forLoopParts, oldNode)) {
+      forLoopParts = newNode as ForLoopPartsImpl;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as CollectionElementImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -12113,6 +13740,25 @@ final class FormalParameterDefaultClauseImpl extends AstNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(value, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'value'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(value, oldNode)) {
+      value = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     value.accept(visitor);
   }
@@ -12320,6 +13966,40 @@ sealed class FormalParameterImpl extends AstNodeImpl
   }
 
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = null;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = newNode as FunctionTypedFormalParameterSuffixImpl;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = newNode as FormalParameterDefaultClauseImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @override
   @mustCallSuper
   void visitChildren(AstVisitor visitor) {
     _visitCommentAndAnnotations(visitor);
@@ -12500,6 +14180,26 @@ final class FormalParameterListImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (parameters.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'parameters' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (parameters.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -12711,6 +14411,41 @@ final class ForPartsWithDeclarationsImpl extends ForPartsImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(variables, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'variables'.");
+    }
+    if (identical(condition, oldNode)) {
+      condition = null;
+      return;
+    }
+    if (updaters.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'updaters' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(variables, oldNode)) {
+      variables = newNode as VariableDeclarationListImpl;
+      return;
+    }
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl?;
+      return;
+    }
+    if (updaters.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     variables.accept(visitor);
     condition?.accept(visitor);
@@ -12865,6 +14600,42 @@ final class ForPartsWithExpressionImpl extends ForPartsImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(initialization, oldNode)) {
+      initialization = null;
+      return;
+    }
+    if (identical(condition, oldNode)) {
+      condition = null;
+      return;
+    }
+    if (updaters.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'updaters' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(initialization, oldNode)) {
+      initialization = newNode as ExpressionImpl?;
+      return;
+    }
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl?;
+      return;
+    }
+    if (updaters.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     initialization?.accept(visitor);
     condition?.accept(visitor);
@@ -13011,6 +14782,41 @@ final class ForPartsWithPatternImpl extends ForPartsImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return !identical(variables, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(variables, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'variables'.");
+    }
+    if (identical(condition, oldNode)) {
+      condition = null;
+      return;
+    }
+    if (updaters.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'updaters' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(variables, oldNode)) {
+      variables = newNode as PatternVariableDeclarationImpl;
+      return;
+    }
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl?;
+      return;
+    }
+    if (updaters.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -13185,6 +14991,32 @@ final class ForStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(forLoopParts, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'forLoopParts'.");
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(forLoopParts, oldNode)) {
+      forLoopParts = newNode as ForLoopPartsImpl;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as StatementImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -13484,6 +15316,35 @@ final class FunctionDeclarationImpl extends CompilationUnitMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = null;
+      return;
+    }
+    if (identical(functionExpression, oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove required child 'functionExpression'.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(functionExpression, oldNode)) {
+      functionExpression = newNode as FunctionExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     returnType?.accept(visitor);
@@ -13592,6 +15453,27 @@ final class FunctionDeclarationStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(functionDeclaration, oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove required child 'functionDeclaration'.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(functionDeclaration, oldNode)) {
+      functionDeclaration = newNode as FunctionDeclarationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -13761,6 +15643,41 @@ final class FunctionExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = newNode as FormalParameterListImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as FunctionBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitFunctionExpression(this, contextType: contextType);
   }
@@ -13915,6 +15832,40 @@ final class FunctionExpressionInvocationImpl extends InvocationExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(function, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'function'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(function, oldNode)) {
+      function = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -14091,6 +16042,33 @@ final class FunctionReferenceImpl extends CommentReferableExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(function, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'function'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(function, oldNode)) {
+      function = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -14281,6 +16259,41 @@ final class FunctionTypeAliasImpl extends TypeAliasImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = null;
+      return;
+    }
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'parameters'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = newNode as FormalParameterListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     returnType?.accept(visitor);
@@ -14446,6 +16459,35 @@ final class FunctionTypedFormalParameterSuffixImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(formalParameters, oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove required child 'formalParameters'.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(formalParameters, oldNode)) {
+      formalParameters = newNode as FormalParameterListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -14732,6 +16774,41 @@ final class GenericFunctionTypeImpl extends TypeAnnotationImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = null;
+      return;
+    }
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'parameters'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = newNode as FormalParameterListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     returnType?.accept(visitor);
     typeParameters?.accept(visitor);
@@ -14925,6 +17002,33 @@ final class GenericTypeAliasImpl extends TypeAliasImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     typeParameters?.accept(visitor);
@@ -15067,6 +17171,33 @@ final class GuardedPatternImpl extends AstNodeImpl implements GuardedPattern {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    if (identical(whenClause, oldNode)) {
+      whenClause = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    if (identical(whenClause, oldNode)) {
+      whenClause = newNode as WhenClauseImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     pattern.accept(visitor);
     whenClause?.accept(visitor);
@@ -15173,6 +17304,26 @@ final class HideCombinatorImpl extends CombinatorImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (hiddenNames.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'hiddenNames' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (hiddenNames.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -15420,6 +17571,48 @@ final class IfElementImpl extends AstNodeImpl
     return identical(expression, child) ||
         identical(thenElement, child) ||
         identical(elseElement, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (identical(caseClause, oldNode)) {
+      caseClause = null;
+      return;
+    }
+    if (identical(thenElement, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'thenElement'.");
+    }
+    if (identical(elseElement, oldNode)) {
+      elseElement = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(caseClause, oldNode)) {
+      caseClause = newNode as CaseClauseImpl?;
+      return;
+    }
+    if (identical(thenElement, oldNode)) {
+      thenElement = newNode as CollectionElementImpl;
+      return;
+    }
+    if (identical(elseElement, oldNode)) {
+      elseElement = newNode as CollectionElementImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -15707,6 +17900,48 @@ final class IfStatementImpl extends StatementImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (identical(caseClause, oldNode)) {
+      caseClause = null;
+      return;
+    }
+    if (identical(thenStatement, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'thenStatement'.");
+    }
+    if (identical(elseStatement, oldNode)) {
+      elseStatement = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(caseClause, oldNode)) {
+      caseClause = newNode as CaseClauseImpl?;
+      return;
+    }
+    if (identical(thenStatement, oldNode)) {
+      thenStatement = newNode as StatementImpl;
+      return;
+    }
+    if (identical(elseStatement, oldNode)) {
+      elseStatement = newNode as StatementImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     expression.accept(visitor);
     caseClause?.accept(visitor);
@@ -15843,6 +18078,26 @@ final class ImplementsClauseImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (interfaces.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'interfaces' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (interfaces.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -15990,6 +18245,33 @@ final class ImplicitCallReferenceImpl extends ExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -16165,6 +18447,49 @@ final class ImportDirectiveImpl extends NamespaceDirectiveImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(uri, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'uri'.");
+    }
+    if (configurations.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'configurations' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(prefix, oldNode)) {
+      prefix = null;
+      return;
+    }
+    if (combinators.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'combinators' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(uri, oldNode)) {
+      uri = newNode as StringLiteralImpl;
+      return;
+    }
+    if (configurations.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(prefix, oldNode)) {
+      prefix = newNode as SimpleIdentifierImpl?;
+      return;
+    }
+    if (combinators.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -16653,6 +18978,33 @@ final class IndexExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(target, oldNode)) {
+      target = null;
+      return;
+    }
+    if (identical(index, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'index'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(target, oldNode)) {
+      target = newNode as ExpressionImpl?;
+      return;
+    }
+    if (identical(index, oldNode)) {
+      index = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitIndexExpression(this, contextType: contextType);
   }
@@ -16864,6 +19216,40 @@ final class InstanceCreationExpressionImpl extends ExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(constructorName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'constructorName'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(constructorName, oldNode)) {
+      constructorName = newNode as ConstructorNameImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -17192,6 +19578,25 @@ final class InterpolationExpressionImpl extends InterpolationElementImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     expression.accept(visitor);
   }
@@ -17510,6 +19915,32 @@ final class IsExpressionImpl extends ExpressionImpl implements IsExpression {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitIsExpression(this, contextType: contextType);
   }
@@ -17654,6 +20085,33 @@ final class LabeledStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (labels.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'labels' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(statement, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'statement'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (labels.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(statement, oldNode)) {
+      statement = newNode as StatementImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -17927,6 +20385,26 @@ final class LibraryDirectiveImpl extends DirectiveImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(name, oldNode)) {
+      name = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(name, oldNode)) {
+      name = newNode as DottedNameImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     name?.accept(visitor);
@@ -18065,6 +20543,34 @@ final class ListLiteralImpl extends TypedLiteralImpl implements ListLiteral {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return !identical(typeArguments, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (elements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'elements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (elements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -18245,6 +20751,34 @@ final class ListPatternImpl extends DartPatternImpl implements ListPattern {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (elements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'elements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (elements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -18446,6 +20980,32 @@ final class LogicalAndPatternImpl extends DartPatternImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(leftOperand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'leftOperand'.");
+    }
+    if (identical(rightOperand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'rightOperand'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(leftOperand, oldNode)) {
+      leftOperand = newNode as DartPatternImpl;
+      return;
+    }
+    if (identical(rightOperand, oldNode)) {
+      rightOperand = newNode as DartPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   PatternResult resolvePattern(
     ResolverVisitor resolverVisitor,
@@ -18607,6 +21167,32 @@ final class LogicalOrPatternImpl extends DartPatternImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(leftOperand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'leftOperand'.");
+    }
+    if (identical(rightOperand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'rightOperand'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(leftOperand, oldNode)) {
+      leftOperand = newNode as DartPatternImpl;
+      return;
+    }
+    if (identical(rightOperand, oldNode)) {
+      rightOperand = newNode as DartPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -18789,6 +21375,32 @@ final class MapLiteralEntryImpl extends AstNodeImpl
     return true;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(key, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'key'.");
+    }
+    if (identical(value, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'value'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(key, oldNode)) {
+      key = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(value, oldNode)) {
+      value = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   void resolveElement(
     ResolverVisitor resolver,
@@ -18967,6 +21579,32 @@ final class MapPatternEntryImpl extends AstNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(key, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'key'.");
+    }
+    if (identical(value, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'value'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(key, oldNode)) {
+      key = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(value, oldNode)) {
+      value = newNode as DartPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     key.accept(visitor);
     value.accept(visitor);
@@ -19108,6 +21746,34 @@ final class MapPatternImpl extends DartPatternImpl implements MapPattern {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (elements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'elements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (elements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -19430,6 +22096,49 @@ final class MethodDeclarationImpl extends ClassMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = null;
+      return;
+    }
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(returnType, oldNode)) {
+      returnType = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(parameters, oldNode)) {
+      parameters = newNode as FormalParameterListImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as FunctionBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     returnType?.accept(visitor);
@@ -19710,6 +22419,48 @@ final class MethodInvocationImpl extends InvocationExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(target, oldNode)) {
+      target = null;
+      return;
+    }
+    if (identical(methodName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'methodName'.");
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(target, oldNode)) {
+      target = newNode as ExpressionImpl?;
+      return;
+    }
+    if (identical(methodName, oldNode)) {
+      methodName = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitMethodInvocation(this, contextType: contextType);
   }
@@ -19984,6 +22735,49 @@ final class MixinDeclarationImpl extends CompilationUnitMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(onClause, oldNode)) {
+      onClause = null;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = null;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(onClause, oldNode)) {
+      onClause = newNode as MixinOnClauseImpl?;
+      return;
+    }
+    if (identical(implementsClause, oldNode)) {
+      implementsClause = newNode as ImplementsClauseImpl?;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as ClassBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     typeParameters?.accept(visitor);
@@ -20132,6 +22926,26 @@ final class MixinOnClauseImpl extends AstNodeImpl implements MixinOnClause {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (superclassConstraints.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'superclassConstraints' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (superclassConstraints.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     superclassConstraints.accept(visitor);
   }
@@ -20249,6 +23063,27 @@ final class NamedArgumentImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(argumentExpression, oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove required child 'argumentExpression'.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(argumentExpression, oldNode)) {
+      argumentExpression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -20440,6 +23275,34 @@ final class NamedTypeImpl extends TypeAnnotationImpl implements NamedType {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(importPrefix, oldNode)) {
+      importPrefix = null;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(importPrefix, oldNode)) {
+      importPrefix = newNode as ImportPrefixReferenceImpl?;
+      return;
+    }
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     importPrefix?.accept(visitor);
     typeArguments?.accept(visitor);
@@ -20615,6 +23478,26 @@ final class NameWithTypeParametersImpl extends ClassNamePartImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     typeParameters?.accept(visitor);
   }
@@ -20724,6 +23607,26 @@ final class NativeClauseImpl extends AstNodeImpl implements NativeClause {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(name, oldNode)) {
+      name = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(name, oldNode)) {
+      name = newNode as StringLiteralImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -20847,6 +23750,26 @@ final class NativeFunctionBodyImpl extends FunctionBodyImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(stringLiteral, oldNode)) {
+      stringLiteral = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(stringLiteral, oldNode)) {
+      stringLiteral = newNode as StringLiteralImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -21023,6 +23946,16 @@ final class NodeListImpl<E extends AstNodeImpl>
     throw UnsupportedError("Cannot resize NodeList.");
   }
 
+  bool containsChild(AstNodeImpl oldNode) {
+    int length = _elements.length;
+    for (var i = 0; i < length; i++) {
+      if (identical(_elements[i], oldNode)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Deprecated('NodeList cannot be resized')
   @override
   void insert(int index, E element) {
@@ -21033,6 +23966,17 @@ final class NodeListImpl<E extends AstNodeImpl>
   @override
   E removeAt(int index) {
     throw UnsupportedError("Cannot resize NodeList.");
+  }
+
+  bool replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    int length = _elements.length;
+    for (var i = 0; i < length; i++) {
+      if (identical(_elements[i], oldNode)) {
+        this[i] = newNode as E;
+        return true;
+      }
+    }
+    return false;
   }
 
   /// Returns the child of this node that completely contains the range.
@@ -21162,6 +24106,25 @@ final class NullAssertPatternImpl extends DartPatternImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   PatternResult resolvePattern(
     ResolverVisitor resolverVisitor,
@@ -21281,6 +24244,25 @@ final class NullAwareElementImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(value, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'value'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(value, oldNode)) {
+      value = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -21410,6 +24392,25 @@ final class NullCheckPatternImpl extends DartPatternImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @override
@@ -21633,6 +24634,33 @@ final class ObjectPatternImpl extends DartPatternImpl implements ObjectPattern {
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    if (fields.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'fields' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as NamedTypeImpl;
+      return;
+    }
+    if (fields.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   PatternResult resolvePattern(
     ResolverVisitor resolverVisitor,
@@ -21804,6 +24832,25 @@ final class ParenthesizedExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitParenthesizedExpression(this, contextType: contextType);
   }
@@ -21948,6 +24995,25 @@ final class ParenthesizedPatternImpl extends DartPatternImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   PatternResult resolvePattern(
     ResolverVisitor resolverVisitor,
@@ -22067,6 +25133,25 @@ final class PartDirectiveImpl extends UriBasedDirectiveImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(uri, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'uri'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(uri, oldNode)) {
+      uri = newNode as StringLiteralImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -22224,6 +25309,34 @@ final class PartOfDirectiveImpl extends DirectiveImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(uri, oldNode)) {
+      uri = null;
+      return;
+    }
+    if (identical(libraryName, oldNode)) {
+      libraryName = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(uri, oldNode)) {
+      uri = newNode as StringLiteralImpl?;
+      return;
+    }
+    if (identical(libraryName, oldNode)) {
+      libraryName = newNode as DottedNameImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -22387,6 +25500,32 @@ final class PatternAssignmentImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitPatternAssignment(this, contextType: contextType);
   }
@@ -22546,6 +25685,33 @@ final class PatternFieldImpl extends AstNodeImpl implements PatternField {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(name, oldNode)) {
+      name = null;
+      return;
+    }
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(name, oldNode)) {
+      name = newNode as PatternFieldNameImpl?;
+      return;
+    }
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -22798,6 +25964,32 @@ final class PatternVariableDeclarationImpl extends AnnotatedNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'pattern'.");
+    }
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl;
+      return;
+    }
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     pattern.accept(visitor);
@@ -22917,6 +26109,25 @@ final class PatternVariableDeclarationStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(declaration, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'declaration'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(declaration, oldNode)) {
+      declaration = newNode as PatternVariableDeclarationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -23059,6 +26270,25 @@ final class PostfixExpressionImpl extends ExpressionImpl
       return false;
     }
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(operand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'operand'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(operand, oldNode)) {
+      operand = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -23225,6 +26455,32 @@ final class PrefixedIdentifierImpl extends IdentifierImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(prefix, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'prefix'.");
+    }
+    if (identical(identifier, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'identifier'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(prefix, oldNode)) {
+      prefix = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    if (identical(identifier, oldNode)) {
+      identifier = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitPrefixedIdentifier(this, contextType: contextType);
   }
@@ -23379,6 +26635,25 @@ final class PrefixExpressionImpl extends ExpressionImpl
       return false;
     }
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(operand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'operand'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(operand, oldNode)) {
+      operand = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -23543,6 +26818,33 @@ final class PrimaryConstructorBodyImpl extends ClassMemberImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (initializers.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'initializers' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (initializers.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as FunctionBodyImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -23745,6 +27047,43 @@ final class PrimaryConstructorDeclarationImpl extends ClassNamePartImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = null;
+      return;
+    }
+    if (identical(constructorName, oldNode)) {
+      constructorName = null;
+      return;
+    }
+    if (identical(formalParameters, oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove required child 'formalParameters'.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeParameters, oldNode)) {
+      typeParameters = newNode as TypeParameterListImpl?;
+      return;
+    }
+    if (identical(constructorName, oldNode)) {
+      constructorName = newNode as PrimaryConstructorNameImpl?;
+      return;
+    }
+    if (identical(formalParameters, oldNode)) {
+      formalParameters = newNode as FormalParameterListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -24046,6 +27385,33 @@ final class PropertyAccessImpl extends CommentReferableExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(target, oldNode)) {
+      target = null;
+      return;
+    }
+    if (identical(propertyName, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'propertyName'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(target, oldNode)) {
+      target = newNode as ExpressionImpl?;
+      return;
+    }
+    if (identical(propertyName, oldNode)) {
+      propertyName = newNode as SimpleIdentifierImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitPropertyAccess(this, contextType: contextType);
   }
@@ -24211,6 +27577,26 @@ final class RecordLiteralImpl extends LiteralImpl implements RecordLiteral {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (fields.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'fields' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (fields.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitRecordLiteral(this, contextType: contextType);
   }
@@ -24332,6 +27718,25 @@ final class RecordLiteralNamedFieldImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(fieldExpression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'fieldExpression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(fieldExpression, oldNode)) {
+      fieldExpression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -24459,6 +27864,26 @@ final class RecordPatternImpl extends DartPatternImpl implements RecordPattern {
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (fields.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'fields' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (fields.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   PatternResult resolvePattern(
     ResolverVisitor resolverVisitor,
@@ -24570,13 +27995,12 @@ sealed class RecordTypeAnnotationFieldImpl extends AstNodeImpl
   @override
   final NodeListImpl<AnnotationImpl> metadata = NodeListImpl._();
 
-  @override
-  final TypeAnnotationImpl type;
+  TypeAnnotationImpl _type;
 
   RecordTypeAnnotationFieldImpl({
     required List<AnnotationImpl>? metadata,
-    required this.type,
-  }) {
+    required TypeAnnotationImpl type,
+  }) : _type = type {
     this.metadata._initialize(this, metadata);
     _becomeParentOf(type);
   }
@@ -24586,6 +28010,13 @@ sealed class RecordTypeAnnotationFieldImpl extends AstNodeImpl
 
   @override
   Token get endToken => name ?? type.endToken;
+
+  @override
+  TypeAnnotationImpl get type => _type;
+
+  set type(TypeAnnotationImpl type) {
+    _type = _becomeParentOf(type);
+  }
 
   @override
   ChildEntities get _childEntities => super._childEntities
@@ -24701,6 +28132,34 @@ final class RecordTypeAnnotationImpl extends TypeAnnotationImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (positionalFields.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'positionalFields' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(namedFields, oldNode)) {
+      namedFields = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (positionalFields.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(namedFields, oldNode)) {
+      namedFields = newNode as RecordTypeAnnotationNamedFieldsImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     positionalFields.accept(visitor);
     namedFields?.accept(visitor);
@@ -24809,6 +28268,33 @@ final class RecordTypeAnnotationNamedFieldImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (metadata.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'metadata' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (metadata.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -24932,6 +28418,26 @@ final class RecordTypeAnnotationNamedFieldsImpl extends AstNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (fields.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'fields' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (fields.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     fields.accept(visitor);
   }
@@ -25026,6 +28532,33 @@ final class RecordTypeAnnotationPositionalFieldImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (metadata.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'metadata' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (metadata.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -25183,6 +28716,33 @@ final class RedirectingConstructorInvocationImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(constructorName, oldNode)) {
+      constructorName = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(constructorName, oldNode)) {
+      constructorName = newNode as SimpleIdentifierImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -25351,6 +28911,42 @@ final class RegularFormalParameterImpl extends FormalParameterImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = null;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = newNode as FunctionTypedFormalParameterSuffixImpl?;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = newNode as FormalParameterDefaultClauseImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   @DoNotGenerate(reason: 'Inherited nodes are already visited by super.')
   void visitChildren(AstVisitor visitor) {
@@ -25512,6 +29108,25 @@ final class RelationalPatternImpl extends DartPatternImpl
     return true;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(operand, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'operand'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(operand, oldNode)) {
+      operand = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   PatternResult resolvePattern(
     ResolverVisitor resolverVisitor,
@@ -25639,6 +29254,26 @@ final class RestPatternElementImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(pattern, oldNode)) {
+      pattern = newNode as DartPatternImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -25833,6 +29468,26 @@ final class ReturnStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      expression = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -26109,6 +29764,34 @@ final class SetOrMapLiteralImpl extends TypedLiteralImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = null;
+      return;
+    }
+    if (elements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'elements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(typeArguments, oldNode)) {
+      typeArguments = newNode as TypeArgumentListImpl?;
+      return;
+    }
+    if (elements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitSetOrMapLiteral(this, contextType: contextType);
   }
@@ -26223,6 +29906,26 @@ final class ShowCombinatorImpl extends CombinatorImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (shownNames.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'shownNames' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (shownNames.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -26741,6 +30444,25 @@ final class SpreadElementImpl extends AstNodeImpl
     return true;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   void resolveElement(
     ResolverVisitor resolver,
@@ -26930,6 +30652,26 @@ final class StringInterpolationImpl extends SingleStringLiteralImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (elements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'elements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (elements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -27214,6 +30956,33 @@ final class SuperConstructorInvocationImpl extends ConstructorInitializerImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(constructorName, oldNode)) {
+      constructorName = null;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'argumentList'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(constructorName, oldNode)) {
+      constructorName = newNode as SimpleIdentifierImpl?;
+      return;
+    }
+    if (identical(argumentList, oldNode)) {
+      argumentList = newNode as ArgumentListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     constructorName?.accept(visitor);
     argumentList.accept(visitor);
@@ -27461,6 +31230,42 @@ final class SuperFormalParameterImpl extends FormalParameterImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = null;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (identical(functionTypedSuffix, oldNode)) {
+      functionTypedSuffix = newNode as FunctionTypedFormalParameterSuffixImpl?;
+      return;
+    }
+    if (identical(defaultClause, oldNode)) {
+      defaultClause = newNode as FormalParameterDefaultClauseImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   @DoNotGenerate(reason: 'Inherited nodes are already visited by super.')
   void visitChildren(AstVisitor visitor) {
@@ -27612,6 +31417,41 @@ final class SwitchCaseImpl extends SwitchMemberImpl implements SwitchCase {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (labels.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'labels' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (statements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'statements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (labels.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (statements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     labels.accept(visitor);
     expression.accept(visitor);
@@ -27725,6 +31565,34 @@ final class SwitchDefaultImpl extends SwitchMemberImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (labels.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'labels' because NodeList cannot be resized.",
+      );
+    }
+    if (statements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'statements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (labels.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (statements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -27900,6 +31768,32 @@ final class SwitchExpressionCaseImpl extends AstNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(guardedPattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'guardedPattern'.");
+    }
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(guardedPattern, oldNode)) {
+      guardedPattern = newNode as GuardedPatternImpl;
+      return;
+    }
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     guardedPattern.accept(visitor);
     expression.accept(visitor);
@@ -28039,6 +31933,33 @@ final class SwitchExpressionImpl extends ExpressionImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return identical(expression, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (cases.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'cases' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (cases.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -28254,6 +32175,41 @@ final class SwitchPatternCaseImpl extends SwitchMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (labels.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'labels' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(guardedPattern, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'guardedPattern'.");
+    }
+    if (statements.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'statements' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (labels.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(guardedPattern, oldNode)) {
+      guardedPattern = newNode as GuardedPatternImpl;
+      return;
+    }
+    if (statements.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     labels.accept(visitor);
     guardedPattern.accept(visitor);
@@ -28447,6 +32403,33 @@ final class SwitchStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return identical(expression, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    if (members.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'members' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    if (members.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -28760,6 +32743,25 @@ final class ThrowExpressionImpl extends ExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitThrowExpression(this, contextType: contextType);
   }
@@ -28927,6 +32929,25 @@ final class TopLevelVariableDeclarationImpl extends CompilationUnitMemberImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(variables, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'variables'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(variables, oldNode)) {
+      variables = newNode as VariableDeclarationListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     variables.accept(visitor);
@@ -29089,6 +33110,41 @@ final class TryStatementImpl extends StatementImpl implements TryStatement {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    if (catchClauses.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'catchClauses' because NodeList cannot be resized.",
+      );
+    }
+    if (identical(finallyBlock, oldNode)) {
+      finallyBlock = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(body, oldNode)) {
+      body = newNode as BlockImpl;
+      return;
+    }
+    if (catchClauses.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    if (identical(finallyBlock, oldNode)) {
+      finallyBlock = newNode as BlockImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -29305,6 +33361,26 @@ final class TypeArgumentListImpl extends AstNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (arguments.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'arguments' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (arguments.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     arguments.accept(visitor);
   }
@@ -29497,6 +33573,25 @@ final class TypeLiteralImpl extends CommentReferableExpressionImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'type'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as NamedTypeImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void resolveExpression(ResolverVisitor resolver, TypeImpl contextType) {
     resolver.visitTypeLiteral(this, contextType: contextType);
   }
@@ -29649,6 +33744,26 @@ final class TypeParameterImpl extends DeclarationImpl implements TypeParameter {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(bound, oldNode)) {
+      bound = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(bound, oldNode)) {
+      bound = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     bound?.accept(visitor);
@@ -29763,6 +33878,26 @@ final class TypeParameterListImpl extends AstNodeImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (typeParameters.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'typeParameters' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (typeParameters.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -30069,6 +34204,26 @@ final class VariableDeclarationImpl extends DeclarationImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(initializer, oldNode)) {
+      initializer = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(initializer, oldNode)) {
+      initializer = newNode as ExpressionImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     initializer?.accept(visitor);
@@ -30267,6 +34422,34 @@ final class VariableDeclarationListImpl extends AnnotatedNodeImpl
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    if (variables.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'variables' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    if (variables.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     super.visitChildren(visitor);
     type?.accept(visitor);
@@ -30392,6 +34575,25 @@ final class VariableDeclarationStatementImpl extends StatementImpl
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return false;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(variables, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'variables'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(variables, oldNode)) {
+      variables = newNode as VariableDeclarationListImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -30523,6 +34725,25 @@ final class WhenClauseImpl extends AstNodeImpl implements WhenClause {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return true;
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -30669,6 +34890,32 @@ final class WhileStatementImpl extends StatementImpl implements WhileStatement {
   bool isInValueExpressionSlot(AstNode child) {
     assert(identical(child.parent, this));
     return identical(condition, child);
+  }
+
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(condition, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'condition'.");
+    }
+    if (identical(body, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'body'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(condition, oldNode)) {
+      condition = newNode as ExpressionImpl;
+      return;
+    }
+    if (identical(body, oldNode)) {
+      body = newNode as StatementImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   @generated
@@ -30826,6 +35073,26 @@ final class WildcardPatternImpl extends DartPatternImpl
     return false;
   }
 
+  @generated
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(type, oldNode)) {
+      type = null;
+      return;
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(type, oldNode)) {
+      type = newNode as TypeAnnotationImpl?;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
   @override
   PatternResult resolvePattern(
     ResolverVisitor resolverVisitor,
@@ -30957,6 +35224,26 @@ final class WithClauseImpl extends AstNodeImpl implements WithClause {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (mixinTypes.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'mixinTypes' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (mixinTypes.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     mixinTypes.accept(visitor);
   }
@@ -31084,6 +35371,25 @@ final class YieldStatementImpl extends StatementImpl implements YieldStatement {
 
   @generated
   @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(expression, oldNode)) {
+      throw UnsupportedError("Cannot remove required child 'expression'.");
+    }
+    super.removeChild(oldNode);
+  }
+
+  @generated
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(expression, oldNode)) {
+      expression = newNode as ExpressionImpl;
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
+  }
+
+  @generated
+  @override
   void visitChildren(AstVisitor visitor) {
     expression.accept(visitor);
   }
@@ -31157,6 +35463,32 @@ base mixin _AnnotatedNodeMixin on AstNodeImpl implements AnnotatedNode {
     return ChildEntities()
       ..addNode('documentationComment', _documentationComment)
       ..addNodeList('metadata', metadata);
+  }
+
+  @override
+  void removeChild(AstNodeImpl oldNode) {
+    if (identical(_documentationComment, oldNode)) {
+      documentationComment = null;
+      return;
+    }
+    if (_metadata.containsChild(oldNode)) {
+      throw UnsupportedError(
+        "Cannot remove child 'metadata' because NodeList cannot be resized.",
+      );
+    }
+    super.removeChild(oldNode);
+  }
+
+  @override
+  void replaceChild(AstNodeImpl oldNode, AstNodeImpl newNode) {
+    if (identical(_documentationComment, oldNode)) {
+      documentationComment = newNode as CommentImpl;
+      return;
+    }
+    if (_metadata.replaceChild(oldNode, newNode)) {
+      return;
+    }
+    super.replaceChild(oldNode, newNode);
   }
 
   /// Returns `true` if there are no annotations before the comment.

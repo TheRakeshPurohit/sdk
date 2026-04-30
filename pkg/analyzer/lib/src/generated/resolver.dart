@@ -4795,7 +4795,7 @@ class ResolverVisitor extends ThrowingAstVisitor<void>
         defaultValue,
         SharedTypeSchemaView(fragment.element.type),
       );
-      popRewrite();
+      defaultValue = popRewrite()!;
 
       if (node.isOfLocalFunction) {
         fragment.constantInitializer = defaultValue;

@@ -101,5 +101,6 @@ class DefaultValueResolver {
       () => firstNode.defaultClause!.value,
       contextType: contextType,
     );
+    firstFragment.constantInitializer = firstNode.defaultClause!.value;
   }
 }
