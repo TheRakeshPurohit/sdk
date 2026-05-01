@@ -210,8 +210,8 @@ class DynamicDispatchTable {
         start,
         entry,
         _table,
-        (TableEntry a, TableEntry b) =>
-            a.target == b.target && a.shape == b.shape,
+        (TableEntry? b) =>
+            b != null && entry.target == b.target && entry.shape == b.shape,
       );
       assert(
         (() {

@@ -771,52 +771,120 @@ class DispatchTable {
   }
 
   void output() {
-    int start = 0;
-    while (start < _table.length) {
-      Reference? target = _table[start];
-      if (target == null) {
-        start++;
-        continue;
-      }
-      w.BaseFunction? fun = translator.functions.getExistingFunction(target);
-      if (fun == null) {
-        start++;
-        continue;
-      }
+    final mainModule = translator.mainModule.module;
 
-      // Any call to the dispatch table is guaranteed to hit a target.
-      //
-      // If a target is in a deferred module and that deferred module hasn't
-      // been loaded yet, then the entry is `null`.
-      //
-      // Though we can only hit a target if that target's class has been
-      // allocated. In order for the class to be allocated, the deferred
-      // module must've been loaded to call the constructor.
+    int calculateStrideWithHelper(
+      Reference target,
+      int start, {
+      required bool includeNull,
+      required bool includeArbitraryNonMainEntries,
+    }) {
+      final width = calculateStrideWith(start, target, _table, (
+        Reference? next,
+      ) {
+        // If the entry is the same as before we can extend the stride.
+        if (next == target) return true;
 
-      final targetModuleBuilder =
-          translator.moduleToBuilder[fun.enclosingModule]!;
+        // Any call to the dispatch table will succeed. If there's an empty slot
+        // in the table, we are guaranteed no calls will invoke it. That in return
+        // means its safe to put any entry in there, as it will not be used.
+        //
+        // => If putting an entry in there makes the stride larger and allows us
+        //    to use `table.fill` we'll do so.
+        if (next == null) return includeNull;
+        final nextFunction = translator.functions.getExistingFunction(next);
+        if (nextFunction == null) return includeNull;
 
-      final strideWidth = calculateStrideWith(
-        start,
-        target,
-        _table,
-        (Reference a, Reference b) => a == b,
-      );
-
-      final table = getWasmTable(targetModuleBuilder);
-      if (strideWidth < strideElementTableLimit) {
-        for (int i = 0; i < strideWidth; ++i) {
-          targetModuleBuilder.elements
-              .activeFunctionSegmentBuilderFor(table)
-              .setFunctionAt(start + i, fun);
+        final nextIsInMainModule = nextFunction.enclosingModule == mainModule;
+        if (includeArbitraryNonMainEntries && !nextIsInMainModule) {
+          return true;
         }
-      } else {
-        targetModuleBuilder.elements.declarativeSegmentBuilder.declare(fun);
-        final b = targetModuleBuilder.startFunction.body;
-        b.fillTableRange(table, start, strideWidth, fun);
+
+        return false;
+      });
+      int lastIncluding = start + width - 1;
+      while (_table[lastIncluding] != target) {
+        lastIncluding--;
       }
-      start += strideWidth;
+      return lastIncluding - start + 1;
     }
+
+    void processTableRange(int start, int end, bool includeMainModuleEntries) {
+      while (start < end) {
+        final Reference? target = _table[start];
+        if (target == null) {
+          start++;
+          continue;
+        }
+        final targetFunction = translator.functions.getExistingFunction(target);
+        if (targetFunction == null) {
+          start++;
+          continue;
+        }
+
+        final targetInMain = targetFunction.enclosingModule == mainModule;
+        if (targetInMain && !includeMainModuleEntries) {
+          start++;
+          continue;
+        }
+
+        final includeArbitraryNonMainEntries = targetInMain;
+        final strideWidth = calculateStrideWithHelper(
+          target,
+          start,
+          includeNull: true,
+          includeArbitraryNonMainEntries: includeArbitraryNonMainEntries,
+        );
+        final strideWidthOnlyTarget = calculateStrideWithHelper(
+          target,
+          start,
+          includeNull: false,
+          includeArbitraryNonMainEntries: false,
+        );
+
+        final targetModuleBuilder =
+            translator.moduleToBuilder[targetFunction.enclosingModule]!;
+        final targetTable = getWasmTable(targetModuleBuilder);
+        if (strideWidth >= strideElementTableLimit) {
+          targetModuleBuilder.elements.declarativeSegmentBuilder.declare(
+            targetFunction,
+          );
+          final b = targetModuleBuilder.startFunction.body;
+
+          // This may fill entries
+          //   - which should be [target]
+          //
+          //   - which should be null (unused entries)
+          //
+          //   - which should be 3rd party targets
+          //     (iff [includeArbitraryNonMainEntries])
+          //     => Those incorrect entries are not used until the deferred
+          //     units containing them are loaded, and those deferred units
+          //     should override those slots (see below)
+          b.fillTableRange(targetTable, start, strideWidth, targetFunction);
+
+          if (includeArbitraryNonMainEntries) {
+            // We wrote the `target` to table slots which should contain targets
+            // from deferred modules. Ensure the deferred modules override those
+            // slots when loaded.
+            processTableRange(start, start + strideWidth, false);
+          }
+
+          start += strideWidth;
+        } else {
+          // We don't issue a `table.fill` instruction, so only fill in the
+          // slots that are exactly `target`.
+          for (int i = 0; i < strideWidthOnlyTarget; ++i) {
+            targetModuleBuilder.elements
+                .activeFunctionSegmentBuilderFor(targetTable)
+                .setFunctionAt(start + i, targetFunction);
+          }
+          start += strideWidthOnlyTarget;
+        }
+      }
+    }
+
+    processTableRange(0, _table.length, true);
   }
 }
 
@@ -923,13 +991,11 @@ int calculateStrideWith<T>(
   int start,
   T startEntry,
   List<T?> table,
-  bool Function(T, T) equals,
+  bool Function(T?) matches,
 ) {
   int end = start + 1;
   while (end < table.length) {
-    final endEntry = table[end];
-    if (endEntry == null) break;
-    if (!equals(startEntry, endEntry)) break;
+    if (!matches(table[end])) break;
     end++;
   }
   return end - start;
