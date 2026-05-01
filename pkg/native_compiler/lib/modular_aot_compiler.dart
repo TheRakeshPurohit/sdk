@@ -199,9 +199,9 @@ Future<int> runCompilerWithCommandLineArguments(List<String> arguments) async {
 
   final platformKernelUri = Uri.base.resolveUri(new Uri.file(platformKernel));
 
-  final additionalDills = <Uri>[];
+  final additionalDillModules = <Uri>[];
   if (importDill != null) {
-    additionalDills.add(Uri.base.resolveUri(new Uri.file(importDill)));
+    additionalDillModules.add(Uri.base.resolveUri(new Uri.file(importDill)));
   }
 
   final verbosity = Verbosity.parseArgument(messageVerbosity);
@@ -216,7 +216,7 @@ Future<int> runCompilerWithCommandLineArguments(List<String> arguments) async {
   final compilerOptions = CompilerOptions()
     ..sdkSummary = platformKernelUri
     ..fileSystem = fileSystem
-    ..additionalDills = additionalDills
+    ..additionalDillModules = additionalDillModules
     ..packagesFileUri = packagesUri
     ..explicitExperimentalFlags = parseExperimentalFlags(
       parseExperimentalArguments(experimentalFlags),

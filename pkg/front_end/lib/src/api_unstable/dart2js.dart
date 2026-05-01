@@ -95,7 +95,7 @@ InitializedCompilerState initializeCompiler(
   InitializedCompilerState? oldState,
   Target target,
   Uri? librariesSpecificationUri,
-  List<Uri> additionalDills,
+  List<Uri> additionalDillModules,
   Uri? packagesFileUri, {
   required Map<ExperimentalFlag, bool> explicitExperimentalFlags,
   Map<String, String>? environmentDefines,
@@ -103,7 +103,7 @@ InitializedCompilerState initializeCompiler(
   Set<InvocationMode> invocationModes = const <InvocationMode>{},
   Verbosity verbosity = Verbosity.all,
 }) {
-  additionalDills.sort((a, b) => a.toString().compareTo(b.toString()));
+  additionalDillModules.sort((a, b) => a.toString().compareTo(b.toString()));
 
   // We don't check `target` because it doesn't support '==' and each
   // compilation passes a fresh target. However, we pass a logically identical
@@ -111,7 +111,10 @@ InitializedCompilerState initializeCompiler(
   if (oldState != null &&
       oldState.options.packagesFileUri == packagesFileUri &&
       oldState.options.librariesSpecificationUri == librariesSpecificationUri &&
-      equalLists(oldState.options.additionalDills, additionalDills) &&
+      equalLists(
+        oldState.options.additionalDillModules,
+        additionalDillModules,
+      ) &&
       equalMaps(
         oldState.options.explicitExperimentalFlags,
         explicitExperimentalFlags,
@@ -125,7 +128,7 @@ InitializedCompilerState initializeCompiler(
 
   CompilerOptions options = new CompilerOptions()
     ..target = target
-    ..additionalDills = additionalDills
+    ..additionalDillModules = additionalDillModules
     ..librariesSpecificationUri = librariesSpecificationUri
     ..packagesFileUri = packagesFileUri
     ..explicitExperimentalFlags = explicitExperimentalFlags

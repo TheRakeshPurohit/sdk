@@ -2464,7 +2464,7 @@ class Outline extends Step<TestDescription, ComponentResult, FastaContext> {
               serializeIfBuildingSummary: false,
               buildComponent: compileMode != CompileMode.outline,
               retainDataForTesting: true,
-              additionalDillsForTesting: alsoAppend != null
+              additionalDillModulesForTesting: alsoAppend != null
                   ? [alsoAppend]
                   : null,
               allowVerificationErrorForTesting: true,

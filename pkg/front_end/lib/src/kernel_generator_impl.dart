@@ -68,7 +68,7 @@ Future<InternalCompilerResult> generateKernelInternal(
   bool includeHierarchyAndCoreTypes = false,
   bool retainDataForTesting = false,
   Benchmarker? benchmarker,
-  List<Component>? additionalDillsForTesting,
+  List<Component>? additionalDillModulesForTesting,
   bool allowVerificationErrorForTesting = false,
 }) async {
   ProcessedOptions options = compilerContext.options;
@@ -99,19 +99,19 @@ Future<InternalCompilerResult> generateKernelInternal(
       // By using the nameRoot of the summary, we enable sharing the
       // sdkSummary between multiple invocations.
       CanonicalName? nameRoot;
-      if (additionalDillsForTesting != null) {
-        for (Component additionalDill in additionalDillsForTesting) {
-          loadedComponents.add(additionalDill);
-          dillTarget.loader.appendLibraries(additionalDill);
+      if (additionalDillModulesForTesting != null) {
+        for (Component additionalDillModule
+            in additionalDillModulesForTesting) {
+          loadedComponents.add(additionalDillModule);
+          dillTarget.loader.appendLibraries(additionalDillModule);
         }
-      } else if (options.hasAdditionalDills) {
+      } else if (options.hasAdditionalDillModules) {
         // Coverage-ignore-block(suite): Not run.
         nameRoot = sdkSummary?.root ?? new CanonicalName.root();
-        for (Component additionalDill in await options.loadAdditionalDills(
-          nameRoot,
-        )) {
-          loadedComponents.add(additionalDill);
-          dillTarget.loader.appendLibraries(additionalDill);
+        for (Component additionalDillModule
+            in await options.loadAdditionalDillModules(nameRoot)) {
+          loadedComponents.add(additionalDillModule);
+          dillTarget.loader.appendLibraries(additionalDillModule);
         }
       }
 

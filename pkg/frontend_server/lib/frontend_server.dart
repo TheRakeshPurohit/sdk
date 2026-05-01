@@ -820,7 +820,7 @@ class FrontendCompiler implements CompilerInterface {
 
     final String? importDill = options['import-dill'];
     if (importDill != null) {
-      compilerOptions.additionalDills = <Uri>[
+      compilerOptions.additionalDillModules = <Uri>[
         Uri.base.resolveUri(new Uri.file(importDill)),
       ];
     }
@@ -865,14 +865,6 @@ class FrontendCompiler implements CompilerInterface {
 
       incrementalSerializer = _generator.incrementalSerializer;
     } else {
-      if (options['link-platform']) {
-        // TODO(aam): Remove linkedDependencies once platform is directly
-        // embedded into VM snapshot and http://dartbug.com/30111 is fixed.
-        compilerOptions.additionalDills = <Uri>[
-          sdkRoot.resolve(platformKernelDill),
-          ...compilerOptions.additionalDills,
-        ];
-      }
       results = await _runWithPrintRedirection(
         () => compileToKernel(
           new KernelCompilationArguments(

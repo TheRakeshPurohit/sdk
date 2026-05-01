@@ -253,9 +253,9 @@ Future<int> runCompilerWithOptions({
 
   final platformKernelUri = Uri.base.resolveUri(new Uri.file(platformKernel));
 
-  final List<Uri> additionalDills = <Uri>[];
+  final List<Uri> additionalDillModules = <Uri>[];
   if (importDill != null) {
-    additionalDills.add(Uri.base.resolveUri(new Uri.file(importDill)));
+    additionalDillModules.add(Uri.base.resolveUri(new Uri.file(importDill)));
   }
 
   final Uri? dynamicInterfaceSpecificationUri =
@@ -279,7 +279,7 @@ Future<int> runCompilerWithOptions({
   final CompilerOptions compilerOptions = CompilerOptions()
     ..sdkSummary = platformKernelUri
     ..fileSystem = fileSystem
-    ..additionalDills = additionalDills
+    ..additionalDillModules = additionalDillModules
     ..packagesFileUri = packagesUri
     ..dynamicInterfaceSpecificationUri = dynamicInterfaceSpecificationUri
     ..explicitExperimentalFlags = parseExperimentalFlags(

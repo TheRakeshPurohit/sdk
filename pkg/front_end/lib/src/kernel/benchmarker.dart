@@ -162,7 +162,7 @@ class SubdivideTiming {
 enum BenchmarkPhases {
   implicitInitialization,
   loadSDK,
-  loadAdditionalDills,
+  loadAdditionalDillModules,
 
   dill_buildOutlines,
   dill_finalizeExports,

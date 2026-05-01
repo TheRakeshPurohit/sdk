@@ -384,10 +384,6 @@ Future<int> runCompiler(ArgResults options, String usage) async {
   final Uri? packagesUri = packages != null ? resolveInputUri(packages) : null;
 
   final platformKernelUri = Uri.base.resolveUri(new Uri.file(platformKernel));
-  final List<Uri> additionalDills = <Uri>[];
-  if (aot || linkPlatform) {
-    additionalDills.add(platformKernelUri);
-  }
 
   final verbosity = Verbosity.parseArgument(options['verbosity']);
   final errorPrinter = new ErrorPrinter(verbosity);
@@ -423,7 +419,6 @@ Future<int> runCompiler(ArgResults options, String usage) async {
   final CompilerOptions compilerOptions = new CompilerOptions()
     ..sdkSummary = platformKernelUri
     ..fileSystem = fileSystem
-    ..additionalDills = additionalDills
     ..packagesFileUri = packagesUri
     ..explicitExperimentalFlags = parseExperimentalFlags(
       parseExperimentalArguments(experimentalFlags),
@@ -456,7 +451,7 @@ Future<int> runCompiler(ArgResults options, String usage) async {
       additionalSources: additionalSources,
       nativeAssets: nativeAssetsUri,
       recordedUsages: recordedUsagesUri,
-      includePlatform: additionalDills.isNotEmpty,
+      includePlatform: aot || linkPlatform,
       deleteToStringPackageUris: options['delete-tostring-package-uri'],
       keepClassNamesImplementing: options['keep-class-names-implementing'],
       dynamicInterface: dynamicInterfaceUri,
@@ -551,15 +546,6 @@ class KernelCompilationResults {
   final CoreTypes? coreTypes;
   final Iterable<Uri>? compiledSources;
   final Uri? usedPackageConfig;
-
-  KernelCompilationResults(
-    this.component,
-    this.loadedLibraries,
-    this.classHierarchy,
-    this.coreTypes,
-    this.compiledSources,
-  ) : nativeAssetsLibrary = null,
-      usedPackageConfig = null;
 
   KernelCompilationResults.named({
     this.component,
