@@ -2815,11 +2815,6 @@ abstract class ExecutableFragmentImpl extends FunctionTypedFragmentImpl
     }
     _typeParameters = typeParameters;
   }
-
-  void addTypeParameter(TypeParameterFragmentImpl fragment) {
-    _typeParameters.add(fragment);
-    fragment.enclosingFragment = this;
-  }
 }
 
 @elementClass
@@ -4018,8 +4013,7 @@ class FormalParameterFragmentImpl extends VariableFragmentImpl
       'isOriginDeclaration': isOriginDeclaration,
       'isOriginMixinApplicationClassConstructor':
           isOriginMixinApplicationClassConstructor,
-      'isOriginPreviousFragmentOfEnclosing':
-          isOriginPreviousFragmentOfEnclosing,
+      'isOriginOtherFragmentOfEnclosing': isOriginOtherFragmentOfEnclosing,
     };
   }
 
@@ -4118,18 +4112,18 @@ class FormalParameterFragmentImpl extends VariableFragmentImpl
   }
 
   @generated
-  bool get isOriginPreviousFragmentOfEnclosing {
+  bool get isOriginOtherFragmentOfEnclosing {
     return hasFlag(
       _FragmentStorageFlag
-          .formalParameterFragment_isOriginPreviousFragmentOfEnclosing,
+          .formalParameterFragment_isOriginOtherFragmentOfEnclosing,
     );
   }
 
   @generated
-  set isOriginPreviousFragmentOfEnclosing(bool value) {
+  set isOriginOtherFragmentOfEnclosing(bool value) {
     setFlag(
       _FragmentStorageFlag
-          .formalParameterFragment_isOriginPreviousFragmentOfEnclosing,
+          .formalParameterFragment_isOriginOtherFragmentOfEnclosing,
       value,
     );
   }
@@ -4352,6 +4346,15 @@ abstract class FragmentImpl implements Fragment {
     return enclosingFragment!.enclosingUnit;
   }
 
+  /// The first fragment in the augmentation chain.
+  FragmentImpl get firstFragment {
+    var current = this;
+    while (current.previousFragment != null) {
+      current = current.previousFragment!;
+    }
+    return current;
+  }
+
   @generated
   @visibleForTesting
   @trackedInternal
@@ -4360,6 +4363,16 @@ abstract class FragmentImpl implements Fragment {
       'isAugmentation': isAugmentation,
       'isCompleteDeclaration': isCompleteDeclaration,
     };
+  }
+
+  /// The fragments in the augmentation chain that follow this fragment,
+  /// in order from the immediate next fragment to the last fragment.
+  Iterable<FragmentImpl> get followingFragments sync* {
+    var current = nextFragment;
+    while (current != null) {
+      yield current;
+      current = current.nextFragment;
+    }
   }
 
   @generated
@@ -4420,6 +4433,19 @@ abstract class FragmentImpl implements Fragment {
 
   @override
   FragmentImpl? get nextFragment;
+
+  /// The fragments in the augmentation chain that precede this fragment,
+  /// in order from the immediate previous fragment to the first fragment.
+  Iterable<FragmentImpl> get precedingFragments sync* {
+    var current = previousFragment;
+    while (current != null) {
+      yield current;
+      current = current.previousFragment;
+    }
+  }
+
+  @override
+  FragmentImpl? get previousFragment;
 
   /// The version where this SDK API was added.
   ///
@@ -5484,11 +5510,6 @@ abstract class InstanceFragmentImpl extends FragmentImpl
       _setters = [];
     }
     _setters.add(fragment);
-    fragment.enclosingFragment = this;
-  }
-
-  void addTypeParameter(TypeParameterFragmentImpl fragment) {
-    _typeParameters.add(fragment);
     fragment.enclosingFragment = this;
   }
 }
@@ -7762,7 +7783,7 @@ class LibraryFragmentImpl extends FragmentImpl
   }
 
   @override
-  LibraryFragment? get previousFragment {
+  LibraryFragmentImpl? get previousFragment {
     var fragments = library.fragments;
     var index = fragments.indexOf(this);
     if (index >= 1) {
@@ -8926,12 +8947,6 @@ class MethodFragmentImpl extends ExecutableFragmentImpl
     fragment.element = element;
     fragment.previousFragment = this;
     nextFragment = fragment;
-  }
-
-  @override
-  void addTypeParameter(TypeParameterFragmentImpl typeParameter) {
-    _typeParameters.add(typeParameter);
-    typeParameter.enclosingFragment = this;
   }
 }
 
@@ -11353,24 +11368,23 @@ class TypeParameterFragmentImpl extends FragmentImpl
   Map<String, bool> get flagsForTesting {
     return {
       ...super.flagsForTesting,
-      'isOriginPreviousFragmentOfEnclosing':
-          isOriginPreviousFragmentOfEnclosing,
+      'isOriginOtherFragmentOfEnclosing': isOriginOtherFragmentOfEnclosing,
     };
   }
 
   @generated
-  bool get isOriginPreviousFragmentOfEnclosing {
+  bool get isOriginOtherFragmentOfEnclosing {
     return hasFlag(
       _FragmentStorageFlag
-          .typeParameterFragment_isOriginPreviousFragmentOfEnclosing,
+          .typeParameterFragment_isOriginOtherFragmentOfEnclosing,
     );
   }
 
   @generated
-  set isOriginPreviousFragmentOfEnclosing(bool value) {
+  set isOriginOtherFragmentOfEnclosing(bool value) {
     setFlag(
       _FragmentStorageFlag
-          .typeParameterFragment_isOriginPreviousFragmentOfEnclosing,
+          .typeParameterFragment_isOriginOtherFragmentOfEnclosing,
       value,
     );
   }
@@ -11871,7 +11885,7 @@ enum _FormalParameterElementFlags {
   isExplicitlyCovariant(fragment: true),
   isOriginDeclaration(fragment: true),
   isOriginMixinApplicationClassConstructor(fragment: true),
-  isOriginPreviousFragmentOfEnclosing(fragment: true);
+  isOriginOtherFragmentOfEnclosing(fragment: true);
 
   final bool fragment;
   final _ElementFlagSource element;
@@ -11926,7 +11940,7 @@ enum _FragmentStorageFlag {
   formalParameterFragment_isExplicitlyCovariant,
   formalParameterFragment_isOriginDeclaration,
   formalParameterFragment_isOriginMixinApplicationClassConstructor,
-  formalParameterFragment_isOriginPreviousFragmentOfEnclosing,
+  formalParameterFragment_isOriginOtherFragmentOfEnclosing,
   fragment_isAugmentation,
   fragment_isCompleteDeclaration,
   libraryFragment_isOriginNotExistingFile,
@@ -11941,7 +11955,7 @@ enum _FragmentStorageFlag {
   propertyInducingFragment_isOriginGetterSetter,
   topLevelFunctionFragment_isOriginDeclaration,
   topLevelFunctionFragment_isOriginLoadLibrary,
-  typeParameterFragment_isOriginPreviousFragmentOfEnclosing,
+  typeParameterFragment_isOriginOtherFragmentOfEnclosing,
   variableFragment_hasImplicitType,
   variableFragment_isAbstract,
   variableFragment_isConst,
@@ -12124,7 +12138,7 @@ enum _TypeAliasElementFlags {
 }
 
 enum _TypeParameterElementFlags {
-  isOriginPreviousFragmentOfEnclosing(fragment: true);
+  isOriginOtherFragmentOfEnclosing(fragment: true);
 
   final bool fragment;
   final _ElementFlagSource element;
