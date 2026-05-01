@@ -4010,8 +4010,6 @@ static void ReloadKernel(Thread* thread, JSONStream* js) {
   isolate_group->ReloadKernel(js, force_reload, kernel_buffer,
                               kernel_buffer_size);
 
-  free(kernel_buffer);
-
   Service::CheckForPause(isolate, js);
 #endif  // defined(DART_PRECOMPILED_RUNTIME)
 }

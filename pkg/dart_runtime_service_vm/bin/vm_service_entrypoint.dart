@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
+import 'dart:vmservice_io' show getResidentCompilerInfoFileConsideringArgsImpl;
 
 import 'package:dart_runtime_service/dart_runtime_service.dart';
 import 'package:dart_runtime_service_vm/dart_runtime_service_vm.dart';
@@ -90,19 +91,23 @@ bool _waitForDdsToAdvertiseService = false;
 @entrypoint
 bool _printDtd = false;
 
-// ignore: unused_element
 File? _residentCompilerInfoFile;
 
 @entrypoint
+/// Sets the resident compiler info file, which is used to configure the
+/// service to utilize a resident compiler.
+///
+/// If either `--resident-compiler-info-file` or `--resident-server-info-file`
+/// was supplied on the command line, the CLI argument should be forwarded as
+/// the argument to [residentCompilerInfoFilePathArgumentFromCli]. If neither
+/// option was supplied, the argument to this parameter should be null.
 // ignore: unused_element
 void _populateResidentCompilerInfoFile(
-  /// If either `--resident-compiler-info-file` or `--resident-server-info-file`
-  /// was supplied on the command line, the CLI argument should be forwarded as
-  /// the argument to this parameter. If neither option was supplied, the
-  /// argument to this parameter should be null.
   String? residentCompilerInfoFilePathArgumentFromCli,
 ) {
-  // TODO(bkonyi): implement
+  _residentCompilerInfoFile = getResidentCompilerInfoFileConsideringArgsImpl(
+    residentCompilerInfoFilePathArgumentFromCli,
+  );
 }
 
 @pragma('vm:entry-point', 'get')
@@ -131,6 +136,7 @@ Future<void> main([List<String> args = const []]) async {
         host: _ddsIP,
         port: _ddsPort,
       ),
+      residentCompilerInfoFile: _residentCompilerInfoFile,
     ),
   );
 }

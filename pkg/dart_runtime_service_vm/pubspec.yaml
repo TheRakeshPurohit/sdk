@@ -11,6 +11,7 @@ resolution: workspace
 dependencies:
   dart_runtime_service: any
   file: any
+  frontend_server: any
   json_rpc_2: any
   logging: any
   meta: any
