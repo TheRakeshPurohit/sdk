@@ -28,28 +28,42 @@ export 'configuration.dart' show TestConfiguration;
 /// simpler to add them to test.dart. Existing test suites should be moved to
 /// here, if possible.
 final testSuiteDirectories = [
-  Path('pkg'),
-  Path('runtime/tests/vm'),
-  Path('samples'),
-  Path('tests/corelib'),
-  Path('tests/dartdevc'),
-  Path('tests/ffi'),
-  Path('tests/language'),
-  Path('tests/macro_build'),
-  Path('tests/lib'),
-  Path('tests/standalone'),
-  Path('tests/web'),
-  Path('third_party/pkg/dart_style'),
-  Path('third_party/pkg/dartdoc'),
-  Path('third_party/pkg/native/pkgs/code_assets'),
-  Path('third_party/pkg/native/pkgs/data_assets'),
-  Path('third_party/pkg/native/pkgs/hooks_runner'),
-  Path('third_party/pkg/native/pkgs/hooks'),
-  Path('third_party/pkg/native/pkgs/native_toolchain_c'),
-  Path('third_party/pkg/native/pkgs/record_use'),
-  Path('third_party/pkg/package_config'),
-  Path('utils/tests/peg'),
+  SuiteDirectory('pkg'),
+  SuiteDirectory('runtime/tests/vm'),
+  SuiteDirectory('samples'),
+  SuiteDirectory('tests/corelib'),
+  SuiteDirectory('tests/dartdevc'),
+  SuiteDirectory('tests/ffi'),
+  SuiteDirectory('tests/language'),
+  SuiteDirectory('tests/macro_build'),
+  SuiteDirectory('tests/lib'),
+  SuiteDirectory('tests/standalone'),
+  SuiteDirectory('tests/web'),
+  SuiteDirectory('third_party/pkg/dart_style', 'test'),
+  SuiteDirectory('third_party/pkg/dartdoc'),
+  SuiteDirectory('third_party/pkg/native/pkgs/code_assets'),
+  SuiteDirectory('third_party/pkg/native/pkgs/data_assets'),
+  SuiteDirectory('third_party/pkg/native/pkgs/hooks_runner'),
+  SuiteDirectory('third_party/pkg/native/pkgs/hooks'),
+  SuiteDirectory('third_party/pkg/native/pkgs/native_toolchain_c'),
+  SuiteDirectory('third_party/pkg/native/pkgs/record_use'),
+  SuiteDirectory('third_party/pkg/package_config'),
+  SuiteDirectory('utils/tests/peg'),
 ];
+
+/// Describes a directory whose name defines a test suite and whose contents
+/// are tests.
+final class SuiteDirectory {
+  final Path directory;
+
+  /// The subdirectory to look inside [directory] for tests.
+  ///
+  /// If `null`, then all tests in [directory] are found.
+  final String? testSubdirectory;
+
+  SuiteDirectory(String directoryPath, [this.testSubdirectory])
+    : directory = Path(directoryPath);
+}
 
 // TODO(26372): Ensure that the returned future awaits on all started tasks.
 Future testConfigurations(List<TestConfiguration> configurations) async {
@@ -129,10 +143,15 @@ Future testConfigurations(List<TestConfiguration> configurations) async {
       testSuites.add(PackageTestSuite(configuration, suitePath));
     } else {
       for (var testSuiteDir in testSuiteDirectories) {
-        var name = testSuiteDir.filename;
+        var name = testSuiteDir.directory.filename;
         if (configuration.selectors.containsKey(name)) {
-          testSuites
-              .add(StandardTestSuite.forDirectory(configuration, testSuiteDir));
+          testSuites.add(
+            StandardTestSuite.forDirectory(
+              configuration,
+              testSuiteDir.directory,
+              testSuiteDir.testSubdirectory,
+            ),
+          );
         }
       }
 

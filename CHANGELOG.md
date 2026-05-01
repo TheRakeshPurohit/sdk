@@ -23,6 +23,98 @@
 
 [#54557]: https://github.com/dart-lang/sdk/issues/54557
 
+### Tools
+
+#### Dart format
+
+These changes are not language versioned and affect formatting all code:
+
+* Fix bug where some collections or arguments might split unnecessarily.
+
+* Don't add a blank line before a comment at the end of a compilation unit or
+  braced body.
+
+* Format extension type representation clauses the same way primary constructor
+  formal parameter lists are formatted:
+
+  ```dart
+  // Before:
+  extension type JSExportedDartFunction._(
+    JSExportedDartFunctionRepType _jsExportedDartFunction
+  )
+      implements JSFunction {}
+
+  // After:
+  extension type JSExportedDartFunction._(
+    JSExportedDartFunctionRepType _jsExportedDartFunction
+  ) implements JSFunction {}
+  ```
+
+* When trailing commas are preserved, don't insert a newline before the `;` in
+  an enum with members unless there actually is a trailing comma.
+  (Fix by @Barbirosha.)
+
+These changes are language versioned and only affect code at 3.13 or higher:
+
+* Support block-formatting parameter lists:
+
+  ```dart
+  // Before:
+  typedef DataViewBuilder<T> =
+      Widget Function(
+        BuildContext context,
+        PagingState<int, T> state,
+        NextPageCallback fetchNextPage,
+      );
+
+  // After:
+  typedef DataViewBuilder<T> = Widget Function(
+    BuildContext context,
+    PagingState<int, T> state,
+    NextPageCallback fetchNextPage,
+  );
+  ```
+
+* Allow `as`, `is`, and `is!` expressions to be block formatted:
+
+  ```dart
+  // Before:
+  variable =
+      function(
+            argument,
+            argument,
+            argument,
+          )
+          as Type;
+
+  // After:
+  variable = function(
+    argument,
+    argument,
+    argument,
+  ) as Type;
+  ```
+
+* Force blank lines around a mixin or extension type declaration if it doesn't
+  have a `;` body:
+
+  ```dart
+  // Before:
+  int above;
+  extension type Inches(int x) {}
+  mixin M {}
+  int below;
+
+  // After:
+  int above;
+
+  extension type Inches(int x) {}
+
+  mixin M {}
+
+  int below;
+  ```
+
 ## 3.12.0
 
 **Released on:** Unreleased

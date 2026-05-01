@@ -178,7 +178,7 @@ class OptionsParser {
 
     var allSuiteDirectories = [
       ...testSuiteDirectories,
-      Path('tests/co19'),
+      SuiteDirectory('tests/co19'),
     ];
 
     var selectors = <String>[];
@@ -187,7 +187,7 @@ class OptionsParser {
       // infer the selector from it. This lets users use tab completion on
       // the command line.
       for (var suiteDirectory in allSuiteDirectories) {
-        var path = suiteDirectory.toString();
+        var path = suiteDirectory.directory.toString();
         final separator = Platform.pathSeparator;
         if (separator != '/') {
           selector = selector.replaceAll(separator, '/');

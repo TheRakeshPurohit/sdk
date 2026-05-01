@@ -619,9 +619,14 @@ class StandardTestSuite extends TestSuite {
   /// instead of having to create a custom [StandardTestSuite] subclass. In
   /// particular, if you add 'path/to/mytestsuite' to `testSuiteDirectories`
   /// in test.dart, this will all be set up for you.
-  factory StandardTestSuite.forDirectory(
-      TestConfiguration configuration, Path directory) {
+  ///
+  /// If [testSubdirectory] is given, then tests are only searched for inside
+  /// that subdirectory of [directory]. Otherwise, tests will be found anywhere
+  /// in [directory].
+  factory StandardTestSuite.forDirectory(TestConfiguration configuration,
+      Path directory, String? testSubdirectory) {
     var name = directory.filename;
+
     var statusPaths = [
       '$directory/$name.status',
       '$directory/.status',
@@ -643,6 +648,10 @@ class StandardTestSuite extends TestSuite {
         segments[0] == 'third_party' &&
         segments[1] == 'pkg') {
       statusPaths = ['third_party/pkg/$name.status'];
+    }
+
+    if (testSubdirectory != null) {
+      directory = directory.append(testSubdirectory);
     }
 
     return StandardTestSuite(configuration, name, directory, statusPaths,
