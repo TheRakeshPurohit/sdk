@@ -7891,10 +7891,9 @@ class LibraryFragmentImpl extends FragmentImpl
     return element;
   }
 
-  /// Returns the [PrefixElementImpl] identified by the given fragment-local
-  /// [id], or `null` if no such element has been bound yet.
-  PrefixElementImpl? libraryImportPrefixById(String id) {
-    return _libraryImportPrefixesById[id];
+  /// Returns the [PrefixElementImpl] for the given fragment-local [id].
+  PrefixElementImpl libraryImportPrefixById(String id) {
+    return _libraryImportPrefixesById[id]!;
   }
 
   /// Indicates whether it is unnecessary to report an undefined identifier
