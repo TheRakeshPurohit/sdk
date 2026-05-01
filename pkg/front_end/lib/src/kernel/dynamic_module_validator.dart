@@ -1122,7 +1122,7 @@ class _DynamicCallValidator {
       List<String> split = descriptor.split(':');
       if (split.length == 1) {
         if (descriptor.startsWith('_')) {
-          // Coverage-ignore(suite): Not run.
+          // Coverage-ignore-block(suite): Not run.
           throw "Unexpected selector name in descriptor '$descriptor': "
               "private descriptors are not supported.";
         }
@@ -1130,7 +1130,7 @@ class _DynamicCallValidator {
         _dynamicallyCallable.add(new _Selector(.Method, name));
         _dynamicallyCallable.add(new _Selector(.PropertyGet, name));
       } else if (split.length > 2) {
-        // Coverage-ignore(suite): Not run.
+        // Coverage-ignore-block(suite): Not run.
         throw "Unexpected selector descriptor '$descriptor'.";
       } else {
         final String kindString = split[0];
@@ -1142,7 +1142,7 @@ class _DynamicCallValidator {
           throw "Unexpected selector descriptor kind in '$descriptor'.",
         };
         if (nameString.startsWith('_')) {
-          // Coverage-ignore(suite): Not run.
+          // Coverage-ignore-block(suite): Not run.
           throw "Unexpected selector name in descriptor '$descriptor': "
               "private descriptors are not supported.";
         }

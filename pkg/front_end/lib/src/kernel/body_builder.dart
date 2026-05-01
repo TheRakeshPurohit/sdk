@@ -6523,7 +6523,6 @@ class BodyBuilderImpl extends StackListenerImpl
     } else if (type is ParserRecovery) {
       push(new ParserErrorGenerator(this, nameToken, diag.syntheticToken));
     } else if (type is InvalidExpression) {
-      // Coverage-ignore-block(suite): Not run.
       push(type);
     } else if (type is Expression) {
       push(
