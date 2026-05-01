@@ -400,6 +400,10 @@ class DispatchTable {
   /// class member for the selector.
   late final List<Reference?> _table;
 
+  /// For direct calls across modules one can also use the existing table slots
+  /// in the dispatch table (instead of adding more slots to static call table).
+  late final Map<Reference, int> _tableIndexForReference;
+
   late final w.TableBuilder _definedWasmTable;
   late final WasmTableImporter _importedWasmTables = WasmTableImporter(
     translator,
@@ -428,6 +432,13 @@ class DispatchTable {
         : metadata.methodOrSetterSelectorId;
     return _selectorInfo[selectorId]!;
   }
+
+  /// Returns a dispatch table index if the [target] is going to be in the
+  /// dispatch table.
+  ///
+  /// NOTE: The [target] can occur in multiple slots in the dispatch table and
+  /// we return the first such index.
+  int? indexForTarget(Reference target) => _tableIndexForReference[target];
 
   SelectorInfo _createSelectorForTarget(Reference target) {
     Member member = target.asMember;
@@ -756,6 +767,12 @@ class DispatchTable {
     }
 
     _table = buildRowDisplacementTable<Reference>(rows);
+    _tableIndexForReference = {};
+    for (int i = 0; i < _table.length; ++i) {
+      final entry = _table[i];
+      if (entry == null) continue;
+      _tableIndexForReference[entry] ??= i;
+    }
 
     int rowIndex = 0;
     for (final selector in selectors) {

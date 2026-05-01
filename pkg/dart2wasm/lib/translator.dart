@@ -765,10 +765,10 @@ class Translator with KernelNodes {
         outputs = b.inlineCallTo(callTarget);
       } else {
         b.comment('Not inlining, reason: ${decision.reason}');
-        outputs = callFunction(callTarget.function, b);
+        outputs = callFunction(callTarget.function, b, reference);
       }
     } else {
-      outputs = callFunction(callTarget.function, b);
+      outputs = callFunction(callTarget.function, b, reference);
     }
     if (callTarget.synthesizeNullReturnValue) {
       assert(outputs.isEmpty);
@@ -789,18 +789,37 @@ class Translator with KernelNodes {
   /// module. Otherwise does an indirect call through the static dispatch table.
   List<w.ValueType> callFunction(
     w.BaseFunction function,
-    w.InstructionsBuilder b,
-  ) {
+    w.InstructionsBuilder b, [
+    Reference? target,
+  ]) {
+    // If the target function is defined in the same module as the caller, just
+    // invoke it.
     final targetModuleBuilder = moduleToBuilder[function.enclosingModule]!;
     if (targetModuleBuilder == b.moduleBuilder) {
       b.call(function);
-    } else {
-      b.i32_const(crossModuleFunctionTable.indexForFunction(function));
-      b.call_indirect(
-        function.type,
-        crossModuleFunctionTable.getWasmTable(b.moduleBuilder),
-      );
+      return b.emitUnreachableIfNoResult(function.type.outputs);
     }
+
+    // If the target function is already available via the dispatch table, use
+    // it from there.
+    if (target != null) {
+      final dispatchTableIndex = dispatchTable.indexForTarget(target);
+      if (dispatchTableIndex != null) {
+        b.i32_const(dispatchTableIndex);
+        b.call_indirect(
+          function.type,
+          dispatchTable.getWasmTable(b.moduleBuilder),
+        );
+        return b.emitUnreachableIfNoResult(function.type.outputs);
+      }
+    }
+
+    // Otherwise add & call via the cross module function table.
+    b.i32_const(crossModuleFunctionTable.indexForFunction(function));
+    b.call_indirect(
+      function.type,
+      crossModuleFunctionTable.getWasmTable(b.moduleBuilder),
+    );
     return b.emitUnreachableIfNoResult(function.type.outputs);
   }
 
