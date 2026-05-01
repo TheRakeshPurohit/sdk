@@ -1087,6 +1087,28 @@ EnumDeclaration
 ''');
   }
 
+  test_primaryConstructor_const_typeName_noFormalParameters_language310() {
+    var parseResult = parseStringWithErrors(r'''
+// @dart=3.10
+enum const E {v}
+''');
+    parseResult.assertErrors([error(diag.unexpectedToken, 19, 5)]);
+
+    var node = parseResult.findNode.singleEnumDeclaration;
+    assertParsedNodeText(node, r'''
+EnumDeclaration
+  enumKeyword: enum
+  namePart: NameWithTypeParameters
+    typeName: E
+  body: BlockEnumBody
+    leftBracket: {
+    constants
+      EnumConstantDeclaration
+        name: v
+    rightBracket: }
+''');
+  }
+
   test_primaryConstructor_declaringFormalParameter_default_namedRequired_final() {
     var parseResult = parseStringWithErrors(r'''
 enum const E({required final int a = 0}) {v}

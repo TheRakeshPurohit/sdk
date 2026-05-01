@@ -1102,14 +1102,19 @@ class TestParser extends Parser {
   }
 
   @override
-  Token parseMixinHeaderOpt(Token token, Token mixinKeyword) {
+  Token parseMixinHeaderOpt(
+    Token token,
+    Token? constKeyword,
+    Token mixinKeyword,
+  ) {
     doPrint(
       'parseMixinHeaderOpt('
       '$token, '
+      '$constKeyword, '
       '$mixinKeyword)',
     );
     indent++;
-    var result = super.parseMixinHeaderOpt(token, mixinKeyword);
+    var result = super.parseMixinHeaderOpt(token, constKeyword, mixinKeyword);
     indent--;
     return result;
   }

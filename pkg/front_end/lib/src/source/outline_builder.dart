@@ -1812,12 +1812,22 @@ class OutlineBuilder extends StackListenerImpl {
 
     int? startOffset = constKeyword?.charOffset ?? nameOffset ?? formalsOffset;
 
-    if (kind != DeclarationKind.ExtensionType) {
-      reportIfNotEnabled(
-        libraryFeatures.primaryConstructors,
-        beginToken.charOffset,
-        noLength,
-      );
+    switch (kind) {
+      case DeclarationKind.TopLevel:
+      case DeclarationKind.Mixin:
+      case DeclarationKind.Extension:
+        // Invalid. Error reported in the parser.
+        break;
+      case DeclarationKind.ExtensionType:
+        // Always valid.
+        break;
+      case DeclarationKind.Class:
+      case DeclarationKind.Enum:
+        reportIfNotEnabled(
+          libraryFeatures.primaryConstructors,
+          beginToken.charOffset,
+          noLength,
+        );
     }
 
     if (formals != null) {

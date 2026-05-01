@@ -3360,8 +3360,15 @@ class Parser {
   ) {
     assert(mixinKeyword.isA(Keyword.MIXIN));
     listener.beginClassOrMixinOrNamedMixinApplicationPrelude(mixinKeyword);
+    Token token = mixinKeyword;
+    Token? constKeyword;
+    if (token.next!.type == Keyword.CONST) {
+      // Error recovery. Error reported in [parsePrimaryConstructorOpt] called
+      // through [parseMixinHeaderOpt].
+      token = constKeyword = token.next!;
+    }
     Token name = ensureIdentifier(
-      mixinKeyword,
+      token,
       IdentifierContext.classOrMixinOrExtensionDeclaration,
     );
     Token headerStart = computeTypeParamOrArg(
@@ -3376,7 +3383,7 @@ class Parser {
       mixinKeyword,
       name,
     );
-    Token token = parseMixinHeaderOpt(headerStart, mixinKeyword);
+    token = parseMixinHeaderOpt(headerStart, constKeyword, mixinKeyword);
     if (token.next!.isA(TokenType.SEMICOLON)) {
       Token semicolonToken = token = token.next!;
       if (!isPrimaryConstructorsFeatureEnabled) {
@@ -3403,7 +3410,16 @@ class Parser {
     return token;
   }
 
-  Token parseMixinHeaderOpt(Token token, Token mixinKeyword) {
+  Token parseMixinHeaderOpt(
+    Token token,
+    Token? constKeyword,
+    Token mixinKeyword,
+  ) {
+    token = parsePrimaryConstructorOpt(
+      DeclarationKind.Mixin,
+      token,
+      constKeyword,
+    );
     token = parseMixinOnOpt(token);
     token = parseClassOrMixinOrEnumImplementsOpt(token);
     listener.handleMixinHeader(mixinKeyword);
@@ -3422,7 +3438,11 @@ class Parser {
     // Reparse to determine which clauses have already been parsed
     // but intercept the events so they are not sent to the primary listener.
     listener = recoveryListener;
-    token = parseMixinHeaderOpt(headerStart, mixinKeyword);
+    token = parseMixinHeaderOpt(
+      headerStart,
+      /* constKeyword */ null,
+      mixinKeyword,
+    );
     bool hasOn = recoveryListener.onKeyword != null;
     bool hasImplements = recoveryListener.implementsKeyword != null;
 
@@ -3586,6 +3606,11 @@ class Parser {
     Token extensionKeyword,
   ) {
     assert(extensionKeyword.isA(Keyword.EXTENSION));
+    Token? constKeyword;
+    if (token.next!.type == Keyword.CONST) {
+      // Error recovery. Error reported in [parsePrimaryConstructorOpt].
+      token = constKeyword = token.next!;
+    }
     Token? name = token.next!;
     if (name.isIdentifier && !name.isA(Keyword.ON)) {
       token = name;
@@ -3603,6 +3628,11 @@ class Parser {
       /* inDeclaration = */ true,
     ).parseVariables(token, this);
     listener.beginExtensionDeclaration(augmentToken, extensionKeyword, name);
+    token = parsePrimaryConstructorOpt(
+      DeclarationKind.Extension,
+      token,
+      constKeyword,
+    );
 
     Token? onKeyword = token.next!;
     if (augmentToken != null) {
@@ -3698,6 +3728,45 @@ class Parser {
     if (token.next!.isA(TokenType.OPEN_PAREN) ||
         token.next!.isA(TokenType.PERIOD)) {
       Token beginPrimaryConstructor = token.next!;
+
+      switch (kind) {
+        case DeclarationKind.TopLevel:
+          assert(false, "Unexpected primary constructor kind: $kind");
+        case DeclarationKind.Mixin:
+          if (isPrimaryConstructorsFeatureEnabled) {
+            reportRecoverableError(
+              constKeyword ?? beginPrimaryConstructor,
+              diag.mixinPrimaryConstructor,
+            );
+          } else {
+            reportRecoverableError(
+              constKeyword ?? beginPrimaryConstructor,
+              diag.unexpectedToken.withArguments(
+                lexeme: constKeyword ?? beginPrimaryConstructor,
+              ),
+            );
+          }
+        case DeclarationKind.Extension:
+          if (isPrimaryConstructorsFeatureEnabled) {
+            reportRecoverableError(
+              constKeyword ?? beginPrimaryConstructor,
+              diag.extensionPrimaryConstructor,
+            );
+          } else {
+            reportRecoverableError(
+              constKeyword ?? beginPrimaryConstructor,
+              diag.unexpectedToken.withArguments(
+                lexeme: constKeyword ?? beginPrimaryConstructor,
+              ),
+            );
+          }
+        case DeclarationKind.Class:
+        case DeclarationKind.ExtensionType:
+        case DeclarationKind.Enum:
+          // Valid cases.
+          break;
+      }
+
       listener.beginPrimaryConstructor(beginPrimaryConstructor);
       bool hasConstructorName = beginPrimaryConstructor.isA(TokenType.PERIOD);
       if (hasConstructorName) {
@@ -3728,12 +3797,34 @@ class Parser {
       if (kind == DeclarationKind.ExtensionType) {
         reportRecoverableError(token, diag.missingPrimaryConstructor);
       } else if (constKeyword != null) {
-        // TODO(johnniwinther): It should be possible to report if the
-        //  declaring constructors feature is not enabled here.
-        reportRecoverableError(
-          constKeyword,
-          diag.constWithoutPrimaryConstructor,
-        );
+        if (isPrimaryConstructorsFeatureEnabled) {
+          switch (kind) {
+            case DeclarationKind.TopLevel:
+              assert(false, "Unexpected primary constructor kind: $kind");
+            case DeclarationKind.Mixin:
+              reportRecoverableError(
+                constKeyword,
+                diag.mixinPrimaryConstructor,
+              );
+            case DeclarationKind.Extension:
+              reportRecoverableError(
+                constKeyword,
+                diag.extensionPrimaryConstructor,
+              );
+            case DeclarationKind.Class:
+            case DeclarationKind.ExtensionType:
+            case DeclarationKind.Enum:
+              reportRecoverableError(
+                constKeyword,
+                diag.constWithoutPrimaryConstructor,
+              );
+          }
+        } else {
+          reportRecoverableError(
+            constKeyword,
+            diag.unexpectedToken.withArguments(lexeme: constKeyword),
+          );
+        }
       }
       listener.handleNoPrimaryConstructor(kind, token, constKeyword);
     }

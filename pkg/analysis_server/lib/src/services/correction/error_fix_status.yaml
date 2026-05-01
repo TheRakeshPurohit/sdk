@@ -714,6 +714,8 @@ extension_override_with_cascade:
   status: hasFix
 extension_override_without_access:
   status: noFix
+extension_primary_constructor:
+  status: needsEvaluation
 extension_type_constructor_with_super_formal_parameter:
   status: needsFix
   notes: |-
@@ -1138,6 +1140,8 @@ mixin_of_type_alias_expands_to_type_parameter:
   status: noFix
 mixin_on_type_alias_expands_to_type_parameter:
   status: noFix
+mixin_primary_constructor:
+  status: needsEvaluation
 mixin_subtype_of_base_is_not_base:
   status: hasFix
 mixin_subtype_of_final_is_not_base:

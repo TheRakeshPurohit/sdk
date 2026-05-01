@@ -1561,6 +1561,9 @@ class AstBuilder extends StackListener {
       );
     }
 
+    pop(); // Error recovery: Primary constructor.
+    pop(); // Error recovery: Const token.
+
     declarations.add(builder.build(typeKeyword: null, onClause: onClause));
 
     _classLikeBuilder = null;
@@ -2700,13 +2703,23 @@ class AstBuilder extends StackListener {
       formalParameterList = _syntheticFormalParameterList(extensionTypeName);
     }
 
-    if (kind != DeclarationKind.ExtensionType) {
-      if (!_featureSet.isEnabled(Feature.primary_constructors)) {
-        _reportFeatureNotEnabled(
-          feature: Feature.primary_constructors,
-          startToken: beginToken,
-        );
-      }
+    switch (kind) {
+      case DeclarationKind.TopLevel:
+      case DeclarationKind.Mixin:
+      case DeclarationKind.Extension:
+        // Invalid. Error reported in the parser.
+        break;
+      case DeclarationKind.ExtensionType:
+        // Always valid.
+        break;
+      case DeclarationKind.Class:
+      case DeclarationKind.Enum:
+        if (!_featureSet.isEnabled(Feature.primary_constructors)) {
+          _reportFeatureNotEnabled(
+            feature: Feature.primary_constructors,
+            startToken: beginToken,
+          );
+        }
     }
 
     PrimaryConstructorNameImpl? constructorName;
@@ -4834,6 +4847,8 @@ class AstBuilder extends StackListener {
     var implementsClause =
         pop(NullValues.IdentifierList) as ImplementsClauseImpl?;
     var onClause = pop(NullValues.IdentifierList) as MixinOnClauseImpl?;
+    pop(); // Error recovery: Primary constructor.
+    pop(); // Error recovery: Const token.
     var baseKeyword = pop(NullValues.Token) as Token?;
     var augmentKeyword = pop(NullValues.Token) as Token?;
     var typeParameters = pop() as TypeParameterListImpl?;

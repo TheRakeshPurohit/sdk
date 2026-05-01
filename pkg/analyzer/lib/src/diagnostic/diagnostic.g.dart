@@ -5240,6 +5240,19 @@ const DiagnosticWithoutArguments extensionOverrideWithoutAccess =
 
 /// No parameters.
 const DiagnosticWithoutArguments
+extensionPrimaryConstructor = DiagnosticWithoutArgumentsImpl(
+  name: 'extension_primary_constructor',
+  problemMessage: "Extensions can't have primary constructors.",
+  correctionMessage:
+      "Try removing the primary constructor or changing the extension to an "
+      "extension type.",
+  type: DiagnosticType.SYNTACTIC_ERROR,
+  uniqueName: 'extension_primary_constructor',
+  expectedTypes: [],
+);
+
+/// No parameters.
+const DiagnosticWithoutArguments
 extensionTypeConstructorWithSuperFormalParameter =
     DiagnosticWithoutArgumentsImpl(
       name: 'extension_type_constructor_with_super_formal_parameter',
@@ -10805,6 +10818,19 @@ const DiagnosticWithoutArguments mixinOnTypeAliasExpandsToTypeParameter =
       hasPublishedDocs: true,
       type: DiagnosticType.COMPILE_TIME_ERROR,
       uniqueName: 'mixin_on_type_alias_expands_to_type_parameter',
+      expectedTypes: [],
+    );
+
+/// No parameters.
+const DiagnosticWithoutArguments mixinPrimaryConstructor =
+    DiagnosticWithoutArgumentsImpl(
+      name: 'mixin_primary_constructor',
+      problemMessage: "Mixins can't have primary constructors.",
+      correctionMessage:
+          "Try removing the primary constructor or changing the mixin to a "
+          "class.",
+      type: DiagnosticType.SYNTACTIC_ERROR,
+      uniqueName: 'mixin_primary_constructor',
       expectedTypes: [],
     );
 

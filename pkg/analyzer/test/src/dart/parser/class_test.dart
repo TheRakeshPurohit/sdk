@@ -1822,6 +1822,25 @@ ClassDeclaration
 ''');
   }
 
+  test_primaryConstructor_const_typeName_noFormalParameters_language310() {
+    var parseResult = parseStringWithErrors(r'''
+// @dart=3.10
+class const A {}
+''');
+    parseResult.assertErrors([error(diag.unexpectedToken, 20, 5)]);
+
+    var node = parseResult.findNode.singleClassDeclaration;
+    assertParsedNodeText(node, r'''
+ClassDeclaration
+  classKeyword: class
+  namePart: NameWithTypeParameters
+    typeName: A
+  body: BlockClassBody
+    leftBracket: {
+    rightBracket: }
+''');
+  }
+
   test_primaryConstructor_const_typeName_periodName_noFormalParameters() {
     var parseResult = parseStringWithErrors(r'''
 class const A.named {}

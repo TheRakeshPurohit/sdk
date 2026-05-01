@@ -2492,6 +2492,7 @@ constWithoutPrimaryConstructor:
   correctionMessage: "Try removing the 'const' keyword or adding a primary constructor declaration."
   analyzerCode: constWithoutPrimaryConstructor
   hasPublishedDocs: false
+  experiments: primary-constructors
   script: |
     class const C {}
 
@@ -2791,3 +2792,25 @@ redirectGenerativeToNonGenerativeConstructor:
       factory C() => throw '';
       C.named() : this();
     }
+
+mixinPrimaryConstructor:
+  type: syntacticError
+  parameters: none
+  problemMessage: "Mixins can't have primary constructors."
+  correctionMessage: "Try removing the primary constructor or changing the mixin to a class."
+  analyzerCode: mixinPrimaryConstructor
+  hasPublishedDocs: false
+  experiments: primary-constructors
+  script: |
+    mixin M() {}
+
+extensionPrimaryConstructor:
+  type: syntacticError
+  parameters: none
+  problemMessage: "Extensions can't have primary constructors."
+  correctionMessage: "Try removing the primary constructor or changing the extension to an extension type."
+  analyzerCode: extensionPrimaryConstructor
+  hasPublishedDocs: false
+  experiments: primary-constructors
+  script: |
+    extension E() on int {}
