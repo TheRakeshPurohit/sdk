@@ -7,10 +7,10 @@ import 'dart:io';
 import 'package:kernel/ast.dart';
 import 'package:kernel/binary/ast_from_binary.dart';
 import 'package:kernel/binary/ast_to_binary.dart';
-import 'package:kernel/dart_scope_calculator.dart';
+import 'package:front_end/src/kernel/dart_scope_calculator.dart';
 import 'package:kernel/src/printer.dart';
 
-import 'binary/find_sdk_dills.dart';
+import 'find_sdk_dills.dart';
 
 void main() {
   List<File> dills = findSdkDills().where((dill) {

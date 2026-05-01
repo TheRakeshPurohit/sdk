@@ -4,6 +4,7 @@
 
 import 'package:kernel/ast.dart';
 
+// Coverage-ignore(suite): Not run.
 /// Dart scope
 ///
 /// Provides information about symbols available inside a dart scope.
@@ -49,6 +50,7 @@ class DartScope {
   }
 }
 
+// Coverage-ignore(suite): Not run.
 /// Dart scope
 ///
 /// Provides information about symbols available inside a dart scope.
@@ -84,6 +86,7 @@ class DartScope2 {
   }
 }
 
+// Coverage-ignore(suite): Not run.
 class DartScopeBuilder2 extends VisitorDefault<void> with VisitorVoidMixin {
   final Library _library;
   final Uri _scriptUri;
@@ -1059,7 +1062,11 @@ class DartScopeBuilder2 extends VisitorDefault<void> with VisitorVoidMixin {
     Class? cls,
     int offset,
   ) {
-    DartScopeBuilder2 builder = DartScopeBuilder2._(library, scriptUri, offset);
+    DartScopeBuilder2 builder = new DartScopeBuilder2._(
+      library,
+      scriptUri,
+      offset,
+    );
     if (cls != null) {
       builder.visitClass(cls);
     } else {
@@ -1075,7 +1082,11 @@ class DartScopeBuilder2 extends VisitorDefault<void> with VisitorVoidMixin {
     Uri scriptUri,
     int offset,
   ) {
-    DartScopeBuilder2 builder = DartScopeBuilder2._(library, scriptUri, offset);
+    DartScopeBuilder2 builder = new DartScopeBuilder2._(
+      library,
+      scriptUri,
+      offset,
+    );
     builder.visitLibrary(library);
     return builder;
   }

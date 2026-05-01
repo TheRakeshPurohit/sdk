@@ -238,6 +238,7 @@ ddart
 dds
 debugger
 declarative
+decls
 decrease
 decrements
 dectcem
@@ -876,6 +877,7 @@ tpt
 transitively
 translators
 transparent
+treenode
 triangle
 triggers
 trimming

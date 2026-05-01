@@ -45,6 +45,7 @@ export '../base/ticker.dart' show Ticker;
 export '../compute_platform_binaries_location.dart'
     show computePlatformBinariesLocation;
 export '../kernel/constructor_tearoff_lowering.dart' show isTearOffLowering;
+export '../kernel/dart_scope_calculator.dart' show DartScope, DartScopeBuilder2;
 export '../type_inference/type_schema_environment.dart'
     show TypeSchemaEnvironment;
 export 'compiler_state.dart'

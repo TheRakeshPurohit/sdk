@@ -56,6 +56,7 @@ dwds/test/integration/*: SkipByDesign # Skip integration tests relying on build_
 dwds_test_common/fixtures/*: SkipByDesign # Skip fixtures relying on build_daemon/build_runner.
 front_end/test/analyze_git_test: Pass, Slow
 front_end/test/bootstrap_test: Pass, Slow
+front_end/test/dart_scope_calculator_test: Slow, Pass
 front_end/test/incremental_compiler_leak_test: Pass, ExtraSlow
 front_end/test/incremental_dart2js_test: Pass, Slow
 front_end/test/rasta/*: SkipByDesign # Anything in rasta is input to cfe unit tests and shouldn't be run as tests.
@@ -63,7 +64,6 @@ front_end/test/types/dart2js_benchmark_test: Pass, Slow
 front_end/test/types/large_app_benchmark_test: Pass, ExtraSlow
 front_end/testcases/*: Skip # These are not tests but input for tests.
 front_end/tool/incremental_perf_test: Slow, Pass
-kernel/test/dart_scope_calculator_test: Slow, Pass
 kernel/testcases/*: Skip # These are not tests but input for tests.
 vm/test/kernel_front_end_test: Slow, Pass
 vm/test/transformations/ffi_test: Slow, Pass # https://github.com/dart-lang/sdk/issues/54950

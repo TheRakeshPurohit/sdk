@@ -25,8 +25,6 @@ import 'package:kernel/canonical_name.dart'
     show CanonicalNameError, CanonicalNameSdkError;
 import 'package:kernel/class_hierarchy.dart'
     show ClassHierarchy, ClassHierarchySubtypes, ClosedWorldClassHierarchy;
-import 'package:kernel/dart_scope_calculator.dart'
-    show DartScope, DartScopeBuilder2;
 import 'package:kernel/kernel.dart'
     show
         Class,
@@ -93,6 +91,7 @@ import '../dill/dill_library_builder.dart' show DillLibraryBuilder;
 import '../dill/dill_loader.dart' show DillLoader;
 import '../dill/dill_target.dart' show DillTarget;
 import '../kernel/benchmarker.dart' show BenchmarkPhases, Benchmarker;
+import '../kernel/dart_scope_calculator.dart' show DartScope, DartScopeBuilder2;
 import '../kernel/hierarchy/hierarchy_builder.dart' show ClassHierarchyBuilder;
 import '../kernel/internal_ast.dart' show VariableDeclarationImpl;
 import '../kernel/kernel_target.dart' show BuildResult, KernelTarget;
