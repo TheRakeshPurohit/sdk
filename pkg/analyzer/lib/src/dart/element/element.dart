@@ -3502,6 +3502,7 @@ class FieldFormalParameterElementImpl extends FormalParameterElementImpl
   @override
   bool get isFinal => true;
 
+  @Deprecated('Use element is FieldFormalParameterElement instead')
   @override
   bool get isInitializingFormal => true;
 
@@ -3572,6 +3573,7 @@ class FieldFormalParameterFragmentImpl extends FormalParameterFragmentImpl
   @override
   bool get isFinal => true;
 
+  @Deprecated('Use fragment is FieldFormalParameterFragment instead')
   @override
   bool get isInitializingFormal => true;
 }
@@ -3730,6 +3732,8 @@ class FirstFragmentLocation {
   });
 }
 
+enum FormalParameterDeclarationForm { regular, fieldFormal, superFormal }
+
 @GenerateElementFlags(flags: _FormalParameterElementFlags.values)
 class FormalParameterElementImpl extends PromotableElementImpl
     with InternalFormalParameterElement {
@@ -3831,8 +3835,9 @@ class FormalParameterElementImpl extends PromotableElementImpl
     return false;
   }
 
+  @Deprecated('Use element is FieldFormalParameterElement instead')
   @override
-  bool get isInitializingFormal => _firstFragment.isInitializingFormal;
+  bool get isInitializingFormal => this is FieldFormalParameterElement;
 
   @override
   bool get isNamed => _firstFragment.isNamed;
@@ -3858,9 +3863,10 @@ class FormalParameterElementImpl extends PromotableElementImpl
   @override
   bool get isRequiredPositional => _firstFragment.isRequiredPositional;
 
+  @Deprecated('Use element is SuperFormalParameterElement instead')
   @override
   // TODO(augmentations): Implement the merge of formal parameters.
-  bool get isSuperFormal => _firstFragment.isSuperFormal;
+  bool get isSuperFormal => this is SuperFormalParameterElement;
 
   @override
   ElementKind get kind => ElementKind.PARAMETER;
@@ -4051,6 +4057,7 @@ class FormalParameterFragmentImpl extends VariableFragmentImpl
   }
 
   /// Whether the parameter is an initializing formal parameter.
+  @Deprecated('Use fragment is FieldFormalParameterFragment instead')
   bool get isInitializingFormal => false;
 
   /// Whether the parameter is a named parameter.
@@ -4152,6 +4159,7 @@ class FormalParameterFragmentImpl extends VariableFragmentImpl
   bool get isRequiredPositional => parameterKind.isRequiredPositional;
 
   /// Whether the parameter is a super formal parameter.
+  @Deprecated('Use fragment is SuperFormalParameterFragment instead')
   bool get isSuperFormal => false;
 
   @override
@@ -6111,12 +6119,21 @@ mixin InternalFieldFormalParameterElement on InternalFormalParameterElement
     implements FieldFormalParameterElement {
   @override
   FieldFormalParameterElementImpl get baseElement;
+
+  @override
+  FormalParameterDeclarationForm get declarationForm {
+    return FormalParameterDeclarationForm.fieldFormal;
+  }
 }
 
 mixin InternalFormalParameterElement on InternalVariableElement
     implements FormalParameterElement, SharedNamedFunctionParameter {
   @override
   FormalParameterElementImpl get baseElement;
+
+  FormalParameterDeclarationForm get declarationForm {
+    return FormalParameterDeclarationForm.regular;
+  }
 
   @override
   FormalParameterFragmentImpl get firstFragment;
@@ -6235,6 +6252,11 @@ mixin InternalSuperFormalParameterElement on InternalFormalParameterElement
     implements SuperFormalParameterElement {
   @override
   SuperFormalParameterElementImpl get baseElement;
+
+  @override
+  FormalParameterDeclarationForm get declarationForm {
+    return FormalParameterDeclarationForm.superFormal;
+  }
 
   @override
   InternalFormalParameterElement? get superConstructorParameter;
@@ -10366,6 +10388,7 @@ class SuperFormalParameterElementImpl extends FormalParameterElementImpl
   @override
   bool get isFinal => true;
 
+  @Deprecated('Use element is SuperFormalParameterElement instead')
   @override
   bool get isSuperFormal => true;
 
@@ -10462,6 +10485,7 @@ class SuperFormalParameterFragmentImpl extends FormalParameterFragmentImpl
   @override
   bool get isFinal => true;
 
+  @Deprecated('Use fragment is SuperFormalParameterFragment instead')
   @override
   bool get isSuperFormal => true;
 }
