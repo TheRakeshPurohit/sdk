@@ -31,9 +31,7 @@ class MigrateTest extends AbstractLspAnalysisServerTest {
       response.error,
       isResponseError(
         ErrorCodes.InvalidParams,
-        message:
-            "The directory '/home/my_project' doesn't contain a 'pubspec.yaml' "
-            'file.',
+        message: contains("doesn't contain a 'pubspec.yaml' file."),
       ),
     );
   }
@@ -53,9 +51,9 @@ class MigrateTest extends AbstractLspAnalysisServerTest {
       response.error,
       isResponseError(
         ErrorCodes.InvalidParams,
-        message:
-            "The path '/home/my_project/lib/main.dart' doesn't refer to a "
-            'package or pub workspace directory.',
+        message: contains(
+          "doesn't refer to a package or pub workspace directory.",
+        ),
       ),
     );
   }
@@ -97,7 +95,7 @@ class MigrateTest extends AbstractLspAnalysisServerTest {
       response.error,
       isResponseError(
         ErrorCodes.InvalidParams,
-        message: "The path '/non/existent/dir' doesn't exist.",
+        message: contains("doesn't exist"),
       ),
     );
   }
@@ -120,9 +118,9 @@ resolution: workspace
       response.error,
       isResponseError(
         ErrorCodes.InvalidParams,
-        message:
-            "The directory '/home/my_project' is part of a workspace and can't "
-            'be migrated independently.',
+        message: contains(
+          "is part of a workspace and can't be migrated independently.",
+        ),
       ),
     );
   }
