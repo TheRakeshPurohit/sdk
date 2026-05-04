@@ -6,7 +6,6 @@ import 'package:analyzer/file_system/file_system.dart';
 import 'package:analyzer/source/source.dart';
 import 'package:analyzer/src/context/source.dart';
 import 'package:analyzer/src/generated/sdk.dart' show DartSdk;
-import 'package:path/path.dart' as path;
 
 /// Instances of the class `DartUriResolver` resolve `dart` URI's.
 class DartUriResolver extends UriResolver {
