@@ -1694,9 +1694,14 @@ final class Arm64CodeGenerator extends CodeGenerator {
 
   @override
   void visitUnaryBoolOp(UnaryBoolOp instr) {
-    _asm.unimplemented(
-      'Unimplemented: code generation for UnaryBoolOp ${instr.op.token}',
-    );
+    final operandReg = inputReg(instr, 0);
+    final resultReg = outputReg(instr);
+    switch (instr.op) {
+      case .not:
+        final boolValueBit = boolValueBitPosition(log2wordSize);
+        _asm.eor(resultReg, operandReg, Immediate(1 << boolValueBit));
+        break;
+    }
   }
 
   @override
