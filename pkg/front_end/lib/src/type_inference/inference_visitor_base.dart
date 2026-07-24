@@ -5796,12 +5796,6 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     );
   }
 
-  /// Creates a `e == null` test for the expression [left] using the
-  /// [fileOffset] as file offset for the created nodes.
-  Expression createEqualsNull(int fileOffset, Expression left) {
-    return new EqualsNull(left)..fileOffset = fileOffset;
-  }
-
   /// Reports an error if [typeArgument] is a generic function type.
   ///
   /// This is use for reporting generic function types used as a type argument,

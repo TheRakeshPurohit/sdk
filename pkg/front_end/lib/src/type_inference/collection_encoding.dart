@@ -728,16 +728,17 @@ abstract class _LiteralBuilder(
     DartType type, {
     Expression? nullCheckedValue,
   }) {
-    return new Let(
-      variable,
-      _createConditionalExpression(
+    return extern.createLet(
+      variable: variable,
+      body: _createConditionalExpression(
         fileOffset,
         _createEqualsNull(_createVariableGet(variable)),
         defaultValue,
         nullCheckedValue ?? _createNullCheckedVariableGet(variable),
         type,
       ),
-    )..fileOffset = fileOffset;
+      fileOffset: fileOffset,
+    );
   }
 
   VariableGet _createNullCheckedVariableGet(Variable variable) {
