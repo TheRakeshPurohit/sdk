@@ -50,41 +50,7 @@ typedef SharedMatchContext =
       InternalVariable
     >;
 
-abstract class InternalNode({required int fileOffset}) extends TreeNode {
-  this {
-    this.fileOffset = fileOffset;
-  }
-
-  @override
-  // Coverage-ignore(suite): Not run.
-  R accept<R>(TreeVisitor<R> v) =>
-      throw new UnsupportedError("${runtimeType}.accept");
-
-  @override
-  // Coverage-ignore(suite): Not run.
-  R accept1<R, A>(TreeVisitor1<R, A> v, A arg) =>
-      throw new UnsupportedError("${runtimeType}.accept1");
-
-  @override
-  // Coverage-ignore(suite): Not run.
-  void replaceChild(TreeNode child, TreeNode replacement) =>
-      throw new UnsupportedError("${runtimeType}.replaceChild");
-
-  @override
-  void transformChildren(Transformer v) {
-    throw new UnsupportedError("${runtimeType}.transformChildren");
-  }
-
-  @override
-  // Coverage-ignore(suite): Not run.
-  void transformOrRemoveChildren(RemovingTransformer v) =>
-      throw new UnsupportedError("${runtimeType}.transformOrRemoveChildren");
-
-  @override
-  // Coverage-ignore(suite): Not run.
-  void visitChildren(Visitor v) =>
-      throw new UnsupportedError("${runtimeType}.visitChildren");
-
+abstract class InternalNode({required final int fileOffset}) {
   /// Returns the textual representation of this node for use in debugging.
   ///
   /// [toStringInternal] should only be used for debugging, but should not leak.
@@ -94,11 +60,9 @@ abstract class InternalNode({required int fileOffset}) extends TreeNode {
   ///
   /// This method is called internally by toString methods to create conciser
   /// textual representations.
-  @override
   // Coverage-ignore(suite): Not run.
   String toStringInternal() => toText(defaultAstTextStrategy);
 
-  @override
   // Coverage-ignore(suite): Not run.
   String toText(AstTextStrategy strategy) {
     AstPrinter printer = new AstPrinter(strategy);
@@ -106,7 +70,6 @@ abstract class InternalNode({required int fileOffset}) extends TreeNode {
     return printer.getText();
   }
 
-  @override
   void toTextInternal(AstPrinter printer);
 
   @override
@@ -7162,9 +7125,18 @@ class InternalCatch extends InternalNode {
 class InternalVariableDeclaration extends InternalNode {
   /// The declared variable.
   final InternalDeclaredVariable variable;
+
   InternalExpression? initializer;
 
-  new(this.variable, {this.initializer, required super.fileOffset});
+  final int equalsOffset;
+
+  new(
+    this.variable, {
+    this.initializer,
+    required int nameOffset,
+    int? equalsOffset,
+  }) : this.equalsOffset = equalsOffset ?? TreeNode.noOffset,
+       super(fileOffset: nameOffset);
 
   void updateInitializer(InternalExpression? value) {
     initializer = value;
@@ -7372,7 +7344,7 @@ final InternalSyntheticVariable dummyInternalVariable =
 final InternalVariableDeclaration dummyInternalVariableDeclaration =
     new InternalVariableDeclaration(
       dummyInternalVariable,
-      fileOffset: TreeNode.noOffset,
+      nameOffset: TreeNode.noOffset,
     );
 
 class InternalFieldInitializer extends InternalInitializer {

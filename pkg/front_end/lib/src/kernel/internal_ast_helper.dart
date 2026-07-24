@@ -1987,12 +1987,13 @@ UnaryExpression createUnary(
 InternalVariableDeclaration createVariableDeclaration(
   InternalDeclaredVariable variable, {
   required InternalExpression? initializer,
-  int? fileOffset,
+  int? nameOffset,
+  int? equalsOffset,
 }) {
   return new InternalVariableDeclaration(
     variable,
     initializer: initializer,
-    fileOffset: fileOffset ?? variable.fileOffset,
+    nameOffset: nameOffset ?? variable.fileOffset,
   );
 }
 

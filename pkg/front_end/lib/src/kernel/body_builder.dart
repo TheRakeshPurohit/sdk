@@ -4541,8 +4541,6 @@ class BodyBuilderImpl extends StackListenerImpl
     }
     InternalVariableDeclaration declaration =
         node as InternalVariableDeclaration;
-    declaration.variable.fileOffset = declaration.fileOffset =
-        nameToken.charOffset;
     push(declaration);
 
     // Avoid adding the local identifier to scope if it's a wildcard.
@@ -9779,7 +9777,8 @@ class BodyBuilderImpl extends StackListenerImpl
     variableDeclaration = intern.createVariableDeclaration(
       internalVariable,
       initializer: initializer,
-      fileOffset: offsetForToken(equalsToken),
+      nameOffset: identifier.nameOffset,
+      equalsOffset: offsetForToken(equalsToken),
     );
     assignedVariables.declare(internalVariable);
     push(variableDeclaration);
