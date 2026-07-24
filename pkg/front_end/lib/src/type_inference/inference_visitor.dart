@@ -513,7 +513,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(result.inferredType, replacement);
   }
 
@@ -531,7 +531,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return instantiateTearOff(type, typeContext, replacement);
   }
 
@@ -549,7 +549,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return instantiateTearOff(type, typeContext, replacement);
   }
 
@@ -598,7 +598,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       typeContext,
       replacement,
     );
-    return ensureAssignableResult(typeContext, inferredResult);
+    return ensureAssignableResult(
+      typeContext,
+      inferredResult,
+      assignedNode: node.expression,
+    );
   }
 
   InitializerInferenceResult visitInternalInvalidInitializer(
@@ -796,7 +800,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     }
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result);
+    ?.registerExternalNode(node, result);
     return new ExpressionInferenceResult(resultType, result);
   }
 
@@ -822,7 +826,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(node.type, replacement);
   }
 
@@ -853,6 +857,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression condition = ensureAssignableResult(
       expectedType,
       conditionResult,
+      assignedNode: node.condition,
     ).expression;
     flowAnalysis.assert_afterCondition(getExpressionInfo(condition));
     Expression? message;
@@ -973,7 +978,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(flattenType, replacement);
   }
 
@@ -1008,7 +1013,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
 
     if (scopeProviderInfo != null) {
       _contextAllocationStrategy.exitScopeProvider(scopeProviderInfo);
@@ -1028,7 +1033,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     storeExpressionInfo(replacement, flowAnalysis.booleanLiteral(node.value));
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(
       coreTypes.boolRawType(Nullability.nonNullable),
       replacement,
@@ -1202,6 +1207,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression condition = ensureAssignableResult(
       expectedType,
       conditionResult,
+      assignedNode: node.condition,
     ).expression;
     flowAnalysis.conditional_thenBegin(getExpressionInfo(condition), node);
     bool isThenReachable = flowAnalysis.isReachable;
@@ -1279,7 +1285,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(inferredType, replacement);
   }
 
@@ -1411,7 +1417,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     StaticInvocation replacement = createStaticInvocation(
@@ -1486,7 +1497,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     DartType resultType = target.getGetterType(this);
@@ -1514,6 +1530,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       isNullAware: node.isNullAware,
       fileOffset: node.fileOffset,
       nodeForTesting: node,
+      valueNode: node.value,
     );
     ExpressionInferenceResult valueResult = inferExpression(
       node.value,
@@ -1537,6 +1554,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     required Procedure setter,
     required bool isNullAware,
     required int fileOffset,
+    required InternalNode valueNode,
     TreeNode? nodeForTesting,
   }) {
     DartType receiverContextType = computeExplicitExtensionReceiverContextType(
@@ -1596,6 +1614,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionOnType,
       receiverType,
       inferredReceiver,
+      assignedNode: receiver,
     );
     receiverType = extensionOnType;
 
@@ -1604,6 +1623,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       receiver: inferredReceiver,
       inferredReceiverType: receiverResult.inferredType,
       valueType: valueType,
+      valueNode: valueNode,
       extensionTypeArguments: extensionTypeArguments,
       setter: setter,
     );
@@ -1619,7 +1639,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression receiver = data.receiver;
 
     DartType valueType = data.valueType;
-    valueResult = ensureAssignableResult(valueType, valueResult);
+    valueResult = ensureAssignableResult(
+      valueType,
+      valueResult,
+      assignedNode: data.valueNode,
+    );
     Expression value = valueResult.expression;
 
     SyntheticVariable? valueVariable;
@@ -1722,7 +1746,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     SyntheticVariable? receiverVariable;
@@ -1773,19 +1802,21 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     }
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.fileOffset,
-      valueType,
-      value,
-      readType,
-      node.isInc ? plusName : minusName,
-      intern.createIntLiteral(value: 1, fileOffset: node.fileOffset),
-      null,
+      fileOffset: node.fileOffset,
+      contextType: valueType,
+      left: value,
+      leftType: readType,
+      binaryName: node.isInc ? plusName : minusName,
+      right: intern.createIntLiteral(value: 1, fileOffset: node.fileOffset),
+      whyNotPromoted: null,
+      invocationNode: node,
     );
 
     binaryResult = ensureAssignableResult(
       valueType,
       binaryResult,
       isVoidAllowed: true,
+      assignedNode: node,
     );
     DartType binaryType = binaryResult.inferredType;
     Expression binary = binaryResult.expression;
@@ -1899,7 +1930,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     DartType getterType = target.getGetterType(this);
@@ -1922,6 +1958,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       typeContext,
       isExpressionInvocation: true,
       isImplicitCall: true,
+      invocationNode: node,
     );
   }
 
@@ -1983,7 +2020,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     InvocationTargetType invocationTargetType = target.getFunctionType(this);
@@ -2081,7 +2123,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     Expression readReceiver;
@@ -2107,6 +2154,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       propertyName: node.propertyName,
       typeContext: const UnknownType(),
       isThisReceiver: _isInternalThisExpression(node.receiver),
+      accessNode: node,
     ).expressionInferenceResult;
 
     Expression read = readResult.expression;
@@ -2142,6 +2190,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeContext: writeContext,
       valueResult: rhsResult,
       forEffect: node.forEffect,
+      valueNode: node.rhs,
     );
     Expression write = writeResult.expression;
     DartType writeType = writeResult.inferredType;
@@ -2257,7 +2306,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     SyntheticVariable? receiverVariable;
@@ -2300,19 +2354,21 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     DartType valueType = writeTarget.getSetterType(this);
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.binaryOffset,
-      valueType,
-      read,
-      readType,
-      node.binaryName,
-      node.rhs,
-      null,
+      fileOffset: node.binaryOffset,
+      contextType: valueType,
+      left: read,
+      leftType: readType,
+      binaryName: node.binaryName,
+      right: node.rhs,
+      whyNotPromoted: null,
+      invocationNode: node,
     );
 
     binaryResult = ensureAssignableResult(
       valueType,
       binaryResult,
       isVoidAllowed: true,
+      assignedNode: node,
     );
     Expression value = binaryResult.expression;
 
@@ -2448,6 +2504,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression condition = ensureAssignableResult(
       boolType,
       conditionResult,
+      assignedNode: node.condition,
     ).expression;
     flowAnalysis.doStatement_end(getExpressionInfo(condition));
     Statement replacement = extern.createDoStatement(
@@ -2458,7 +2515,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
 
     replacement = _handleBreaks(node, replacement);
 
@@ -2475,7 +2532,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(
       coreTypes.doubleRawType(Nullability.nonNullable),
       replacement,
@@ -2490,7 +2547,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new StatementInferenceResult.single(replacement);
   }
 
@@ -2509,7 +2566,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new StatementInferenceResult.single(replacement);
   }
 
@@ -3098,6 +3155,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       initializerResult,
       fileOffset: node.fileOffset,
       isVoidAllowed: true,
+      assignedNode: node.value,
     ).expression;
     return new SuccessfulInitializerInferenceResult(
       extern.createFieldInitializer(
@@ -3136,6 +3194,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       inferredExpressionType,
       inferredIterable,
       errorTemplate: diag.forInLoopTypeNotIterable,
+      assignedNode: iterable,
     );
     DartType inferredType = const DynamicType();
     if (inferredExpressionType is TypeDeclarationType) {
@@ -3200,6 +3259,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       result.expressionType.unwrapTypeView(),
       inferredIterable,
       errorTemplate: diag.forInLoopTypeNotIterable,
+      assignedNode: iterable,
     );
 
     DeclaredVariable loopVariable = extern.createUninitializedVariable(
@@ -3309,7 +3369,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     }
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, forInStatement);
+    ?.registerExternalNode(node, forInStatement);
     return new StatementInferenceResult.single(result);
   }
 
@@ -3378,6 +3438,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       condition = ensureAssignableResult(
         expectedType,
         conditionResult,
+        assignedNode: node.condition!,
       ).expression;
     }
 
@@ -3422,7 +3483,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
 
     replacement = _handleBreaks(node, replacement);
 
@@ -3524,10 +3585,10 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(variable, variable.astVariable);
+    ?.registerExternalNode(variable, variable.astVariable);
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new StatementInferenceResult.single(replacement);
   }
 
@@ -3596,7 +3657,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(inferredType, replacement);
   }
 
@@ -3705,6 +3766,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression condition = ensureAssignableResult(
       expectedType,
       conditionResult,
+      assignedNode: node.condition,
     ).expression;
     flowAnalysis.ifStatement_thenBegin(getExpressionInfo(condition), node);
     StatementInferenceResult thenResult = inferStatement(node.then);
@@ -3726,7 +3788,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new StatementInferenceResult.single(replacement);
   }
 
@@ -3834,7 +3896,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result);
+    ?.registerExternalNode(node, result);
     return new ExpressionInferenceResult(inferredType, result);
   }
 
@@ -3852,7 +3914,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         );
         libraryBuilder.loader.dataForTesting
         // Coverage-ignore(suite): Not run.
-        ?.registerAlias(node, replacement);
+        ?.registerExternalNode(node, replacement);
         return new ExpressionInferenceResult(inferredType, replacement);
       }
     }
@@ -3889,7 +3951,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     DartType inferredType = coreTypes.intRawType(Nullability.nonNullable);
     return new ExpressionInferenceResult(inferredType, replacement);
   }
@@ -3926,7 +3988,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(
       coreTypes.boolRawType(Nullability.nonNullable),
       replacement,
@@ -3942,21 +4004,6 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Statement body = bodyResult.statement;
     Statement replacement = _handleBreaks(node, body);
     return new StatementInferenceResult.single(replacement);
-  }
-
-  void _copyNonPromotionReasonToReplacement(
-    TreeNode oldNode,
-    TreeNode replacement,
-  ) {
-    if (!identical(oldNode, replacement) &&
-        dataForTesting
-                // Coverage-ignore(suite): Not run.
-                ?.flowAnalysisResult !=
-            null) {
-      // Coverage-ignore-block(suite): Not run.
-      dataForTesting!.flowAnalysisResult.nonPromotionReasons[replacement] =
-          dataForTesting!.flowAnalysisResult.nonPromotionReasons[oldNode]!;
-    }
   }
 
   /// Performs checking of [element] after it has been determined whether the
@@ -3986,6 +4033,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
               ),
               spreadType,
               element.expression,
+              assignedNode: element.expressionNode,
             );
           } else {
             expression = ensureAssignable(
@@ -3996,10 +4044,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
               ),
               spreadType,
               element.expression,
+              assignedNode: element.expressionNode,
             );
           }
           return new InferredSpreadElement(
             expression: expression,
+            expressionNode: element.expressionNode,
             expressionType: element.expressionType,
             isNullAware: element.isNullAware,
             elementType: element.elementType,
@@ -4198,7 +4248,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result);
+    ?.registerExternalNode(node, result);
     dataForTesting
             // Coverage-ignore(suite): Not run.
             ?.externalToInternalNodeMap[result] =
@@ -4217,7 +4267,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       boolType,
       isVoidAllowed: false,
     );
-    Expression left = ensureAssignableResult(boolType, leftResult).expression;
+    Expression left = ensureAssignableResult(
+      boolType,
+      leftResult,
+      assignedNode: node.left,
+    ).expression;
     flowAnalysis.logicalBinaryOp_rightBegin(
       getExpressionInfo(left),
       node,
@@ -4228,7 +4282,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       boolType,
       isVoidAllowed: false,
     );
-    Expression right = ensureAssignableResult(boolType, rightResult).expression;
+    Expression right = ensureAssignableResult(
+      boolType,
+      rightResult,
+      assignedNode: node.right,
+    ).expression;
     Expression replacement = extern.createLogicalExpression(
       left: left,
       operator: node.operator,
@@ -4244,7 +4302,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(boolType, replacement);
   }
 
@@ -4305,6 +4363,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         typeContext,
         result,
         isVoidAllowed: typeContext is VoidType,
+        assignedNode: node.expression,
       );
     }
     Expression replacement = result.expression;
@@ -4342,6 +4401,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         nullableInferredTypeArgument,
         expressionResult,
         isVoidAllowed: nullableInferredTypeArgument is VoidType,
+        assignedNode: node.expression,
       );
     }
     InferredElement inferredElement = new InferredNullAwareElement(
@@ -4585,7 +4645,9 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           ),
         ),
       );
-      _copyNonPromotionReasonToReplacement(node, error);
+      libraryBuilder.loader.dataForTesting
+      // Coverage-ignore(suite): Not run.
+      ?.registerExternalNode(node, error);
     }
 
     if (isMap && !isIterable) {
@@ -4605,6 +4667,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           )
         : new InferredSpreadElement(
             expression: expression,
+            expressionNode: node.expression,
             isNullAware: node.isNullAware,
             expressionType: spreadType,
             elementType: spreadElementType,
@@ -4631,6 +4694,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression condition = ensureAssignableResult(
       boolType,
       conditionResult,
+      assignedNode: node.condition,
     ).expression;
     flowAnalysis.ifStatement_thenBegin(getExpressionInfo(condition), node);
     ElementInferenceResult thenResult = inferElement(node.then, context);
@@ -4802,6 +4866,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         coreTypes.boolRawType(Nullability.nonNullable),
         conditionResult.inferredType,
         conditionResult.expression,
+        assignedNode: node.condition!,
       );
       condition = assignableCondition;
     }
@@ -5036,6 +5101,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         adjustedInferredKeyType,
         keyInferenceResult,
         isVoidAllowed: inferredKeyType is VoidType,
+        assignedNode: node.key,
       );
     }
     Expression key = keyInferenceResult.expression;
@@ -5060,6 +5126,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         adjustedInferredValueType,
         valueInferenceResult,
         isVoidAllowed: inferredValueType is VoidType,
+        assignedNode: node.value,
       );
     }
     Expression value = valueInferenceResult.expression;
@@ -5221,7 +5288,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     }
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result);
+    ?.registerExternalNode(node, result);
     dataForTesting
             // Coverage-ignore(suite): Not run.
             ?.externalToInternalNodeMap[result] =
@@ -5264,6 +5331,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       isExpressionInvocation: false,
       isImplicitCall: false,
       isImplicitThis: node.isImplicitThis,
+      invocationNode: node,
     );
   }
 
@@ -5289,6 +5357,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       typeContext,
       isExpressionInvocation: true,
       isImplicitCall: true,
+      invocationNode: node,
     );
   }
 
@@ -5305,6 +5374,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       boolType,
       operandResult,
       fileOffset: node.fileOffset,
+      assignedNode: node.operand,
     ).expression;
     Expression replacement = extern.createNot(
       operand,
@@ -5316,7 +5386,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(boolType, replacement);
   }
 
@@ -5343,7 +5413,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(nonNullableResultType, replacement);
   }
 
@@ -5369,13 +5439,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
     DartType writeContext = computeStaticSetWriteContext(node.setter);
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.operatorOffset,
-      writeContext,
-      read,
-      readType,
-      node.isInc ? plusName : minusName,
-      intern.createIntLiteral(value: 1, fileOffset: node.operatorOffset),
-      null,
+      fileOffset: node.operatorOffset,
+      contextType: writeContext,
+      left: read,
+      leftType: readType,
+      binaryName: node.isInc ? plusName : minusName,
+      right: intern.createIntLiteral(value: 1, fileOffset: node.operatorOffset),
+      whyNotPromoted: null,
+      invocationNode: node,
     );
     DartType binaryType = binaryResult.inferredType;
 
@@ -5385,6 +5456,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeContext: writeContext,
       assignOffset: node.operatorOffset,
       nameOffset: node.nameOffset,
+      valueNode: node,
     );
     Expression write = writeResult.expression;
 
@@ -5446,13 +5518,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     DartType writeType = computeSuperPropertySetWriteContext(node.setter);
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.operatorOffset,
-      writeType,
-      read,
-      readType,
-      node.isInc ? plusName : minusName,
-      intern.createIntLiteral(value: 1, fileOffset: node.operatorOffset),
-      null,
+      fileOffset: node.operatorOffset,
+      contextType: writeType,
+      left: read,
+      leftType: readType,
+      binaryName: node.isInc ? plusName : minusName,
+      right: intern.createIntLiteral(value: 1, fileOffset: node.operatorOffset),
+      whyNotPromoted: null,
+      invocationNode: node,
     );
     DartType binaryType = binaryResult.inferredType;
 
@@ -5464,6 +5537,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeContext: writeType,
       assignOffset: node.operatorOffset,
       nameOffset: node.nameOffset,
+      valueNode: node,
     );
     Expression write = writeResult.expression;
 
@@ -5512,22 +5586,25 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     var (DartType variableType, DartType writeContext) =
         computeVariableSetTypeAndWriteContext(node.variable);
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.operatorOffset,
-      writeContext,
-      read,
-      readType,
-      node.isInc ? plusName : minusName,
-      intern.createIntLiteral(value: 1, fileOffset: node.operatorOffset),
-      null,
+      fileOffset: node.operatorOffset,
+      contextType: writeContext,
+      left: read,
+      leftType: readType,
+      binaryName: node.isInc ? plusName : minusName,
+      right: intern.createIntLiteral(value: 1, fileOffset: node.operatorOffset),
+      whyNotPromoted: null,
+      invocationNode: node,
     );
     DartType binaryType = binaryResult.inferredType;
 
     ExpressionInferenceResult writeResult = inferVariableSet(
+      node: node,
       variable: node.variable,
       rhsResult: binaryResult,
       variableType: variableType,
       assignOffset: node.operatorOffset,
       nameOffset: node.nameOffset,
+      valueNode: node,
     );
     Expression write = writeResult.expression;
 
@@ -5605,6 +5682,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       typeContext: const UnknownType(),
       isThisReceiver: _isInternalThisExpression(node.receiver),
       isImplicitThis: node.isImplicitThis,
+      accessNode: node,
     ).expressionInferenceResult;
 
     Expression read = readResult.expression;
@@ -5629,13 +5707,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     DartType writeType = writeTarget.getSetterType(this);
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.operatorOffset,
-      writeType,
-      read,
-      readType,
-      node.isInc ? plusName : minusName,
-      intern.createIntLiteral(value: 1, fileOffset: node.fileOffset),
-      null,
+      fileOffset: node.operatorOffset,
+      contextType: writeType,
+      left: read,
+      leftType: readType,
+      binaryName: node.isInc ? plusName : minusName,
+      right: intern.createIntLiteral(value: 1, fileOffset: node.fileOffset),
+      whyNotPromoted: null,
+      invocationNode: node,
     );
 
     ExpressionInferenceResult writeResult = inferPropertySet(
@@ -5650,6 +5729,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       // assignment as the result of the expression.
       forEffect: node.isPost || node.forEffect,
       isImplicitThis: node.isImplicitThis,
+      valueNode: node,
     );
     Expression write = writeResult.expression;
 
@@ -5736,6 +5816,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       propertyName: node.propertyName,
       typeContext: const UnknownType(),
       isThisReceiver: _isInternalThisExpression(node.receiver),
+      accessNode: node,
     ).expressionInferenceResult;
 
     Expression read = readResult.expression;
@@ -5752,13 +5833,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     DartType writeType = writeTarget.getSetterType(this);
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.binaryOffset,
-      writeType,
-      read,
-      readType,
-      node.binaryName,
-      node.value,
-      null,
+      fileOffset: node.binaryOffset,
+      contextType: writeType,
+      left: read,
+      leftType: readType,
+      binaryName: node.binaryName,
+      right: node.value,
+      whyNotPromoted: null,
+      invocationNode: node,
     );
 
     ExpressionInferenceResult writeResult = inferPropertySet(
@@ -5770,6 +5852,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueResult: binaryResult,
       writeContext: writeType,
       forEffect: node.forEffect,
+      valueNode: node.value,
     );
     Expression write = writeResult.expression;
 
@@ -5826,6 +5909,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       propertyName: node.propertyName,
       typeContext: const UnknownType(),
       isThisReceiver: _isInternalThisExpression(node.receiver),
+      accessNode: node,
     ).expressionInferenceResult;
 
     Expression read = readResult.expression;
@@ -5861,6 +5945,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeContext: writeContext,
       valueResult: rhsResult,
       forEffect: node.forEffect,
+      valueNode: node.rhs,
     );
     Expression write = writeResult.expression;
     DartType writeType = writeResult.inferredType;
@@ -6094,6 +6179,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression index = ensureAssignableResult(
       indexType,
       indexResult,
+      assignedNode: node.index,
     ).expression;
 
     ExpressionInferenceResult replacement = _computeIndexGet(
@@ -6158,6 +6244,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression index = ensureAssignableResult(
       indexType,
       indexResult,
+      assignedNode: node.index,
     ).expression;
 
     SyntheticVariable? indexVariable;
@@ -6171,7 +6258,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueType,
       isVoidAllowed: true,
     );
-    valueResult = ensureAssignableResult(valueType, valueResult);
+    valueResult = ensureAssignableResult(
+      valueType,
+      valueResult,
+      assignedNode: node.value,
+    );
     Expression value = valueResult.expression;
 
     SyntheticVariable? valueVariable;
@@ -6252,6 +6343,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression index = ensureAssignableResult(
       indexType,
       indexResult,
+      assignedNode: node.index,
     ).expression;
 
     SyntheticVariable? indexVariable;
@@ -6265,7 +6357,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueType,
       isVoidAllowed: true,
     );
-    valueResult = ensureAssignableResult(valueType, valueResult);
+    valueResult = ensureAssignableResult(
+      valueType,
+      valueResult,
+      assignedNode: node.value,
+    );
     Expression value = valueResult.expression;
 
     SyntheticVariable? valueVariable;
@@ -6368,7 +6464,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     DartType indexType = target.getIndexKeyType(this);
@@ -6383,6 +6484,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression index = ensureAssignableResult(
       indexType,
       indexResult,
+      assignedNode: node.index,
     ).expression;
 
     StaticInvocation replacement = createStaticInvocation(
@@ -6455,7 +6557,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     SyntheticVariable? receiverVariable;
@@ -6476,6 +6583,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression index = ensureAssignableResult(
       indexType,
       indexResult,
+      assignedNode: node.index,
     ).expression;
 
     ExpressionInferenceResult valueResult = inferExpression(
@@ -6483,7 +6591,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueType,
       isVoidAllowed: true,
     );
-    valueResult = ensureAssignableResult(valueType, valueResult);
+    valueResult = ensureAssignableResult(
+      valueType,
+      valueResult,
+      assignedNode: node.value,
+    );
     Expression value = valueResult.expression;
 
     SyntheticVariable? valueVariable;
@@ -6621,6 +6733,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       indexResult.inferredType,
       readIndex,
       whyNotPromoted: whyNotPromotedIndex,
+      assignedNode: node.index,
     );
 
     ExpressionInferenceResult readResult = _computeIndexGet(
@@ -6644,6 +6757,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       indexResult.inferredType,
       writeIndex,
       whyNotPromoted: whyNotPromotedIndex,
+      assignedNode: node.index,
     );
 
     ExpressionInferenceResult valueResult = inferExpression(
@@ -6651,7 +6765,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueType,
       isVoidAllowed: true,
     );
-    valueResult = ensureAssignableResult(valueType, valueResult);
+    valueResult = ensureAssignableResult(
+      valueType,
+      valueResult,
+      assignedNode: node.value,
+    );
     Expression value = valueResult.expression;
     flowAnalysis.ifNullExpression_end();
 
@@ -6807,12 +6925,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       readIndexType,
       indexResult.inferredType,
       readIndex,
+      assignedNode: node.index,
     );
 
     writeIndex = ensureAssignable(
       writeIndexType,
       indexResult.inferredType,
       writeIndex,
+      assignedNode: node.index,
     );
 
     assert(readTarget.isInstanceMember || readTarget.isSuperMember);
@@ -6832,7 +6952,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueType,
       isVoidAllowed: true,
     );
-    valueResult = ensureAssignableResult(valueType, valueResult);
+    valueResult = ensureAssignableResult(
+      valueType,
+      valueResult,
+      assignedNode: node.value,
+    );
     Expression value = valueResult.expression;
     flowAnalysis.ifNullExpression_end();
 
@@ -6978,7 +7102,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     SyntheticVariable? receiverVariable;
@@ -7035,6 +7164,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       readIndexType,
       indexResult.inferredType,
       readIndex,
+      assignedNode: node.index,
     );
 
     ExpressionInferenceResult readResult = _computeIndexGet(
@@ -7057,6 +7187,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeIndexType,
       indexResult.inferredType,
       writeIndex,
+      assignedNode: node.index,
     );
 
     ExpressionInferenceResult valueResult = inferExpression(
@@ -7064,7 +7195,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueType,
       isVoidAllowed: true,
     );
-    valueResult = ensureAssignableResult(valueType, valueResult);
+    valueResult = ensureAssignableResult(
+      valueType,
+      valueResult,
+      assignedNode: node.value,
+    );
     Expression value = valueResult.expression;
     flowAnalysis.ifNullExpression_end();
 
@@ -7254,6 +7389,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       contextType,
       rightResult,
       errorTemplate: diag.argumentTypeNotAssignable,
+      assignedNode: right,
     );
     inferredRight = rightResult.expression;
 
@@ -7294,15 +7430,19 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   /// [fileOffset] is used as the file offset for created nodes. [leftType] is
   /// the already inferred type of the [left] expression. The inferred type of
   /// [right] is computed by this method.
-  ExpressionInferenceResult _computeBinaryExpression(
-    int fileOffset,
-    DartType contextType,
-    Expression left,
-    DartType leftType,
-    Name binaryName,
-    InternalExpression right,
-    Map<SharedTypeView, NonPromotionReason> Function()? whyNotPromoted,
-  ) {
+  ///
+  /// [invocationNode] is the internal node for the invocation of the binary
+  /// operator.
+  ExpressionInferenceResult _computeBinaryExpression({
+    required int fileOffset,
+    required DartType contextType,
+    required Expression left,
+    required DartType leftType,
+    required Name binaryName,
+    required InternalExpression right,
+    required Map<SharedTypeView, NonPromotionReason> Function()? whyNotPromoted,
+    required InternalNode invocationNode,
+  }) {
     assert(binaryName != equalsName);
 
     ObjectAccessTarget binaryTarget = findInterfaceMember(
@@ -7356,7 +7496,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       isVoidAllowed: true,
     );
 
-    rightResult = ensureAssignableResult(rightType, rightResult);
+    rightResult = ensureAssignableResult(
+      rightType,
+      rightResult,
+      assignedNode: right,
+    );
     Expression inferredRight = rightResult.expression;
 
     if (isSpecialCasedBinaryOperator) {
@@ -7467,27 +7611,28 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     if (binaryTarget.isNullable) {
       List<LocatedMessage>? context = getWhyNotPromotedContext(
         whyNotPromoted?.call(),
-        binary,
+        invocationNode,
         // Coverage-ignore(suite): Not run.
         (type) => !type.isPotentiallyNullable,
       );
-      return new ExpressionInferenceResult(
-        binaryType,
-        extern.createInvalidExpressionFromErrorText(
-          problemReporting.buildProblem(
-            compilerContext: compilerContext,
-            message: diag.nullableOperatorCallError.withArguments(
-              operator: binaryName.text,
-              receiverType: leftType,
-            ),
-            fileUri: fileUri,
-            fileOffset: binary.fileOffset,
-            length: binaryName.text.length,
-            context: context,
+      Expression replacement = extern.createInvalidExpressionFromErrorText(
+        problemReporting.buildProblem(
+          compilerContext: compilerContext,
+          message: diag.nullableOperatorCallError.withArguments(
+            operator: binaryName.text,
+            receiverType: leftType,
           ),
-          expression: binary,
+          fileUri: fileUri,
+          fileOffset: binary.fileOffset,
+          length: binaryName.text.length,
+          context: context,
         ),
+        expression: binary,
       );
+      libraryBuilder.loader.dataForTesting
+      // Coverage-ignore(suite): Not run.
+      ?.registerExternalNode(invocationNode, replacement);
+      return new ExpressionInferenceResult(binaryType, replacement);
     }
     return new ExpressionInferenceResult(binaryType, binary);
   }
@@ -7497,13 +7642,17 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   ///
   /// [fileOffset] is used as the file offset for created nodes.
   /// [expressionType] is the already inferred type of the [expression].
-  ExpressionInferenceResult _computeUnaryExpression(
-    int fileOffset,
-    Expression expression,
-    DartType expressionType,
-    Name unaryName,
-    Map<SharedTypeView, NonPromotionReason> Function() whyNotPromoted,
-  ) {
+  ///
+  /// [invocationNode] is the internal node for the invocation of the unary
+  /// operator.
+  ExpressionInferenceResult _computeUnaryExpression({
+    required int fileOffset,
+    required Expression expression,
+    required DartType expressionType,
+    required Name unaryName,
+    required Map<SharedTypeView, NonPromotionReason> Function() whyNotPromoted,
+    required InternalNode invocationNode,
+  }) {
     ObjectAccessTarget unaryTarget = findInterfaceMember(
       expressionType,
       unaryName,
@@ -7633,33 +7782,34 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     if (unaryTarget.isNullable) {
       List<LocatedMessage>? context = getWhyNotPromotedContext(
         whyNotPromoted(),
-        unary,
+        invocationNode,
         // Coverage-ignore(suite): Not run.
         (type) => !type.isPotentiallyNullable,
       );
       // TODO(johnniwinther): Special case 'unary-' in messages. It should
       // probably be referred to as "Unary operator '-' ...".
-      return new ExpressionInferenceResult(
-        unaryType,
-        extern.createInvalidExpressionFromErrorText(
-          problemReporting.buildProblem(
-            compilerContext: compilerContext,
-            message: diag.nullableOperatorCallError.withArguments(
-              operator: unaryName.text,
-              receiverType: expressionType,
-            ),
-            fileUri: fileUri,
-            fileOffset: unary.fileOffset,
-            length: unaryName == unaryMinusName
-                ? 1
-                :
-                  // Coverage-ignore(suite): Not run.
-                  unaryName.text.length,
-            context: context,
+      Expression replacement = extern.createInvalidExpressionFromErrorText(
+        problemReporting.buildProblem(
+          compilerContext: compilerContext,
+          message: diag.nullableOperatorCallError.withArguments(
+            operator: unaryName.text,
+            receiverType: expressionType,
           ),
-          expression: unary,
+          fileUri: fileUri,
+          fileOffset: unary.fileOffset,
+          length: unaryName == unaryMinusName
+              ? 1
+              :
+                // Coverage-ignore(suite): Not run.
+                unaryName.text.length,
+          context: context,
         ),
+        expression: unary,
       );
+      libraryBuilder.loader.dataForTesting
+      // Coverage-ignore(suite): Not run.
+      ?.registerExternalNode(invocationNode, replacement);
+      return new ExpressionInferenceResult(unaryType, replacement);
     }
     return new ExpressionInferenceResult(unaryType, unary);
   }
@@ -7987,6 +8137,8 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   /// [typeContext] is used to create implicit generic tearoff instantiation
   /// if necessary. [isThisReceiver] must be set to `true` if the receiver is a
   /// `this` expression.
+  ///
+  /// [accessNode] is the internal node for the access to [propertyName].
   PropertyGetInferenceResult _computePropertyGet({
     required int fileOffset,
     required Expression receiver,
@@ -7996,6 +8148,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     required bool isThisReceiver,
     ObjectAccessTarget? readTarget,
     bool? isImplicitThis,
+    required InternalNode accessNode,
   }) {
     Map<SharedTypeView, NonPromotionReason> Function() whyNotPromoted =
         flowAnalysis.whyNotPromoted(getExpressionInfo(receiver));
@@ -8034,6 +8187,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       whyNotPromoted: whyNotPromoted,
       isImplicitThis: isImplicitThis,
       expressionInfo: expressionInfo,
+      accessNode: accessNode,
     );
     storeExpressionInfo(
       result.expressionInferenceResult.expression,
@@ -8118,6 +8272,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       indexResult.inferredType,
       readIndex,
       whyNotPromoted: whyNotPromotedIndex,
+      assignedNode: node.index,
     );
 
     ExpressionInferenceResult readResult = _computeIndexGet(
@@ -8156,13 +8311,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     DartType valueType = writeTarget.getIndexSetValueType(this);
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.binaryOffset,
-      valueType,
-      left,
-      readType,
-      node.binaryName,
-      node.value,
-      null,
+      fileOffset: node.binaryOffset,
+      contextType: valueType,
+      left: left,
+      leftType: readType,
+      binaryName: node.binaryName,
+      right: node.value,
+      whyNotPromoted: null,
+      invocationNode: node,
     );
 
     writeIndex = ensureAssignable(
@@ -8170,12 +8326,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       indexResult.inferredType,
       writeIndex,
       whyNotPromoted: whyNotPromotedIndex,
+      assignedNode: node.index,
     );
 
     binaryResult = ensureAssignableResult(
       valueType,
       binaryResult,
       fileOffset: node.fileOffset,
+      assignedNode: node,
     );
     Expression binary = binaryResult.expression;
     DartType binaryType = binaryResult.inferredType;
@@ -8301,6 +8459,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       readIndexType,
       indexResult.inferredType,
       readIndex,
+      assignedNode: node.index,
     );
 
     assert(readTarget.isInstanceMember || readTarget.isSuperMember);
@@ -8334,19 +8493,21 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     DartType valueType = writeTarget.getIndexSetValueType(this);
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.binaryOffset,
-      valueType,
-      left,
-      readType,
-      node.binaryName,
-      node.value,
-      null,
+      fileOffset: node.binaryOffset,
+      contextType: valueType,
+      left: left,
+      leftType: readType,
+      binaryName: node.binaryName,
+      right: node.value,
+      whyNotPromoted: null,
+      invocationNode: node,
     );
 
     binaryResult = ensureAssignableResult(
       valueType,
       binaryResult,
       fileOffset: node.fileOffset,
+      assignedNode: node,
     );
     Expression binary = binaryResult.expression;
     DartType binaryType = binaryResult.inferredType;
@@ -8355,6 +8516,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeIndexType,
       indexResult.inferredType,
       writeIndex,
+      assignedNode: node.index,
     );
 
     SyntheticVariable? valueVariable;
@@ -8482,7 +8644,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extensionTypeArguments,
     );
 
-    receiver = ensureAssignable(extensionOnType, receiverType, receiver);
+    receiver = ensureAssignable(
+      extensionOnType,
+      receiverType,
+      receiver,
+      assignedNode: node.receiver,
+    );
     receiverType = extensionOnType;
 
     ObjectAccessTarget readTarget = new ExtensionAccessTarget(
@@ -8528,6 +8695,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       readIndexType,
       indexResult.inferredType,
       readIndex,
+      assignedNode: node.index,
     );
 
     ExpressionInferenceResult readResult = _computeIndexGet(
@@ -8566,24 +8734,27 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     DartType valueType = writeTarget.getIndexSetValueType(this);
 
     ExpressionInferenceResult binaryResult = _computeBinaryExpression(
-      node.binaryOffset,
-      valueType,
-      left,
-      readType,
-      node.binaryName,
-      node.rhs,
-      null,
+      fileOffset: node.binaryOffset,
+      contextType: valueType,
+      left: left,
+      leftType: readType,
+      binaryName: node.binaryName,
+      right: node.rhs,
+      whyNotPromoted: null,
+      invocationNode: node,
     );
 
     writeIndex = ensureAssignable(
       writeIndexType,
       indexResult.inferredType,
       writeIndex,
+      assignedNode: node.index,
     );
     binaryResult = ensureAssignableResult(
       valueType,
       binaryResult,
       fileOffset: node.fileOffset,
+      assignedNode: node,
     );
     Expression binary = binaryResult.expression;
     DartType binaryType = binaryResult.inferredType;
@@ -8759,14 +8930,15 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           : receiverType;
       if (!isAssignable(variableType, checkedType)) {
         receiver = wrapUnassignableExpression(
-          receiver,
-          checkedType,
-          variableType,
-          diag.anonymousMethodWrongParameterTypeCfe.withArguments(
+          expression: receiver,
+          expressionType: checkedType,
+          contextType: variableType,
+          message: diag.anonymousMethodWrongParameterTypeCfe.withArguments(
             receiverType: checkedType,
             parameterType: variableType,
           ),
           fileOffset: node.typeOffset,
+          internalNode: node.receiver,
         );
       }
     }
@@ -8970,14 +9142,15 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           : receiverType;
       if (!isAssignable(variableType, checkedType)) {
         receiver = wrapUnassignableExpression(
-          receiver,
-          checkedType,
-          variableType,
-          diag.anonymousMethodWrongParameterTypeCfe.withArguments(
+          expression: receiver,
+          expressionType: checkedType,
+          contextType: variableType,
+          message: diag.anonymousMethodWrongParameterTypeCfe.withArguments(
             receiverType: checkedType,
             parameterType: variableType,
           ),
           fileOffset: node.typeOffset,
+          internalNode: node.receiver,
         );
       }
     }
@@ -9109,6 +9282,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       valueResult: rhsResult,
       forEffect: node.forEffect,
       isImplicitThis: node.isImplicitThis,
+      valueNode: node.value,
     );
     Expression replacement = replacementResult.expression;
     DartType replacementType = replacementResult.inferredType;
@@ -9191,6 +9365,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       typeContext: typeContext,
       isThisReceiver: _isInternalThisExpression(node.receiver),
       isImplicitThis: node.isImplicitThis,
+      accessNode: node,
     );
     return propertyGetInferenceResult.expressionInferenceResult;
   }
@@ -9347,6 +9522,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       initializerResult,
       fileOffset: node.fileOffset,
       isVoidAllowed: true,
+      assignedNode: node.value,
     ).expression;
     Initializer replacement =
         new ExternalExtensionTypeRepresentationFieldInitializer(
@@ -9365,7 +9541,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression replacement = extern.createRethrow(fileOffset: node.fileOffset);
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(
       const NeverType.nonNullable(),
       replacement,
@@ -9437,7 +9613,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       expression,
       fileOffset: node.fileOffset,
     );
-    bodyContext.handleReturn(replacement, inferredType, node.isArrow);
+    bodyContext.handleReturn(
+      replacement,
+      inferredType,
+      node.isArrow,
+      expressionNode: node.expression ?? node,
+    );
     flowAnalysis.handleReturn();
     return new StatementInferenceResult.single(replacement);
   }
@@ -9458,10 +9639,11 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeContext: writeContext,
       assignOffset: node.fileOffset,
       nameOffset: node.fileOffset,
+      valueNode: node.value,
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result.expression);
+    ?.registerExternalNode(node, result.expression);
     return result;
   }
 
@@ -9476,7 +9658,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result.expression);
+    ?.registerExternalNode(node, result.expression);
     return result;
   }
 
@@ -9702,6 +9884,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       writeContext: writeContext,
       assignOffset: node.fileOffset,
       nameOffset: node.fileOffset,
+      valueNode: node.value,
     );
   }
 
@@ -9792,7 +9975,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result);
+    ?.registerExternalNode(node, result);
     return new ExpressionInferenceResult(valueType, result);
   }
 
@@ -9863,7 +10046,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
 
     replacement = _handleBreaks(node, replacement);
 
@@ -10188,7 +10371,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     }
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result);
+    ?.registerExternalNode(node, result);
     _inTryOrLocalFunction = oldInTryOrLocalFunction;
     return new StatementInferenceResult.single(result);
   }
@@ -10232,15 +10415,17 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       isVoidAllowed: true,
     );
     ExpressionInferenceResult result = inferVariableSet(
+      node: node,
       variable: variable,
       variableType: variableType,
       rhsResult: rhsResult,
       assignOffset: node.fileOffset,
       nameOffset: node.fileOffset,
+      valueNode: node.value,
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result.expression);
+    ?.registerExternalNode(node, result.expression);
     return result;
   }
 
@@ -10337,7 +10522,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, result.expression);
+    ?.registerExternalNode(node, result.expression);
     return result;
   }
 
@@ -10360,6 +10545,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Expression condition = ensureAssignableResult(
       expectedType,
       conditionResult,
+      assignedNode: node.condition,
     ).expression;
     flowAnalysis.whileStatement_bodyBegin(node, getExpressionInfo(condition));
     StatementInferenceResult bodyResult = inferStatement(node.body);
@@ -10381,7 +10567,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
 
     replacement = _handleBreaks(node, replacement);
 
@@ -10405,10 +10591,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       isYieldStar: node.isYieldStar,
       fileOffset: node.fileOffset,
     );
-    bodyContext.handleYield(replacement, expressionResult);
+    bodyContext.handleYield(
+      replacement,
+      expressionResult,
+      expressionNode: node.expression,
+    );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new StatementInferenceResult.single(replacement);
   }
 
@@ -10441,7 +10631,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
-    ?.registerAlias(node, replacement);
+    ?.registerExternalNode(node, replacement);
     return new ExpressionInferenceResult(inferredType, replacement);
   }
 
@@ -10490,13 +10680,14 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     Map<SharedTypeView, NonPromotionReason> Function() whyNotPromoted =
         flowAnalysis.whyNotPromoted(getExpressionInfo(leftResult.expression));
     return _computeBinaryExpression(
-      node.fileOffset,
-      typeContext,
-      leftResult.expression,
-      leftResult.inferredType,
-      node.binaryName,
-      node.right,
-      whyNotPromoted,
+      fileOffset: node.fileOffset,
+      contextType: typeContext,
+      left: leftResult.expression,
+      leftType: leftResult.inferredType,
+      binaryName: node.binaryName,
+      right: node.right,
+      whyNotPromoted: whyNotPromoted,
+      invocationNode: node,
     );
   }
 
@@ -10588,11 +10779,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           getExpressionInfo(expressionResult.expression),
         );
     return _computeUnaryExpression(
-      node.fileOffset,
-      expressionResult.expression,
-      expressionResult.inferredType,
-      node.unaryName,
-      whyNotPromoted,
+      fileOffset: node.fileOffset,
+      expression: expressionResult.expression,
+      expressionType: expressionResult.inferredType,
+      unaryName: node.unaryName,
+      whyNotPromoted: whyNotPromoted,
+      invocationNode: node,
     );
   }
 
@@ -13506,6 +13698,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         typeContext,
         isExpressionInvocation: true,
         isImplicitCall: true,
+        invocationNode: node,
       );
     }
 
@@ -13721,7 +13914,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     return node is DotShorthand;
   }
 
-  List<VariableBase> _capturedVariablesForNode(TreeNode node) {
+  List<VariableBase> _capturedVariablesForNode(InternalNode node) {
     List<VariableBase> capturedVariables = [];
     AssignedVariablesNodeInfo nodeInfo = assignedVariables.getInfoForNode(node);
     for (int variableKey in nodeInfo.read) {
@@ -13780,10 +13973,10 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         if (isClosureContextLoweringEnabled) {
           capturedContexts = _contextAllocationStrategy
               .computeCapturedVariableContexts(
-                _capturedVariablesForNode(internalVariable.astVariable),
+                _capturedVariablesForNode(internalVariable),
               );
         }
-        flowAnalysis.lateInitializer_begin(internalVariable.astVariable);
+        flowAnalysis.lateInitializer_begin(internalVariable);
       }
       initializerResult = inferExpression(
         variableDeclaration.initializer!,
@@ -13832,6 +14025,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         initializerResult,
         fileOffset: internalVariable.fileOffset,
         isVoidAllowed: internalVariable.type is VoidType,
+        assignedNode: variableDeclaration.initializer!,
       );
       initializer = initializerResult.expression;
     }
@@ -13850,7 +14044,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     } else {
       libraryBuilder.loader.dataForTesting
       // Coverage-ignore(suite): Not run.
-      ?.registerAlias(internalVariable, internalVariable.astVariable);
+      ?.registerExternalNode(internalVariable, internalVariable.astVariable);
       return new VariableDeclarationInferenceResult.direct(
         extern.createVariableDeclaration(
           internalVariable.astVariable,

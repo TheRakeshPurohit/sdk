@@ -15,7 +15,6 @@ import 'package:front_end/src/dill/dill_target.dart';
 import 'package:front_end/src/dill/dill_type_alias_builder.dart';
 import 'package:front_end/src/kernel/body_builder.dart';
 import 'package:front_end/src/kernel/internal_ast.dart';
-import 'package:front_end/src/kernel/internal_ast_helper.dart' as forest;
 import 'package:kernel/ast.dart';
 import 'package:kernel/names.dart';
 import 'package:kernel/target/targets.dart';
@@ -270,7 +269,7 @@ void main() {
 
 void _testVariableDeclarations() {
   testStatement(
-    forest.variablesDeclaration([
+    new MultiVariableDeclaration([
       new InternalVariableDeclaration(
         new InternalLocalVariable(
           name: 'a',
@@ -294,7 +293,7 @@ void _testVariableDeclarations() {
 dynamic a, b;''',
   );
   testStatement(
-    forest.variablesDeclaration([
+    new MultiVariableDeclaration([
       new InternalVariableDeclaration(
         new InternalLocalVariable(
           name: 'a',
@@ -809,6 +808,7 @@ for (null in null) {}''',
           'error',
           fileOffset: TreeNode.noOffset,
         ),
+        fileOffset: TreeNode.noOffset,
       ),
       new InternalNullLiteral(fileOffset: TreeNode.noOffset),
       new InternalBlock(
@@ -851,6 +851,7 @@ for (var a, b in null) {}''',
           'error',
           fileOffset: TreeNode.noOffset,
         ),
+        fileOffset: TreeNode.noOffset,
       ),
       new InternalNullLiteral(fileOffset: TreeNode.noOffset),
       new InternalBlock(

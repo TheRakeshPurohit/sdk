@@ -108,8 +108,8 @@ class AssignedVariablesDataExtractor extends CfeDataExtractor<_Data> {
         return null;
       default:
     }
-    TreeNode alias = _sourceLoaderDataForTesting.toOriginal(node);
-    if (!_assignedVariables.isTracked(alias)) return null;
+    InternalNode? alias = _sourceLoaderDataForTesting.toInternalNode(node);
+    if (alias == null || !_assignedVariables.isTracked(alias)) return null;
     return new _Data(
       _convertVars(_assignedVariables.declaredInNode(alias)),
       _convertVars(_assignedVariables.readInNode(alias)),

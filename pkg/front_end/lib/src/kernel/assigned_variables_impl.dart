@@ -9,9 +9,9 @@ import 'package:kernel/ast.dart';
 import 'internal_ast.dart';
 
 class AssignedVariablesImpl
-    implements AssignedVariables<TreeNode, InternalVariable> {
-  final AssignedVariables<TreeNode, InternalVariable> _delegate;
-  final AssignedVariables<TreeNode, InternalVariable>? _insideAsserts;
+    implements AssignedVariables<InternalNode, InternalVariable> {
+  final AssignedVariables<InternalNode, InternalVariable> _delegate;
+  final AssignedVariables<InternalNode, InternalVariable>? _insideAsserts;
   final AssignedVariables<TreeNode, InternalVariable>? _outsideAsserts;
   int _assertDepth = 0;
   final Map<AssignedVariablesNodeInfo, AssignedVariablesNodeInfo>?
@@ -21,10 +21,10 @@ class AssignedVariablesImpl
 
   new(this._delegate, {required bool isClosureContextLoweringEnabled})
     : _insideAsserts = isClosureContextLoweringEnabled
-          ? new AssignedVariables<TreeNode, InternalVariable>()
+          ? new AssignedVariables()
           : null,
       _outsideAsserts = isClosureContextLoweringEnabled
-          ? new AssignedVariables<TreeNode, InternalVariable>()
+          ? new AssignedVariables()
           : null,
       _deferredInsideAssertsByDeferredDelegate = isClosureContextLoweringEnabled
           ? new Map<
@@ -110,7 +110,7 @@ class AssignedVariablesImpl
 
   @override
   void endNode(
-    TreeNode node, {
+    InternalNode node, {
     bool isClosureOrLateVariableInitializer = false,
   }) {
     _delegate.endNode(
@@ -135,7 +135,7 @@ class AssignedVariablesImpl
   }
 
   @override
-  AssignedVariablesNodeInfo getInfoForNode(TreeNode node) {
+  AssignedVariablesNodeInfo getInfoForNode(InternalNode node) {
     return _delegate.getInfoForNode(node);
   }
 
@@ -174,7 +174,7 @@ class AssignedVariablesImpl
   }
 
   @override
-  void storeInfo(TreeNode node, AssignedVariablesNodeInfo info) {
+  void storeInfo(InternalNode node, AssignedVariablesNodeInfo info) {
     assert(_deferredInsideAssertsByDeferredDelegate?.containsKey(info) ?? true);
     assert(
       _deferredOutsideAssertsByDeferredDelegate?.containsKey(info) ?? true,

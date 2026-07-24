@@ -379,14 +379,14 @@ class TypeInferenceEngineImpl extends TypeInferenceEngine {
     if (dataForTesting != null) {
       // Coverage-ignore-block(suite): Not run.
       dataForTesting.flowAnalysisResult.assignedVariables =
-          new AssignedVariablesForTesting<TreeNode, InternalVariable>();
+          new AssignedVariablesForTesting<InternalNode, InternalVariable>();
       assignedVariables = new AssignedVariablesImpl(
         dataForTesting.flowAnalysisResult.assignedVariables!,
         isClosureContextLoweringEnabled: isClosureContextLoweringEnabled,
       );
     } else {
       assignedVariables = new AssignedVariablesImpl(
-        new AssignedVariables<TreeNode, InternalVariable>(),
+        new AssignedVariables<InternalNode, InternalVariable>(),
         isClosureContextLoweringEnabled: isClosureContextLoweringEnabled,
       );
     }
@@ -450,15 +450,16 @@ class FlowAnalysisResult {
   final List<TreeNode> definitelyUnassignedNodes = [];
 
   /// The assigned variables information that computed for the member.
-  AssignedVariablesForTesting<TreeNode, InternalVariable>? assignedVariables;
+  AssignedVariablesForTesting<InternalNode, InternalVariable>?
+  assignedVariables;
 
   /// For each expression that led to an error because it was not promoted, a
   /// string describing the reason it was not promoted.
-  final Map<TreeNode, String> nonPromotionReasons = {};
+  final Map<InternalNode, String> nonPromotionReasons = {};
 
   /// For each auxiliary AST node pointed to by a non-promotion reason, a string
   /// describing the non-promotion reason pointing to it.
-  final Map<TreeNode, String> nonPromotionReasonTargets = {};
+  final Map<InternalNode, String> nonPromotionReasonTargets = {};
 }
 
 /// CFE-specific implementation of [FlowAnalysisOperations].

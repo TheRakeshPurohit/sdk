@@ -161,7 +161,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   InferenceDataForTesting? get dataForTesting => _inferrer.dataForTesting;
 
   FlowAnalysis<
-    TreeNode,
+    InternalNode,
     InternalStatement,
     InternalExpression,
     InternalVariable
@@ -263,7 +263,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   /// containing [receiver].  [node] is the containing tree node.
   List<LocatedMessage>? getWhyNotPromotedContext(
     Map<SharedTypeView, NonPromotionReason>? whyNotPromoted,
-    TreeNode node,
+    InternalNode node,
     bool Function(DartType) typeFilter,
   ) {
     List<LocatedMessage>? context;
@@ -288,17 +288,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           if (args.isNotEmpty) {
             nonPromotionReasonText += '(${args.join(', ')})';
           }
-          TreeNode origNode = node;
-          while (origNode is VariableGet &&
-              origNode.variable.cosmeticName == null &&
-              origNode.variable.initializer != null) {
-            // This is a read of a synthetic variable, presumably from a "let".
-            // Find the original expression.
-            // TODO(johnniwinther): add a general solution for getting the
-            // original node for testing.
-            origNode = origNode.variable.initializer!;
-          }
-          dataForTesting!.flowAnalysisResult.nonPromotionReasons[origNode] =
+          dataForTesting!.flowAnalysisResult.nonPromotionReasons[node] =
               nonPromotionReasonText;
         }
         // Note: this will always pick the first viable reason (only).  I
@@ -391,6 +381,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   /// where the returned expression is wrapped in a `Future`, if necessary,
   /// before returned and therefore shouldn't be checked to be a `Future`
   /// directly.
+  ///
+  /// [assignedNode] is the internal node for the expression that is being
+  /// checked for assignability.
   Expression ensureAssignable(
     DartType expectedType,
     DartType expressionType,
@@ -408,6 +401,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     >?
     errorTemplate,
     Map<SharedTypeView, NonPromotionReason> Function()? whyNotPromoted,
+    required InternalNode assignedNode,
   }) {
     return ensureAssignableResult(
       expectedType,
@@ -419,6 +413,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       coerceExpression: coerceExpression,
       errorTemplate: errorTemplate,
       whyNotPromoted: whyNotPromoted,
+      assignedNode: assignedNode,
     ).expression;
   }
 
@@ -511,6 +506,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   /// If [isCoercionAllowed] is `true`, the assignability check is made
   /// accounting for a possible coercion that may adjust the type of the
   /// expression.
+  ///
+  /// [assignedNode] is the internal node for the expression that is being
+  /// checked for assignability.
   ExpressionInferenceResult reportAssignabilityErrors(
     DartType contextType,
     ExpressionInferenceResult inferenceResult, {
@@ -527,6 +525,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     >?
     errorTemplate,
     Map<SharedTypeView, NonPromotionReason> Function()? whyNotPromoted,
+    required InternalNode assignedNode,
   }) {
     errorTemplate ??= diag.invalidAssignmentError;
 
@@ -573,13 +572,14 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       case AssignabilityKind.unassignable:
         // Error: not assignable.  Perform error recovery.
         result = wrapUnassignableExpression(
-          expression,
-          expressionType,
-          contextType,
-          errorTemplate.withArguments(
+          expression: expression,
+          expressionType: expressionType,
+          contextType: contextType,
+          message: errorTemplate.withArguments(
             actualType: expressionType,
             expectedType: declaredContextType ?? contextType,
           ),
+          internalNode: assignedNode,
         );
         break;
       case AssignabilityKind.unassignableVoid:
@@ -607,29 +607,31 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
             getExpressionInfo(expression),
           );
           result = wrapUnassignableExpression(
-            expression,
-            expressionType,
-            contextType,
-            errorTemplate.withArguments(
+            expression: expression,
+            expressionType: expressionType,
+            contextType: contextType,
+            message: errorTemplate.withArguments(
               actualType: expressionType,
               expectedType: declaredContextType ?? contextType,
             ),
             context: getWhyNotPromotedContext(
               whyNotPromoted.call(),
-              expression,
+              assignedNode,
               // Coverage-ignore(suite): Not run.
               (type) => typeSchemaEnvironment.isSubtypeOf(type, contextType),
             ),
+            internalNode: assignedNode,
           );
         } else {
           result = wrapUnassignableExpression(
-            expression,
-            expressionType,
-            contextType,
-            errorTemplate.withArguments(
+            expression: expression,
+            expressionType: expressionType,
+            contextType: contextType,
+            message: errorTemplate.withArguments(
               actualType: expressionType,
               expectedType: declaredContextType ?? contextType,
             ),
+            internalNode: assignedNode,
           );
         }
         break;
@@ -650,6 +652,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   /// Same as [ensureAssignable], but accepts an [ExpressionInferenceResult]
   /// rather than an expression and a type separately.  If no change is made,
   /// [inferenceResult] is returned unchanged.
+  ///
+  /// [assignedNode] is the internal node for the expression that is being
+  /// checked for assignability.
   ExpressionInferenceResult ensureAssignableResult(
     DartType contextType,
     ExpressionInferenceResult inferenceResult, {
@@ -666,6 +671,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     >?
     errorTemplate,
     Map<SharedTypeView, NonPromotionReason> Function()? whyNotPromoted,
+    required InternalNode assignedNode,
   }) {
     if (coerceExpression) {
       ExpressionInferenceResult? coercionResult = coerceExpressionForAssignment(
@@ -693,6 +699,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       isCoercionAllowed: coerceExpression,
       errorTemplate: errorTemplate,
       whyNotPromoted: whyNotPromoted,
+      assignedNode: assignedNode,
     );
 
     return inferenceResult;
@@ -733,13 +740,14 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     return errorNode;
   }
 
-  Expression wrapUnassignableExpression(
-    Expression expression,
-    DartType expressionType,
-    DartType contextType,
-    Message message, {
+  Expression wrapUnassignableExpression({
+    required Expression expression,
+    required DartType expressionType,
+    required DartType contextType,
+    required Message message,
     List<LocatedMessage>? context,
     int? fileOffset,
+    required InternalNode internalNode,
   }) {
     Expression errorNode =
         new AsExpression(
@@ -768,6 +776,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
         expression: errorNode,
       );
     }
+    libraryBuilder.loader.dataForTesting
+    // Coverage-ignore(suite): Not run.
+    ?.registerExternalNode(internalNode, errorNode);
     return errorNode;
   }
 
@@ -992,6 +1003,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     required Procedure setter,
     required bool isNullAware,
     required int fileOffset,
+    required InternalNode valueNode,
     TreeNode? nodeForTesting,
   });
 
@@ -1657,27 +1669,29 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     }
   }
 
-  ExpressionInferenceResult wrapExpressionInferenceResultInProblem(
-    ExpressionInferenceResult result,
-    Message message,
-    int fileOffset,
-    int length, {
+  ExpressionInferenceResult wrapExpressionInferenceResultInProblem({
+    required ExpressionInferenceResult result,
+    required Message message,
+    required int fileOffset,
+    required int length,
     List<LocatedMessage>? context,
+    required InternalNode internalNode,
   }) {
-    return new ExpressionInferenceResult(
-      result.inferredType,
-      extern.createInvalidExpressionFromErrorText(
-        problemReporting.buildProblem(
-          compilerContext: compilerContext,
-          message: message,
-          fileUri: fileUri,
-          fileOffset: fileOffset,
-          length: length,
-          context: context,
-        ),
-        expression: result.expression,
+    Expression replacement = extern.createInvalidExpressionFromErrorText(
+      problemReporting.buildProblem(
+        compilerContext: compilerContext,
+        message: message,
+        fileUri: fileUri,
+        fileOffset: fileOffset,
+        length: length,
+        context: context,
       ),
+      expression: result.expression,
     );
+    libraryBuilder.loader.dataForTesting
+    // Coverage-ignore(suite): Not run.
+    ?.registerExternalNode(internalNode, replacement);
+    return new ExpressionInferenceResult(result.inferredType, replacement);
   }
 
   InvocationInferenceResult inferInvocation(
@@ -2170,6 +2184,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           isVoidAllowed: expectedType is VoidType,
           isCoercionAllowed: argumentInfo.coerceExpression,
           errorTemplate: diag.argumentTypeNotAssignable,
+          assignedNode: argumentInfo.argument,
         );
 
         argumentInfo.inferredExpression = argumentResultToCheck.expression;
@@ -2431,13 +2446,13 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     if (libraryBuilder.loader.dataForTesting != null) {
       // Coverage-ignore-block(suite): Not run.
       for (InternalVariable parameter in function.positionalParameters) {
-        libraryBuilder.loader.dataForTesting?.registerAlias(
+        libraryBuilder.loader.dataForTesting?.registerExternalNode(
           parameter,
           parameter.astVariable,
         );
       }
       for (InternalVariable parameter in function.namedParameters) {
-        libraryBuilder.loader.dataForTesting?.registerAlias(
+        libraryBuilder.loader.dataForTesting?.registerExternalNode(
           parameter,
           parameter.astVariable,
         );
@@ -2665,6 +2680,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     DartType typeContext,
     List<SyntheticVariable>? hoistedExpressions, {
     required bool isImplicitCall,
+    required InternalNode invocationNode,
   }) {
     assert(
       target.isExtensionMember ||
@@ -2698,6 +2714,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
         isExpressionInvocation: false,
         isImplicitCall: true,
         implicitInvocationPropertyName: name,
+        invocationNode: invocationNode,
       );
 
       if (target.isNullable) {
@@ -2710,16 +2727,19 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
         //   }
         List<LocatedMessage>? context = getWhyNotPromotedContext(
           flowAnalysis.whyNotPromoted(getExpressionInfo(receiver))(),
-          staticInvocation,
+          invocationNode,
           // Coverage-ignore(suite): Not run.
           (type) => !type.isPotentiallyNullable,
         );
         result = wrapExpressionInferenceResultInProblem(
-          result,
-          diag.nullableExpressionCallError.withArguments(type: receiverType),
-          fileOffset,
-          noLength,
+          result: result,
+          message: diag.nullableExpressionCallError.withArguments(
+            type: receiverType,
+          ),
+          fileOffset: fileOffset,
+          length: noLength,
           context: context,
+          internalNode: invocationNode,
         );
       }
 
@@ -2765,7 +2785,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       if (target.isNullable) {
         List<LocatedMessage>? context = getWhyNotPromotedContext(
           flowAnalysis.whyNotPromoted(getExpressionInfo(receiver))(),
-          staticInvocation,
+          invocationNode,
           // Coverage-ignore(suite): Not run.
           (type) => !type.isPotentiallyNullable,
         );
@@ -2813,6 +2833,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
             expression: replacement,
           );
         }
+        libraryBuilder.loader.dataForTesting
+        // Coverage-ignore(suite): Not run.
+        ?.registerExternalNode(invocationNode, replacement);
       }
       return new ExpressionInferenceResult(result.inferredType, replacement);
     }
@@ -2829,6 +2852,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     DartType typeContext,
     List<SyntheticVariable>? hoistedExpressions, {
     required bool isImplicitCall,
+    required InternalNode invocationNode,
   }) {
     assert(target.isCallFunction || target.isNullableCallFunction);
     InvocationTargetType invocationTargetType = target.getFunctionType(this);
@@ -2914,7 +2938,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     if (target.isNullableCallFunction) {
       List<LocatedMessage>? context = getWhyNotPromotedContext(
         flowAnalysis.whyNotPromoted(getExpressionInfo(receiver))(),
-        expression,
+        invocationNode,
         // Coverage-ignore(suite): Not run.
         (type) => !type.isPotentiallyNullable,
       );
@@ -2954,6 +2978,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           expression: replacement,
         );
       }
+      libraryBuilder.loader.dataForTesting
+      // Coverage-ignore(suite): Not run.
+      ?.registerExternalNode(invocationNode, replacement);
     }
     // TODO(johnniwinther): Check that type arguments against the bounds.
     return new ExpressionInferenceResult(result.inferredType, replacement);
@@ -3019,6 +3046,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     required bool isImplicitCall,
     required bool isSpecialCasedBinaryOperator,
     required bool isSpecialCasedTernaryOperator,
+    required InternalNode invocationNode,
   }) {
     assert(
       target.isInstanceMember ||
@@ -3199,7 +3227,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     if (target.isNullable) {
       List<LocatedMessage>? context = getWhyNotPromotedContext(
         flowAnalysis.whyNotPromoted(getExpressionInfo(receiver))(),
-        expression,
+        invocationNode,
         // Coverage-ignore(suite): Not run.
         (type) => !type.isPotentiallyNullable,
       );
@@ -3243,6 +3271,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           expression: replacement,
         );
       }
+      libraryBuilder.loader.dataForTesting
+      // Coverage-ignore(suite): Not run.
+      ?.registerExternalNode(invocationNode, replacement);
     }
 
     return new ExpressionInferenceResult(result.inferredType, replacement);
@@ -3262,6 +3293,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     required DartType typeContext,
     required List<SyntheticVariable>? hoistedExpressions,
     required bool isExpressionInvocation,
+    required InternalNode invocationNode,
   }) {
     Expression originalReceiver = receiver;
 
@@ -3391,6 +3423,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       isImplicitCall: true,
       hoistedExpressions: hoistedExpressions,
       implicitInvocationPropertyName: member.name,
+      invocationNode: invocationNode,
     );
 
     if (target.isNullable) {
@@ -3406,16 +3439,19 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       // in this scenario?
       List<LocatedMessage>? context = getWhyNotPromotedContext(
         whyNotPromoted!(),
-        invocationResult.expression,
+        invocationNode,
         // Coverage-ignore(suite): Not run.
         (type) => !type.isPotentiallyNullable,
       );
       invocationResult = wrapExpressionInferenceResultInProblem(
-        invocationResult,
-        diag.nullableExpressionCallError.withArguments(type: receiverType),
-        fileOffset,
-        noLength,
+        result: invocationResult,
+        message: diag.nullableExpressionCallError.withArguments(
+          type: receiverType,
+        ),
+        fileOffset: fileOffset,
+        length: noLength,
         context: context,
+        internalNode: invocationNode,
       );
     }
 
@@ -3489,6 +3525,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     DartType typeContext,
     List<SyntheticVariable>? hoistedExpressions, {
     required bool isExpressionInvocation,
+    required InternalNode invocationNode,
   }) {
     assert(
       target.isInstanceMember ||
@@ -3519,6 +3556,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       typeContext: typeContext,
       hoistedExpressions: hoistedExpressions,
       isExpressionInvocation: isExpressionInvocation,
+      invocationNode: invocationNode,
     );
   }
 
@@ -3550,6 +3588,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     DartType typeContext,
     List<SyntheticVariable>? hoistedExpressions, {
     required bool isExpressionInvocation,
+    required InternalNode invocationNode,
   }) {
     assert(
       target.isInstanceMember ||
@@ -3573,6 +3612,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       typeContext: typeContext,
       hoistedExpressions: hoistedExpressions,
       isExpressionInvocation: isExpressionInvocation,
+      invocationNode: invocationNode,
     );
   }
 
@@ -3596,6 +3636,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     List<SyntheticVariable>? hoistedExpressions,
     ObjectAccessTarget? target,
     bool? isImplicitThis,
+    required InternalNode invocationNode,
   }) {
     target ??= findInterfaceMember(
       receiverType,
@@ -3641,6 +3682,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
               typeContext,
               hoistedExpressions,
               isExpressionInvocation: isExpressionInvocation,
+              invocationNode: invocationNode,
             );
           } else {
             bool isSpecialCasedBinaryOperator = target
@@ -3659,6 +3701,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
               isSpecialCasedBinaryOperator: isSpecialCasedBinaryOperator,
               isSpecialCasedTernaryOperator: target
                   .isSpecialCasedTernaryOperator(this),
+              invocationNode: invocationNode,
             );
           }
         } else {
@@ -3673,6 +3716,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
             typeContext,
             hoistedExpressions,
             isExpressionInvocation: isExpressionInvocation,
+            invocationNode: invocationNode,
           );
         }
       case ObjectAccessTargetKind.callFunction:
@@ -3688,6 +3732,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           typeContext,
           hoistedExpressions,
           isImplicitCall: isImplicitCall,
+          invocationNode: invocationNode,
         );
       case ObjectAccessTargetKind.extensionMember:
       case ObjectAccessTargetKind.nullableExtensionMember:
@@ -3705,6 +3750,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           typeContext,
           hoistedExpressions,
           isImplicitCall: isImplicitCall,
+          invocationNode: invocationNode,
         );
       case ObjectAccessTargetKind.ambiguous:
       case ObjectAccessTargetKind.missing:
@@ -3767,16 +3813,19 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           //   r.$1();
           List<LocatedMessage>? context = getWhyNotPromotedContext(
             flowAnalysis.whyNotPromoted(getExpressionInfo(receiver))(),
-            receiver,
+            invocationNode,
             // Coverage-ignore(suite): Not run.
             (type) => !type.isPotentiallyNullable,
           );
           readResult = wrapExpressionInferenceResultInProblem(
-            readResult,
-            diag.nullableExpressionCallError.withArguments(type: receiverType),
-            fileOffset,
-            noLength,
+            result: readResult,
+            message: diag.nullableExpressionCallError.withArguments(
+              type: receiverType,
+            ),
+            fileOffset: fileOffset,
+            length: noLength,
             context: context,
+            internalNode: invocationNode,
           );
         }
         return inferMethodInvocation(
@@ -3791,6 +3840,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           isExpressionInvocation: false,
           isImplicitCall: true,
           hoistedExpressions: hoistedExpressions,
+          invocationNode: invocationNode,
         );
       case ObjectAccessTargetKind.recordNamed:
       case ObjectAccessTargetKind.nullableRecordNamed:
@@ -3818,16 +3868,19 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           //   r.foo();
           List<LocatedMessage>? context = getWhyNotPromotedContext(
             flowAnalysis.whyNotPromoted(getExpressionInfo(receiver))(),
-            receiver,
+            invocationNode,
             // Coverage-ignore(suite): Not run.
             (type) => !type.isPotentiallyNullable,
           );
           readResult = wrapExpressionInferenceResultInProblem(
-            readResult,
-            diag.nullableExpressionCallError.withArguments(type: receiverType),
-            fileOffset,
-            noLength,
+            result: readResult,
+            message: diag.nullableExpressionCallError.withArguments(
+              type: receiverType,
+            ),
+            fileOffset: fileOffset,
+            length: noLength,
             context: context,
+            internalNode: invocationNode,
           );
         }
         return inferMethodInvocation(
@@ -3842,6 +3895,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           isExpressionInvocation: false,
           isImplicitCall: true,
           hoistedExpressions: hoistedExpressions,
+          invocationNode: invocationNode,
         );
       case ObjectAccessTargetKind.extensionTypeRepresentation:
       // Coverage-ignore(suite): Not run.
@@ -3872,15 +3926,18 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           //
           List<LocatedMessage>? context = getWhyNotPromotedContext(
             flowAnalysis.whyNotPromoted(getExpressionInfo(receiver))(),
-            receiver,
+            invocationNode,
             (type) => !type.isPotentiallyNullable,
           );
           readResult = wrapExpressionInferenceResultInProblem(
-            readResult,
-            diag.nullableExpressionCallError.withArguments(type: receiverType),
-            fileOffset,
-            noLength,
+            result: readResult,
+            message: diag.nullableExpressionCallError.withArguments(
+              type: receiverType,
+            ),
+            fileOffset: fileOffset,
+            length: noLength,
             context: context,
+            internalNode: invocationNode,
           );
         }
         return inferMethodInvocation(
@@ -3895,6 +3952,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           isExpressionInvocation: false,
           isImplicitCall: true,
           hoistedExpressions: hoistedExpressions,
+          invocationNode: invocationNode,
         );
       // Coverage-ignore(suite): Not run.
       case ObjectAccessTargetKind.expressionEvaluationParameter:
@@ -3918,6 +3976,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
           isExpressionInvocation: false,
           isImplicitCall: true,
           hoistedExpressions: hoistedExpressions,
+          invocationNode: invocationNode,
         );
     }
   }
@@ -4180,8 +4239,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   /// Performs the inference of a super property set to [member] with the
   /// value from [rhsResult].
   ///
-  /// If [node] is provided, it is used as the basis for the resulting
-  /// expression, otherwise a new [SuperPropertySet] is created.
+  /// [valueNode] is the internal node for the value.
   ExpressionInferenceResult inferSuperPropertySet({
     required Expression receiver,
     required Name name,
@@ -4190,12 +4248,14 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     required DartType writeContext,
     required int assignOffset,
     required int nameOffset,
+    required InternalNode valueNode,
   }) {
     rhsResult = ensureAssignableResult(
       writeContext,
       rhsResult,
       fileOffset: assignOffset,
       isVoidAllowed: writeContext is VoidType,
+      assignedNode: valueNode,
     );
     Expression replacement = extern.createSuperPropertySet(
       receiver,
@@ -4242,20 +4302,21 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   /// Performs the inference of a static set to [member] with the value from
   /// [rhsResult].
   ///
-  /// If [node] is provided, it is used as the basis for the resulting
-  /// expression, otherwise a new [StaticSet] is created.
+  /// [valueNode] is the internal node for the value.
   ExpressionInferenceResult inferStaticSet({
     required Member member,
     required ExpressionInferenceResult rhsResult,
     required DartType writeContext,
     required int assignOffset,
     required int nameOffset,
+    required InternalNode valueNode,
   }) {
     rhsResult = ensureAssignableResult(
       writeContext,
       rhsResult,
       fileOffset: assignOffset,
       isVoidAllowed: writeContext is VoidType,
+      assignedNode: valueNode,
     );
     Expression rhs = rhsResult.expression;
     Expression replacement = extern.createStaticSet(
@@ -4417,14 +4478,18 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   /// Performs the inference of a local set to [variable] with the value from
   /// [rhsResult].
   ///
-  /// If [node] is provided, it is used as the basis for the resulting
-  /// expression, otherwise a new [VariableSet] is created.
+  /// The provided [node] is use in the flow analysis as the source of the
+  /// assignment. This is used for computing why-not-promoted information.
+  ///
+  /// [valueNode] is the internal node for the value.
   ExpressionInferenceResult inferVariableSet({
+    required InternalNode node,
     required InternalVariable variable,
     required DartType variableType,
     required ExpressionInferenceResult rhsResult,
     required int assignOffset,
     required int nameOffset,
+    required InternalNode valueNode,
   }) {
     bool isDefinitelyAssigned = flowAnalysis.isAssigned(variable);
     bool isDefinitelyUnassigned = flowAnalysis.isUnassigned(variable);
@@ -4433,6 +4498,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
       rhsResult,
       fileOffset: assignOffset,
       isVoidAllowed: variableType is VoidType,
+      assignedNode: valueNode,
     );
     Expression rhs = rhsResult.expression;
     VariableSet result = new VariableSet(variable.astVariable, rhs)
@@ -4440,7 +4506,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     storeExpressionInfo(
       result,
       flowAnalysis.write(
-        result,
+        node,
         variable,
         new SharedTypeView(rhsResult.inferredType),
         getExpressionInfo(rhsResult.expression),
@@ -4506,6 +4572,9 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
         }
       }
     }
+    libraryBuilder.loader.dataForTesting
+    // Coverage-ignore(suite): Not run.
+    ?.registerExternalNode(node, resultExpression);
     return new ExpressionInferenceResult(resultType, resultExpression);
   }
 
@@ -4533,6 +4602,8 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
   ///
   /// The returned [ExpressionInferenceResult] holds the generated expression
   /// and the type of this expression.
+  ///
+  /// [valueNode] is the internal node for the value.
   ExpressionInferenceResult inferPropertySet({
     required int fileOffset,
     required Expression receiver,
@@ -4543,12 +4614,14 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     required ExpressionInferenceResult valueResult,
     required bool forEffect,
     bool? isImplicitThis,
+    required InternalNode valueNode,
   }) {
     valueResult = ensureAssignableResult(
       writeContext,
       valueResult,
       fileOffset: fileOffset,
       isVoidAllowed: writeContext is VoidType,
+      assignedNode: valueNode,
     );
     Expression value = valueResult.expression;
     DartType valueType = valueResult.inferredType;
@@ -5259,6 +5332,10 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     }
   }
 
+  /// Performs inference on a property access of [propertyName] on [receiver]
+  /// with the static type [receiverType].
+  ///
+  /// [accessNode] is the internal node for the access to [propertyName].
   PropertyGetInferenceResult createPropertyGet({
     required int fileOffset,
     required Expression receiver,
@@ -5272,6 +5349,7 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     Map<SharedTypeView, NonPromotionReason> Function()? whyNotPromoted,
     bool? isImplicitThis,
     required ExpressionInfo? expressionInfo,
+    required InternalNode accessNode,
   }) {
     Expression read;
     ExpressionInferenceResult? readResult;
@@ -5506,20 +5584,21 @@ abstract class InferenceVisitorBase implements InferenceVisitor {
     }
     if (readTarget.isNullable) {
       readResult = wrapExpressionInferenceResultInProblem(
-        readResult,
-        diag.nullablePropertyAccessError.withArguments(
+        result: readResult,
+        message: diag.nullablePropertyAccessError.withArguments(
           propertyName: propertyName.text,
           receiverType: receiverType,
         ),
-        read.fileOffset,
-        propertyName.text.length,
+        fileOffset: read.fileOffset,
+        length: propertyName.text.length,
         context: whyNotPromoted != null
             ? getWhyNotPromotedContext(
                 whyNotPromoted(),
-                read,
+                accessNode,
                 (type) => !type.isPotentiallyNullable,
               )
             : null,
+        internalNode: accessNode,
       );
     }
     return new PropertyGetInferenceResult(readResult, readTarget.member);
@@ -5839,7 +5918,7 @@ class _WhyNotPromotedVisitor
     implements
         NonPromotionReasonVisitor<
           List<LocatedMessage>,
-          Node,
+          InternalNode,
           InternalVariable
         > {
   final InferenceVisitorBase inferrer;
@@ -5850,9 +5929,9 @@ class _WhyNotPromotedVisitor
 
   @override
   List<LocatedMessage> visitDemoteViaExplicitWrite(
-    DemoteViaExplicitWrite<InternalVariable> reason,
+    DemoteViaExplicitWrite<InternalVariable, InternalNode> reason,
   ) {
-    TreeNode node = reason.node as TreeNode;
+    InternalNode node = reason.node;
     if (inferrer.dataForTesting != null) {
       // Coverage-ignore-block(suite): Not run.
       inferrer
@@ -5874,9 +5953,9 @@ class _WhyNotPromotedVisitor
 
   @override
   List<LocatedMessage> visitDemoteViaSuspension(
-    DemoteViaSuspension<InternalVariable> reason,
+    DemoteViaSuspension<InternalVariable, InternalNode> reason,
   ) {
-    TreeNode node = reason.node as TreeNode;
+    InternalNode node = reason.node;
     if (inferrer.dataForTesting != null) {
       // Coverage-ignore-block(suite): Not run.
       inferrer
@@ -6462,6 +6541,7 @@ class ExtensionSetData {
   final Expression receiver;
   final DartType inferredReceiverType;
   final DartType valueType;
+  final InternalNode valueNode;
   final List<DartType> extensionTypeArguments;
   final Procedure setter;
 
@@ -6469,6 +6549,7 @@ class ExtensionSetData {
     required this.receiver,
     required this.inferredReceiverType,
     required this.valueType,
+    required this.valueNode,
     required this.extensionTypeArguments,
     required this.setter,
   });
