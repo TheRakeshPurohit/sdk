@@ -55,12 +55,12 @@ class AssignedVariablesDataComputer extends CfeDataComputer<_Data> {
       testResultData.compilerResult,
       member,
     ) as SourceMemberBuilder;
-    AssignedVariablesForTesting<TreeNode, InternalVariable>? assignedVariables =
-        memberBuilder
-            .dataForTesting!
-            .inferenceData
-            .flowAnalysisResult
-            .assignedVariables;
+    AssignedVariablesForTesting<InternalNode, InternalVariable>?
+    assignedVariables = memberBuilder
+        .dataForTesting!
+        .inferenceData
+        .flowAnalysisResult
+        .assignedVariables;
     if (assignedVariables == null) return;
     member.accept(
       new AssignedVariablesDataExtractor(
@@ -74,7 +74,7 @@ class AssignedVariablesDataComputer extends CfeDataComputer<_Data> {
 
 class AssignedVariablesDataExtractor extends CfeDataExtractor<_Data> {
   final SourceLoaderDataForTesting _sourceLoaderDataForTesting;
-  final AssignedVariablesForTesting<TreeNode, InternalVariable>
+  final AssignedVariablesForTesting<InternalNode, InternalVariable>
   _assignedVariables;
 
   new(

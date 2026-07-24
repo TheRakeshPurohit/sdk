@@ -4,7 +4,6 @@
 
 import 'package:_fe_analyzer_shared/src/type_inference/assigned_variables.dart';
 import 'package:_fe_analyzer_shared/src/type_inference/promotion_key_store.dart';
-import 'package:kernel/ast.dart';
 
 import 'internal_ast.dart';
 
@@ -12,7 +11,7 @@ class AssignedVariablesImpl
     implements AssignedVariables<InternalNode, InternalVariable> {
   final AssignedVariables<InternalNode, InternalVariable> _delegate;
   final AssignedVariables<InternalNode, InternalVariable>? _insideAsserts;
-  final AssignedVariables<TreeNode, InternalVariable>? _outsideAsserts;
+  final AssignedVariables<InternalNode, InternalVariable>? _outsideAsserts;
   int _assertDepth = 0;
   final Map<AssignedVariablesNodeInfo, AssignedVariablesNodeInfo>?
   _deferredInsideAssertsByDeferredDelegate;

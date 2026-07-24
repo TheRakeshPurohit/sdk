@@ -3555,10 +3555,9 @@ class SourceLoaderDataForTesting {
     _externalToInternalMap[externalNode] = internalNode;
   }
 
-  /// Returns the original node for [alias] or [alias] if it was not registered
-  /// as an alias.
-  InternalNode? toInternalNode(TreeNode alias) {
-    return _externalToInternalMap[alias];
+  /// Returns the internal node for which [externalNode] was created.
+  InternalNode? toInternalNode(TreeNode externalNode) {
+    return _externalToInternalMap[externalNode];
   }
 
   final ExhaustivenessDataForTesting exhaustivenessData =

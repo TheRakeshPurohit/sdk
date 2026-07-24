@@ -110,7 +110,7 @@ class AnonymousMethodReturnContext extends ReturnContext {
 class InferenceVisitorImpl extends InferenceVisitorBase
     with
         TypeAnalyzer<
-          TreeNode,
+          InternalNode,
           InternalStatement,
           InternalExpression,
           InternalVariable,
@@ -243,7 +243,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   ///      // relative to the stack base.
   ///      assert(checkStack(node, [ValuesKind.Expression]));
   ///
-  bool checkStackBase(TreeNode? node, int base) {
+  bool checkStackBase(InternalNode? node, int base) {
     return checkStackBaseStateForAssert(fileUri, node?.fileOffset, base);
   }
 
@@ -263,7 +263,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   ///
   /// to document the expected stack and get earlier errors on unexpected stack
   /// content.
-  bool checkStack(TreeNode? node, int? base, List<ValueKind> kinds) {
+  bool checkStack(InternalNode? node, int? base, List<ValueKind> kinds) {
     return checkStackStateForAssert(
       fileUri,
       node?.fileOffset,
@@ -495,6 +495,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       type,
       typeContext,
       extern.createStaticTearOff(node.target, fileOffset: node.fileOffset),
+      tearOffNode: node,
     );
   }
 
@@ -532,7 +533,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
     ?.registerExternalNode(node, replacement);
-    return instantiateTearOff(type, typeContext, replacement);
+    return instantiateTearOff(
+      type,
+      typeContext,
+      replacement,
+      tearOffNode: node,
+    );
   }
 
   ExpressionInferenceResult visitInternalRedirectingFactoryTearOff(
@@ -550,7 +556,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
     ?.registerExternalNode(node, replacement);
-    return instantiateTearOff(type, typeContext, replacement);
+    return instantiateTearOff(
+      type,
+      typeContext,
+      replacement,
+      tearOffNode: node,
+    );
   }
 
   ExpressionInferenceResult visitInternalTypedefTearOff(
@@ -597,6 +608,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       resultType,
       typeContext,
       replacement,
+      tearOffNode: node,
     );
     return ensureAssignableResult(
       typeContext,
@@ -1222,7 +1234,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       isVoidAllowed: true,
     );
     Expression then = thenResult.expression;
-    registerIfUnreachableForTesting(then, isReachable: isThenReachable);
+    registerIfUnreachableForTesting(node.then, isReachable: isThenReachable);
     DartType t1 = thenResult.inferredType;
 
     // - Let `T2` be the type of `e2` inferred with context type `K`
@@ -1238,7 +1250,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     );
     Expression otherwise = otherwiseResult.expression;
     registerIfUnreachableForTesting(
-      otherwise,
+      node.otherwise,
       isReachable: isOtherwiseReachable,
     );
     DartType t2 = otherwiseResult.inferredType;
@@ -1391,7 +1403,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -1436,6 +1448,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       target.getReturnType(this),
       typeContext,
       replacement,
+      tearOffNode: node,
     );
   }
 
@@ -1471,7 +1484,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -1529,7 +1542,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       setter: node.setter,
       isNullAware: node.isNullAware,
       fileOffset: node.fileOffset,
-      nodeForTesting: node,
+      internalNodeForTesting: node,
       valueNode: node.value,
     );
     ExpressionInferenceResult valueResult = inferExpression(
@@ -1555,7 +1568,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     required bool isNullAware,
     required int fileOffset,
     required InternalNode valueNode,
-    TreeNode? nodeForTesting,
+    InternalNode? internalNodeForTesting,
   }) {
     DartType receiverContextType = computeExplicitExtensionReceiverContextType(
       extension,
@@ -1584,7 +1597,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       extension,
       knownTypeArguments,
       receiverType,
-      treeNodeForTesting: nodeForTesting,
+      internalNodeForTesting: internalNodeForTesting,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -1727,7 +1740,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -1904,7 +1917,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -1994,7 +2007,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -2104,7 +2117,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -2287,7 +2300,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -4249,10 +4262,6 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
     ?.registerExternalNode(node, result);
-    dataForTesting
-            // Coverage-ignore(suite): Not run.
-            ?.externalToInternalNodeMap[result] =
-        node;
     return new ExpressionInferenceResult(inferredType, result);
   }
 
@@ -5289,10 +5298,6 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
     ?.registerExternalNode(node, result);
-    dataForTesting
-            // Coverage-ignore(suite): Not run.
-            ?.externalToInternalNodeMap[result] =
-        node;
     return new ExpressionInferenceResult(inferredType, result);
   }
 
@@ -5425,6 +5430,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       member: node.getter,
       typeContext: typeContext,
       nameOffset: node.nameOffset,
+      accessNode: node,
     );
     Expression read = readResult.expression;
     DartType readType = readResult.inferredType;
@@ -5503,6 +5509,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       typeContext: const UnknownType(),
       member: node.getter,
       nameOffset: node.nameOffset,
+      accessNode: node,
     );
     Expression read = readResult.expression;
     DartType readType = readResult.inferredType;
@@ -5571,6 +5578,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       variable: node.variable,
       typeContext: typeContext,
       nameOffset: node.nameOffset,
+      accessNode: node,
     );
     Expression read = readResult.expression;
     DartType readType = readResult.inferredType;
@@ -6438,7 +6446,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.explicitTypeArguments?.types,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -6531,7 +6539,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.explicitTypeArguments?.types,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -7070,7 +7078,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.knownTypeArguments,
       receiverResult.inferredType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -8625,7 +8633,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       node.extension,
       node.explicitTypeArguments?.types,
       receiverType,
-      treeNodeForTesting: node,
+      internalNodeForTesting: node,
     );
     problemReporting.checkBoundsInStaticInvocation(
       problemReportingHelper: problemReportingHelper,
@@ -9655,6 +9663,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       member: node.target,
       typeContext: typeContext,
       nameOffset: node.fileOffset,
+      accessNode: node,
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
@@ -9849,6 +9858,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       typeContext: typeContext,
       member: node.interfaceTarget,
       nameOffset: node.fileOffset,
+      accessNode: node,
     );
   }
 
@@ -10519,6 +10529,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       variable: node.variable,
       typeContext: typeContext,
       nameOffset: node.fileOffset,
+      accessNode: node,
     );
     libraryBuilder.loader.dataForTesting
     // Coverage-ignore(suite): Not run.
@@ -10856,7 +10867,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
                 coerceExpressionForAssignment(
                   contextType,
                   expressionResult,
-                  treeNodeForTesting: node,
+                  internalNodeForTesting: node,
                 ) ??
                 expressionResult;
           }
@@ -10878,7 +10889,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
                 coerceExpressionForAssignment(
                   contextType,
                   expressionResult,
-                  treeNodeForTesting: node,
+                  internalNodeForTesting: node,
                 ) ??
                 expressionResult;
           }
@@ -11069,7 +11080,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           coerceExpressionForAssignment(
             context.unwrapTypeSchemaView(),
             expressionResult,
-            treeNodeForTesting: node,
+            internalNodeForTesting: node,
           ) ??
           expressionResult;
     }
@@ -11083,7 +11094,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   }
 
   @override
-  PatternResult dispatchPattern(SharedMatchContext context, TreeNode node) {
+  PatternResult dispatchPattern(SharedMatchContext context, InternalNode node) {
     if (node is InternalPattern) {
       return node.acceptInference(this, context);
     } else {
@@ -11092,7 +11103,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   }
 
   @override
-  SharedTypeSchemaView dispatchPatternSchema(Node node) {
+  SharedTypeSchemaView dispatchPatternSchema(InternalNode node) {
     if (node is InternalPattern) {
       switch (node) {
         case InternalAndPattern():
@@ -11145,16 +11156,16 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           return analyzeLogicalOrPatternSchema(node.left, node.right);
         case InternalRecordPattern():
           return analyzeRecordPatternSchema(
-            fields: <RecordPatternField<TreeNode, InternalPattern>>[
+            fields: <RecordPatternField<InternalNode, InternalPattern>>[
               for (InternalPattern element in node.patterns)
                 if (element is InternalNamedPattern)
-                  new RecordPatternField<TreeNode, InternalPattern>(
+                  new RecordPatternField<InternalNode, InternalPattern>(
                     node: element,
                     name: element.name,
                     pattern: element.pattern,
                   )
                 else
-                  new RecordPatternField<TreeNode, InternalPattern>(
+                  new RecordPatternField<InternalNode, InternalPattern>(
                     node: element,
                     name: null,
                     pattern: element,
@@ -11184,7 +11195,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       return problems.unhandled(
         "${node.runtimeType}",
         "dispatchPatternSchema",
-        node is TreeNode ? node.fileOffset : TreeNode.noOffset,
+        node.fileOffset,
         fileUri,
       );
     }
@@ -11407,7 +11418,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
   @override
   FlowAnalysis<
-    TreeNode,
+    InternalNode,
     InternalStatement,
     InternalExpression,
     InternalVariable
@@ -11415,7 +11426,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   get flow => flowAnalysis;
 
   @override
-  SwitchExpressionMemberInfo<TreeNode, InternalExpression, InternalVariable>
+  SwitchExpressionMemberInfo<InternalNode, InternalExpression, InternalVariable>
   getSwitchExpressionMemberInfo(InternalExpression node, int index) {
     InternalSwitchExpressionCase switchExpressionCase =
         (node as InternalSwitchExpression).cases[index];
@@ -11436,7 +11447,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
   @override
   SwitchStatementMemberInfo<
-    TreeNode,
+    InternalNode,
     InternalStatement,
     InternalExpression,
     InternalVariable
@@ -11491,7 +11502,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     required int subIndex,
   }) {
     int? stackBase;
-    assert(checkStackBase(node as TreeNode, stackBase = stackHeight - 2));
+    assert(checkStackBase(node, stackBase = stackHeight - 2));
 
     void handleConstantPattern(Expression expression) {
       Set<Field?>? enumFields = _enumFields;
@@ -11604,7 +11615,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
   @override
   void handleDefault(
-    TreeNode node, {
+    InternalNode node, {
     required int caseIndex,
     required int subIndex,
   }) {}
@@ -11624,7 +11635,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   }
 
   @override
-  void handleNoGuard(TreeNode node, int caseIndex) {
+  void handleNoGuard(InternalNode node, int caseIndex) {
     int? stackBase;
     assert(checkStackBase(node, stackBase = stackHeight));
 
@@ -11639,7 +11650,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
   @override
   void handleSwitchBeforeAlternative(
-    TreeNode node, {
+    InternalNode node, {
     required int caseIndex,
     required int subIndex,
   }) {}
@@ -11664,13 +11675,16 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   }
 
   @override
-  bool isLegacySwitchExhaustive(TreeNode node, SharedTypeView expressionType) {
+  bool isLegacySwitchExhaustive(
+    InternalNode node,
+    SharedTypeView expressionType,
+  ) {
     Set<Field?>? enumFields = _enumFields;
     return enumFields != null && enumFields.isEmpty;
   }
 
   @override
-  bool isVariablePattern(TreeNode node) {
+  bool isVariablePattern(InternalNode node) {
     throw new UnimplementedError('TODO(paulberry)');
   }
 
@@ -12309,7 +12323,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
         analyzeObjectPattern(
           context,
           node,
-          fields: <RecordPatternField<TreeNode, InternalPattern>>[
+          fields: <RecordPatternField<InternalNode, InternalPattern>>[
             for (InternalNamedPattern field in node.fields)
               new RecordPatternField(
                 node: field,
@@ -12866,7 +12880,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     int? stackBase;
     assert(checkStackBase(node, stackBase = stackHeight));
 
-    List<RecordPatternField<TreeNode, InternalPattern>> fields = [
+    List<RecordPatternField<InternalNode, InternalPattern>> fields = [
       for (InternalPattern fieldPattern in node.patterns)
         new RecordPatternField(
           node: fieldPattern,
@@ -13111,7 +13125,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
     required List<TypeParameter> typeParameters,
     required DartType declaredType,
     required DartType contextType,
-    required TreeNode? treeNodeForTesting,
+    required InternalNode? internalNodeForTesting,
   }) {
     FreshStructuralParametersFromTypeParameters freshTypeParameters =
         getFreshStructuralParametersFromTypeParameters(typeParameters);
@@ -13129,7 +13143,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           inferenceResultForTesting: dataForTesting
               // Coverage-ignore(suite): Not run.
               ?.typeInferenceResult,
-          treeNodeForTesting: treeNodeForTesting,
+          internalNodeForTesting: internalNodeForTesting,
         );
     return typeSchemaEnvironment.chooseFinalTypes(
       gatherer.computeConstraints(),
@@ -13138,7 +13152,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
       inferenceUsingBoundsIsEnabled:
           libraryFeatures.inferenceUsingBounds.isEnabled,
       dataForTesting: dataForTesting,
-      treeNodeForTesting: treeNodeForTesting,
+      internalNodeForTesting: internalNodeForTesting,
       typeOperations: operations,
     );
   }
@@ -13168,7 +13182,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
             typeParameters: typedefTypeParameters,
             declaredType: unaliasedTypedef,
             contextType: matchedType.unwrapTypeView(),
-            treeNodeForTesting: pattern,
+            internalNodeForTesting: pattern,
           );
           requiredType = new TypedefType(
             typedef,
@@ -13198,7 +13212,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
             typeParameters: typeParameters,
             declaredType: declaredType,
             contextType: matchedType.unwrapTypeView(),
-            treeNodeForTesting: pattern,
+            internalNodeForTesting: pattern,
           );
           requiredType = new InterfaceType(
             requiredType.classNode,
@@ -13228,7 +13242,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
             typeParameters: typeParameters,
             declaredType: declaredType,
             contextType: matchedType.unwrapTypeView(),
-            treeNodeForTesting: pattern,
+            internalNodeForTesting: pattern,
           );
           requiredType = new ExtensionType(
             requiredType.extensionTypeDeclaration,
@@ -13242,7 +13256,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   }
 
   @override
-  void dispatchCollectionElement(covariant TreeNode element, Object? context) {
+  void dispatchCollectionElement(InternalNode element, Object? context) {
     context as ElementInferenceContext;
     element as InternalElement;
     pushRewrite(inferElement(element, context));
@@ -13252,7 +13266,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   (Member?, SharedTypeView) resolveObjectPatternPropertyGet({
     required InternalPattern objectPattern,
     required SharedTypeView receiverType,
-    required shared.RecordPatternField<TreeNode, InternalPattern> field,
+    required shared.RecordPatternField<InternalNode, InternalPattern> field,
   }) {
     String fieldName = field.name!;
     ObjectAccessTarget fieldAccessTarget = findInterfaceMember(
@@ -13271,7 +13285,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   }
 
   @override
-  void handleNoCollectionElement(TreeNode element) {
+  void handleNoCollectionElement(InternalNode element) {
     pushRewrite(NullValues.Expression);
   }
 
@@ -13289,12 +13303,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   }
 
   @override
-  bool isRestPatternElement(Node node) {
+  bool isRestPatternElement(InternalNode node) {
     return node is InternalRestPattern || node is InternalMapPatternRestEntry;
   }
 
   @override
-  InternalPattern? getRestPatternElementPattern(TreeNode node) {
+  InternalPattern? getRestPatternElementPattern(InternalNode node) {
     if (node is InternalMapPatternRestEntry) {
       return null;
     } else {
@@ -13305,7 +13319,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   @override
   void handleListPatternRestElement(
     InternalPattern container,
-    TreeNode restElement,
+    InternalNode restElement,
   ) {
     InternalRestPattern restPattern = restElement as InternalRestPattern;
     int? stackBase;
@@ -13343,7 +13357,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
   @override
   void handleMapPatternRestElement(
     InternalPattern container,
-    TreeNode restElement,
+    InternalNode restElement,
   ) {
     pushRewrite(
       extern.createMapPatternRestEntry(fileOffset: container.fileOffset),
@@ -13352,7 +13366,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
 
   @override
   shared.MapPatternEntry<InternalExpression, InternalPattern>?
-  getMapPatternEntry(TreeNode element) {
+  getMapPatternEntry(InternalNode element) {
     element as InternalMapPatternEntry;
     if (element is InternalMapPatternRestEntry) {
       return null;
@@ -13787,6 +13801,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
           member: member,
           typeContext: cachedContext,
           nameOffset: node.fileOffset,
+          accessNode: node,
         );
       case Procedure():
         if (member.isGetter) {
@@ -13794,6 +13809,7 @@ class InferenceVisitorImpl extends InferenceVisitorBase
             member: member,
             typeContext: cachedContext,
             nameOffset: node.fileOffset,
+            accessNode: node,
           );
         } else {
           // Method tearoffs.
@@ -13804,7 +13820,12 @@ class InferenceVisitorImpl extends InferenceVisitorBase
             member,
             fileOffset: node.fileOffset,
           );
-          return instantiateTearOff(type, typeContext, tearOff);
+          return instantiateTearOff(
+            type,
+            typeContext,
+            tearOff,
+            tearOffNode: node,
+          );
         }
       case Constructor():
       case null:
@@ -13855,14 +13876,24 @@ class InferenceVisitorImpl extends InferenceVisitorBase
             );
             Expression tearOff = new ConstructorTearOff(constructor)
               ..fileOffset = node.fileOffset;
-            return instantiateTearOff(type, typeContext, tearOff);
+            return instantiateTearOff(
+              type,
+              typeContext,
+              tearOff,
+              tearOffNode: node,
+            );
           } else if (constructor is Procedure) {
             DartType type = constructor.function.computeFunctionType(
               Nullability.nonNullable,
             );
             Expression tearOff = new StaticTearOff(constructor)
               ..fileOffset = node.fileOffset;
-            return instantiateTearOff(type, typeContext, tearOff);
+            return instantiateTearOff(
+              type,
+              typeContext,
+              tearOff,
+              tearOffNode: node,
+            );
           }
         }
 

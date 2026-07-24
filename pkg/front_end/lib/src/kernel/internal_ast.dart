@@ -44,7 +44,7 @@ part 'collections.dart';
 
 typedef SharedMatchContext =
     shared.MatchContext<
-      TreeNode,
+      InternalNode,
       InternalExpression,
       InternalPattern,
       InternalVariable
